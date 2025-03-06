@@ -404,6 +404,7 @@ dependencies = [
  "base16ct",
  "file-format",
  "imagesize",
+ "indexmap 2.7.1",
  "kamadak-exif",
  "serde",
  "serde_json",

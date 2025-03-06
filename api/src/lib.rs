@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 use std::sync::Mutex;
+use indexmap::IndexSet;
 use tauri::Manager;
 
 mod commands;
@@ -7,11 +8,11 @@ mod scan_files;
 
 #[derive(Default)]
 pub struct AppData {
-    file_list: Vec<CImage>,
+    file_list: IndexSet<CImage>,
     base_path: PathBuf,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default, Hash, Eq, PartialEq)]
 pub struct CImage {
     pub id: String,
     pub name: String,

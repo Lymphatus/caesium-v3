@@ -23,10 +23,11 @@ tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 walkdir = "2.5"
-tauri-plugin-dialog = "2.2.0"
+tauri-plugin-dialog = "2.2"
 
 sha2 = "0.10"
 base16ct = { version = "0.2", features = ["alloc"] }
 kamadak-exif = "0.6"
-imagesize = "0.13.0"
-file-format = "0.26.0"
+imagesize = "0.13"
+file-format = "0.26"
+indexmap = "2.7"
