@@ -1,6 +1,10 @@
-use std::path::{absolute, Path, PathBuf};
+use std::{fs::File, io::BufReader, path::{absolute, Path, PathBuf}};
+use sha2::{Digest, Sha256};
 use tauri_plugin_dialog::FilePath;
 use walkdir::WalkDir;
+use file_format::FileFormat;
+
+use crate::CImage;
 
 #[derive(serde::Serialize, Clone)]
 pub struct FileImportProgress {
@@ -9,22 +13,21 @@ pub struct FileImportProgress {
 }
 
 fn is_filetype_supported(path: &Path) -> bool {
-    match get_file_mime_type(path) {
-        Some(mime_type) => {
-            matches!(
-                mime_type.as_str(),
-                "image/jpeg" | "image/png" | "image/webp" | "image/gif" // TODO TIFF
-            )
+    let fmt =  get_file_mime_type(path);
+    let mime_type = fmt.media_type();
+
+    if mime_type == "image/tiff" {
+        let extension = path.extension().unwrap().to_ascii_lowercase();
+        if extension != "tif" && extension != "tiff" {
+            return false;
         }
-        None => false,
     }
+
+    matches!(mime_type, "image/jpeg" | "image/png" | "image/gif" | "image/webp" | "image/tiff")
 }
 
-pub fn get_file_mime_type(path: &Path) -> Option<String> {
-    match infer::get_from_path(path) {
-        Ok(v) => v.map(|ft| ft.mime_type().to_string()),
-        Err(_) => None,
-    }
+pub fn get_file_mime_type(path: &Path) -> FileFormat {
+    FileFormat::from_file(path).unwrap() //TODO
 }
 
 fn is_valid(entry: &Path) -> bool {
@@ -107,4 +110,58 @@ fn compute_base_folder(base_folder: &Path, new_path: &Path) -> Option<PathBuf> {
     }
 
     Some(folder)
+}
+
+pub fn map_file(file: &PathBuf) -> Option<CImage> {
+    // let id = Uuid::new_v4().to_string();
+
+
+    let name = file.file_name()?.to_str()?.to_string();
+    let directory = file.parent()?.to_str()?.to_string();
+    let size = match file.metadata() {
+        Ok(m) => m.len(),
+        Err(..) => return None,
+    };
+    let path = file.to_str()?.to_string();
+    let id = base16ct::lower::encode_string(&Sha256::digest(path.as_bytes()));
+
+    let mime_type = get_file_mime_type(file);
+    let (width, height) = get_real_resolution(file, mime_type.media_type());
+
+    let cimage = CImage {
+        id,
+        name,
+        path,
+        directory,
+        mime_type: mime_type.media_type().to_string(),
+        size,
+        width,
+        height,
+    };
+
+    Some(cimage)
+}
+
+pub fn get_real_resolution(file: &Path, mime_type: &str) -> (usize, usize) {
+    let resolution = match imagesize::size(file) {
+        Ok(r) => r,
+        Err(_) => return (0, 0),
+    };
+    let mut orientation = 1;
+    if mime_type == "image/jpeg" {
+        let f = File::open(file).unwrap(); //TODO
+        if let Ok(e) = exif::Reader::new().read_from_container(&mut BufReader::new(&f)) {
+            let exif_field = match e.get_field(exif::Tag::Orientation, exif::In::PRIMARY) {
+                Some(f) => f,
+                None => return (resolution.width, resolution.height),
+            };
+            orientation = exif_field.value.get_uint(0).unwrap_or(1);
+        };
+    }
+    let (width, height) = match orientation {
+        5..=8 => (resolution.height, resolution.width),
+        _ => (resolution.width, resolution.height),
+    };
+
+    (width, height)
 }

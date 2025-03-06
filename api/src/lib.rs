@@ -7,8 +7,20 @@ mod scan_files;
 
 #[derive(Default)]
 pub struct AppData {
-    file_list: Vec<PathBuf>,
+    file_list: Vec<CImage>,
     base_path: PathBuf,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct CImage {
+    pub id: String,
+    pub name: String,
+    pub path: String,
+    pub directory: String,
+    pub mime_type: String,
+    pub size: u64,
+    pub width: usize,
+    pub height: usize,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -20,7 +32,6 @@ pub fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![commands::greet])
         .invoke_handler(tauri::generate_handler![commands::open_import_files_dialog])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

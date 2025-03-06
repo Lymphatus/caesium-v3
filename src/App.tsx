@@ -8,51 +8,42 @@ function App() {
     listen<{files: string[], base_folder: string}>('fileImporter:importFinished', event => {
       setFiles(event.payload.files);
       setBaseFolder(event.payload.base_folder);
+      setStatus('Done');
+    }).then();
+
+    listen('fileImporter:importStarted', () => {
+      setStatus('Scanning...');
+    }).then();
+
+    listen<{progress: number, total: number}>('fileImporter:importProgress', event => {
+      const p = event.payload.progress;
+      const t = event.payload.total;
+      setStatus(`Importing (${p}/${t})`);
     }).then();
   }, []);
 
-  const [greetMsg, setGreetMsg] = useState('');
-  const [name, setName] = useState('');
   const [files, setFiles] = useState<string[]>([]);
   const [baseFolder, setBaseFolder] = useState('');
-
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke('greet', { name }));
-  }
+  const [status, setStatus] = useState('Ready');
 
   async function open_files() {
     await invoke('open_import_files_dialog');
   }
 
   const listItems = files.map((path) =>
-    <p>{ path }</p>
+    <li>{ path }</li>
   );
 
   return (
-
-    <main className="w-screen h-screen bg-red-200 text-center">
-      <h1>Welcome to Tauri + React + Tailwind</h1>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
+    <main className="w-screen h-screen bg-gray-200 text-center">
+      <h1 className="text-xl font-bold">Welcome to Tauri + React + Tailwind</h1>
 
       <button className="bg-white border border-gray-300 rounded-md px-4 py-2 m-2" onClick={open_files}>Open</button>
-
+      <h2 className="text-bold text-lg">{status}</h2>
       <p className="font-bold">{baseFolder}</p>
-      {listItems}
+      <ul>
+        {listItems}
+      </ul>
     </main>
   );
 }
