@@ -1,5 +1,5 @@
 use crate::scan_files::{map_file, scan_files, FileImportProgress};
-use crate::AppData;
+use crate::{AppData, CImage};
 use serde::Serialize;
 use std::path::absolute;
 use std::sync::Mutex;
@@ -8,7 +8,7 @@ use tauri_plugin_dialog::DialogExt;
 
 #[derive(Serialize, Clone)]
 struct Finished {
-    files: Vec<String>,
+    files: Vec<CImage>,
     base_folder: String,
 }
 
@@ -50,7 +50,13 @@ pub async fn open_import_files_dialog(app: tauri::AppHandle) {
             .sort_by(|a, b| a.path.partial_cmp(&b.path).unwrap());
 
         //TODO
-        let full_list: Vec<String> = state.file_list.iter().map(|i| i.path.clone()).collect();
+        let full_list: Vec<CImage> = state
+            .file_list
+            .get_range(0..50)
+            .unwrap()
+            .iter()
+            .map(|c| c.clone())
+            .collect();
         app.emit(
             "fileImporter:importFinished",
             Finished {
