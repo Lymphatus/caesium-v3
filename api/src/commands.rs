@@ -1,6 +1,7 @@
 use crate::scan_files::{map_file, scan_files, FileImportProgress};
 use crate::{AppData, CImage};
 use serde::Serialize;
+use std::cmp::min;
 use std::path::absolute;
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
@@ -45,26 +46,31 @@ pub async fn open_import_files_dialog(app: tauri::AppHandle) {
             state.file_list.insert(cimage);
         }
 
-        state
-            .file_list
-            .sort_by(|a, b| a.path.partial_cmp(&b.path).unwrap());
+        let mut full_list = vec![];
 
-        //TODO
-        let full_list: Vec<CImage> = state
-            .file_list
-            .get_range(0..50)
-            .unwrap()
-            .iter()
-            .map(|c| c.clone())
-            .collect();
+        if !state.file_list.is_empty() {
+            state
+                .file_list
+                .sort_by(|a, b| a.path.partial_cmp(&b.path).unwrap()); //TODO
+
+
+            full_list = state
+                .file_list
+                .get_range(0..min(state.file_list.len(), 50))
+                .unwrap() //TODO
+                .iter()
+                .cloned()
+                .collect();
+        }
+
         app.emit(
             "fileImporter:importFinished",
             Finished {
                 files: full_list,
                 base_folder: absolute(&state.base_path)
-                    .unwrap()
+                    .unwrap_or_default()
                     .to_str()
-                    .unwrap()
+                    .unwrap() //TODO
                     .to_string(),
             },
         )
