@@ -2,6 +2,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 use indexmap::IndexSet;
 use tauri::Manager;
+use crate::commands::{open_import_files_dialog, open_import_folder_dialog, clear_list};
 
 mod commands;
 mod scan_files;
@@ -33,7 +34,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![commands::open_import_files_dialog])
+        .invoke_handler(tauri::generate_handler![open_import_files_dialog, open_import_folder_dialog, clear_list])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

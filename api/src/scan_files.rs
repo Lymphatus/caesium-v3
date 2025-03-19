@@ -1,19 +1,31 @@
-use std::{fs::File, io::BufReader, path::{absolute, Path, PathBuf}};
+use crate::{AppData, CImage};
+use file_format::FileFormat;
+use serde::Serialize;
 use sha2::{Digest, Sha256};
+use std::cmp::min;
+use std::sync::Mutex;
+use std::{
+    fs::File,
+    io::BufReader,
+    path::{absolute, Path, PathBuf},
+};
+use tauri::{Emitter, Manager};
 use tauri_plugin_dialog::FilePath;
 use walkdir::WalkDir;
-use file_format::FileFormat;
-
-use crate::CImage;
 
 #[derive(serde::Serialize, Clone)]
 pub struct FileImportProgress {
     pub(crate) progress: usize,
     pub(crate) total: usize,
 }
+#[derive(Serialize, Clone)]
+pub struct FileList {
+    pub(crate) files: Vec<CImage>,
+    pub(crate) base_folder: String,
+}
 
 fn is_filetype_supported(path: &Path) -> bool {
-    let fmt =  get_file_mime_type(path);
+    let fmt = get_file_mime_type(path);
     let mime_type = fmt.media_type();
 
     if mime_type == "image/tiff" {
@@ -23,7 +35,10 @@ fn is_filetype_supported(path: &Path) -> bool {
         }
     }
 
-    matches!(mime_type, "image/jpeg" | "image/png" | "image/gif" | "image/webp" | "image/tiff")
+    matches!(
+        mime_type,
+        "image/jpeg" | "image/png" | "image/gif" | "image/webp" | "image/tiff"
+    )
 }
 
 pub fn get_file_mime_type(path: &Path) -> FileFormat {
@@ -34,7 +49,71 @@ fn is_valid(entry: &Path) -> bool {
     entry.exists() && entry.is_file() && is_filetype_supported(entry)
 }
 
-pub fn scan_files(args: &Vec<FilePath>, initial_base_path: &PathBuf, recursive: bool) -> (PathBuf, Vec<PathBuf>) {
+pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>) {
+    app.emit("fileImporter:importStarted", ()).unwrap(); //TODO
+    let state = app.state::<Mutex<AppData>>();
+    let mut state = state.lock().unwrap();
+    let (base_folder, imported_files) = scan_files(&file_paths, &state.base_path, false);
+
+    state.base_path = base_folder;
+
+    app.emit("fileImporter:scanFinished", ()).unwrap(); //TODO
+
+    let total = imported_files.len();
+    for (index, f) in imported_files.iter().enumerate() {
+        app.emit(
+            "fileImporter:importProgress",
+            FileImportProgress {
+                progress: index + 1,
+                total,
+            },
+        )
+        .unwrap_or_default(); //TODO What is default doing here?
+
+        let cimage = match map_file(f) {
+            Some(c) => c,
+            _ => continue,
+        };
+
+        state.file_list.insert(cimage);
+    }
+
+    let mut full_list = vec![];
+
+    if !state.file_list.is_empty() {
+        state
+            .file_list
+            .sort_by(|a, b| a.path.partial_cmp(&b.path).unwrap()); //TODO
+
+        full_list = state
+            .file_list
+            .get_range(0..min(state.file_list.len(), 50))
+            .unwrap() //TODO
+            .iter()
+            .cloned()
+            .collect();
+    }
+
+    app.emit("fileImporter:importFinished", ()).unwrap(); //TODO
+    app.emit(
+        "fileList:getList",
+        FileList {
+            files: full_list,
+            base_folder: absolute(&state.base_path)
+                .unwrap_or_default()
+                .to_str()
+                .unwrap() //TODO
+                .to_string(),
+        },
+    )
+    .unwrap(); //TODO
+}
+
+pub fn scan_files(
+    args: &Vec<FilePath>,
+    initial_base_path: &PathBuf,
+    recursive: bool,
+) -> (PathBuf, Vec<PathBuf>) {
     if args.is_empty() {
         return (initial_base_path.clone(), vec![]);
     }
@@ -91,7 +170,10 @@ fn compute_base_folder(base_folder: &Path, new_path: &Path) -> Option<PathBuf> {
     let mut folder = PathBuf::new();
     let mut new_path_folder = new_path.to_path_buf();
     if new_path.is_file() {
-        new_path_folder = new_path.parent().unwrap_or(&*PathBuf::from("/")).to_path_buf();
+        new_path_folder = new_path
+            .parent()
+            .unwrap_or(&*PathBuf::from("/"))
+            .to_path_buf();
     }
     for (i, component) in base_folder.iter().enumerate() {
         if let Some(new_path_component) = new_path_folder.iter().nth(i) {
@@ -114,7 +196,6 @@ fn compute_base_folder(base_folder: &Path, new_path: &Path) -> Option<PathBuf> {
 
 pub fn map_file(file: &PathBuf) -> Option<CImage> {
     // let id = Uuid::new_v4().to_string();
-
 
     let name = file.file_name()?.to_str()?.to_string();
     let directory = file.parent()?.to_str()?.to_string();
