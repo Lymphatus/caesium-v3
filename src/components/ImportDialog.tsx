@@ -15,10 +15,9 @@ function ImportDialog({ isOpen, onOpenChange, hideCloseButton, importProgress }:
         <DialogHeader>
           {/*TODO translate*/}
           <DialogTitle>Importing...</DialogTitle>
-          <DialogDescription>
-            <Progress value={importProgress || 0} className="w-full"></Progress>
-          </DialogDescription>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
+        <Progress value={importProgress || 0} className="w-full"></Progress>
       </DialogContent>
     </Dialog>
   );
