@@ -36,6 +36,7 @@ pub fn clear_list(app: tauri::AppHandle) {
         "fileList:getList",
         FileList {
             files: vec![],
+            total_files: 0,
             base_folder: "".to_string(),
         },
     )

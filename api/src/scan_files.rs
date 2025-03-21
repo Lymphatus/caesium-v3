@@ -22,6 +22,7 @@ pub struct FileImportProgress {
 pub struct FileList {
     pub(crate) files: Vec<CImage>,
     pub(crate) base_folder: String,
+    pub(crate) total_files: usize,
 }
 
 fn is_filetype_supported(path: &Path) -> bool {
@@ -60,15 +61,19 @@ pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>) {
     app.emit("fileImporter:scanFinished", ()).unwrap(); //TODO
 
     let total = imported_files.len();
+    let mut progress = 0;
     for (index, f) in imported_files.iter().enumerate() {
-        app.emit(
-            "fileImporter:importProgress",
-            FileImportProgress {
-                progress: index + 1,
-                total,
-            },
-        )
-        .unwrap_or_default(); //TODO What is default doing here?
+        let new_progress = ((index + 1) as f64 / total as f64 * 100.0).floor() as usize;
+
+        if progress != new_progress {
+            progress = new_progress;
+            app.emit(
+                "fileImporter:importProgress",
+                FileImportProgress { progress, total },
+            )
+            .unwrap_or_default();
+        }
+        //TODO What is default doing here?
 
         let cimage = match map_file(f) {
             Some(c) => c,
@@ -99,6 +104,7 @@ pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>) {
         "fileList:getList",
         FileList {
             files: full_list,
+            total_files: state.file_list.len(),
             base_folder: absolute(&state.base_path)
                 .unwrap_or_default()
                 .to_str()

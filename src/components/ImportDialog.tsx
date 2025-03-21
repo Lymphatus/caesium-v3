@@ -1,25 +1,33 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Progress } from '@/components/ui/progress.tsx';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@heroui/react';
+import useFileListStore from '@/stores/file-list.store.ts';
 
-interface ImportDialogProps {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-  hideCloseButton?: boolean;
-  importProgress?: number;
-}
+function ImportDialog() {
+  const { isImporting, importProgress } = useFileListStore();
 
-function ImportDialog({ isOpen, onOpenChange, hideCloseButton, importProgress }: ImportDialogProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent hideCloseButton={hideCloseButton}>
-        <DialogHeader>
-          {/*TODO translate*/}
-          <DialogTitle>Importing...</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <Progress value={importProgress || 0} className="w-full"></Progress>
-      </DialogContent>
-    </Dialog>
+    <Modal
+      isOpen={isImporting}
+      hideCloseButton
+      backdrop="blur"
+      // shadow="none"
+      isDismissable={false}
+      isKeyboardDismissDisabled
+      size="sm"
+    >
+      <ModalContent>
+        <ModalHeader className="flex flex-col gap-1">Importing...</ModalHeader>
+        <ModalBody>
+          <Progress
+            size="sm"
+            isIndeterminate={!importProgress}
+            value={importProgress || 0}
+            className="w-full"
+            aria-label="Progress..."
+          ></Progress>
+        </ModalBody>
+        <ModalFooter></ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }
 

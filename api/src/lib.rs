@@ -29,11 +29,18 @@ pub struct CImage {
 pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
+            #[cfg(debug_assertions)] // only include this code on debug builds
+            {
+                let window = app.get_webview_window("main").unwrap();
+                window.open_devtools();
+                window.close_devtools();
+            }
             app.manage(Mutex::new(AppData::default()));
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_window_state::Builder::default().build())
         .invoke_handler(tauri::generate_handler![open_import_files_dialog, open_import_folder_dialog, clear_list])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

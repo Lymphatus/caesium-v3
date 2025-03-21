@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import './assets/css/App.css';
+import { useEffect } from 'react';
 import Toolbar from '@/components/Toolbar.tsx';
 import Footer from '@/components/Footer.tsx';
 import ImportDialog from '@/components/ImportDialog.tsx';
@@ -7,47 +6,59 @@ import CenterContainer from '@/components/CenterContainer.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { listen } from '@tauri-apps/api/event';
 import { CImage } from '@/types.ts';
+import { addToast } from '@heroui/react';
 
 function App() {
-  const [importProgress, setImportProgress] = useState(0);
-  const { setFileList, setBaseFolder, isImporting, setIsImporting } = useFileListStore();
+  const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress } = useFileListStore();
 
   useEffect(() => {
-    listen('fileImporter:importFinished', () => {
+    const unlistenFinished = listen('fileImporter:importFinished', () => {
       setIsImporting(false);
-    }).then();
+      addToast({
+        title: 'Import finished',
+        description: 'Imported a few files',
+        // timeout: 3000,
+        color: 'success',
+      });
+    });
 
-    listen<{ files: CImage[]; base_folder: string }>('fileList:getList', (event) => {
-      const { files, base_folder } = event.payload;
-      setFileList(files);
-      setBaseFolder(base_folder);
-      setIsImporting(false);
-    }).then();
+    const unlistenGetList = listen<{ files: CImage[]; base_folder: string; total_files: number }>(
+      'fileList:getList',
+      (event) => {
+        const { files, base_folder, total_files } = event.payload;
+        setFileList(files);
+        setBaseFolder(base_folder);
+        setTotalFiles(total_files);
+        setIsImporting(false);
+      },
+    );
 
-    listen('fileImporter:importStarted', () => {
+    const unlistenStarted = listen('fileImporter:importStarted', () => {
       setImportProgress(0);
       setIsImporting(true);
-    }).then();
+    });
 
-    listen<{ progress: number; total: number }>('fileImporter:importProgress', (event) => {
-      const { progress, total } = event.payload;
-      setImportProgress((progress / total) * 100);
-    }).then();
+    const unlistenProgress = listen<{ progress: number; total: number }>('fileImporter:importProgress', (event) => {
+      const { progress } = event.payload;
+      setImportProgress(progress);
+    });
+
+    // Cleanup function to remove listeners when component unmounts
+    return () => {
+      Promise.all([unlistenFinished, unlistenGetList, unlistenStarted, unlistenProgress]).then((cleanupFns) => {
+        cleanupFns.forEach((cleanupFn) => cleanupFn());
+      });
+    };
   }, []);
 
   return (
-    <main className="w-screen h-screen text-center bg-card text-foreground px-1">
+    <>
       <Toolbar></Toolbar>
       <CenterContainer></CenterContainer>
       <Footer></Footer>
 
-      <ImportDialog
-        hideCloseButton={true}
-        isOpen={isImporting}
-        onOpenChange={() => console.log('openChanged')}
-        importProgress={importProgress}
-      ></ImportDialog>
-    </main>
+      <ImportDialog></ImportDialog>
+    </>
   );
 }
 

@@ -1,52 +1,58 @@
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
-import { CImage } from '@/types.ts';
-import React from 'react';
-
-interface FileListItemProps {
-  cImage: CImage;
-}
+import { Circle } from 'lucide-react';
+import prettyBytes from 'pretty-bytes';
 
 function FileListTable() {
-  const { fileList, baseFolder } = useFileListStore();
-  const listItems = fileList.map((cImage) => <FileListItem key={cImage.id} cImage={cImage} />);
+  const { fileList } = useFileListStore();
 
   return (
-    <Table className="size-full">
-      <TableCaption className="sticky bottom-0 bg-background">{baseFolder}</TableCaption>
-      <TableHeader className="sticky top-0 bg-background">
-        <TableRow>
-          <TableHead></TableHead>
-          <TableHead>Name</TableHead>
-          {/* TODO Translations */}
-          <TableHead>Size</TableHead>
-          {/* TODO Translations */}
-          <TableHead>Resolution</TableHead>
-          {/* TODO Translations */}
-          <TableHead>Saved</TableHead>
-          {/* TODO Translations */}
-          <TableHead>Info</TableHead>
-          {/* TODO Translations */}
-        </TableRow>
+    <Table
+      selectionMode="multiple"
+      shadow="none"
+      radius="sm"
+      fullWidth
+      removeWrapper
+      isHeaderSticky
+      aria-label="File list"
+      onRowAction={(key) => console.log(`Tapped item ${key}...`)}
+      classNames={{
+        base: 'h-full justify-between overflow-auto',
+        th: 'h-8',
+      }}
+      checkboxesProps={{ disableAnimation: true, size: 'sm' }}
+    >
+      <TableHeader>
+        {/*TODO Translations*/}
+        <TableColumn key="status" minWidth={100} align="center">
+          &nbsp;
+        </TableColumn>
+        <TableColumn key="name">Name</TableColumn>
+        <TableColumn key="size">Size</TableColumn>
+        <TableColumn key="resolution">Resolution</TableColumn>
+        <TableColumn key="saved">Saved</TableColumn>
+        <TableColumn key="info">Info</TableColumn>
       </TableHeader>
-      <TableBody>{listItems}</TableBody>
+      <TableBody items={fileList}>
+        {(cImage) => (
+          <TableRow key={cImage.id}>
+            <TableCell>
+              <div className="flex items-center justify-center">
+                <Circle className="text-primary size-4"></Circle>
+              </div>
+            </TableCell>
+            <TableCell>{cImage.name}</TableCell>
+            <TableCell>{prettyBytes(cImage.size)}</TableCell>
+            <TableCell>
+              {cImage.width}x{cImage.height}
+            </TableCell>
+            <TableCell>-</TableCell>
+            <TableCell>-</TableCell>
+          </TableRow>
+        )}
+      </TableBody>
     </Table>
   );
 }
-
-const FileListItem: React.FC<FileListItemProps> = ({ cImage }) => {
-  return (
-    <TableRow>
-      <TableCell className="text-left"></TableCell>
-      <TableCell className="text-left">{cImage.name}</TableCell>
-      <TableCell className="text-left">{cImage.size}</TableCell>
-      <TableCell className="text-left">
-        {cImage.width}x{cImage.height}
-      </TableCell>
-      <TableCell className="text-left">-</TableCell>
-      <TableCell className="text-left">-</TableCell>
-    </TableRow>
-  );
-};
 
 export default FileListTable;
