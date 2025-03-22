@@ -9,7 +9,6 @@ interface FileListStore {
   currentPage: number;
   totalFiles: number;
   importProgress: number;
-  currentPreviewedCImage: CImage | null;
 
   totalPages: () => number;
 
@@ -20,7 +19,6 @@ interface FileListStore {
   setCurrentPage: (page: number) => void;
   setTotalFiles: (totalFiles: number) => void;
   setImportProgress: (progress: number) => void;
-  setCurrentPreviewedCImage: (cImage: CImage | null) => void;
 }
 
 const useFileListStore = create<FileListStore>()((set, get) => ({
@@ -47,7 +45,6 @@ const useFileListStore = create<FileListStore>()((set, get) => ({
   setCurrentPage: (page: number) => set({ currentPage: page }),
   setTotalFiles: (totalFiles: number) => set({ totalFiles }),
   setImportProgress: (progress: number) => set({ importProgress: progress }),
-  setCurrentPreviewedCImage: (cImage: CImage | null) => set({ currentPreviewedCImage: cImage }),
 }));
 
 export default useFileListStore;

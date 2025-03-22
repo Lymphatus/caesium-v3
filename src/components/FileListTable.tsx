@@ -2,9 +2,11 @@ import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from 
 import useFileListStore from '@/stores/file-list.store.ts';
 import { Circle } from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
+import usePreviewStore from '@/stores/preview.store.ts';
 
 function FileListTable() {
-  const { fileList, setCurrentPreviewedCImage } = useFileListStore();
+  const { fileList } = useFileListStore();
+  const { setCurrentPreviewedCImage } = usePreviewStore();
 
   return (
     <Table
