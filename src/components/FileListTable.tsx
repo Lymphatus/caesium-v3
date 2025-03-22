@@ -4,7 +4,7 @@ import { Circle } from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
 
 function FileListTable() {
-  const { fileList } = useFileListStore();
+  const { fileList, setCurrentPreviewedCImage } = useFileListStore();
 
   return (
     <Table
@@ -15,14 +15,14 @@ function FileListTable() {
       removeWrapper
       isHeaderSticky
       aria-label="File list"
-      onRowAction={(key) => console.log(`Tapped item ${key}...`)}
+      onRowAction={(key) => setCurrentPreviewedCImage(fileList.find((cImage) => cImage.id === key) || null)}
       classNames={{
         base: 'h-full justify-between overflow-auto',
-        th: 'h-8',
+        th: 'h-8 first:rounded-b-none first:rounded-t-sm last:rounded-b-none last:rounded-t-sm',
       }}
       checkboxesProps={{ disableAnimation: true, size: 'sm' }}
     >
-      <TableHeader>
+      <TableHeader className="rounded-sm">
         {/*TODO Translations*/}
         <TableColumn key="status" minWidth={100} align="center">
           &nbsp;

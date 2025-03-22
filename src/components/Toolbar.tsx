@@ -7,16 +7,16 @@ function Toolbar() {
   const { openPickerDialogs } = useFileListStore();
 
   return (
-    <div className="w-full h-[36px] flex items-center justify-between bg-content1 px-2">
+    <div className="w-full h-[40px] flex items-center justify-between bg-content1 px-2">
       <div className="h-full flex items-center gap-1 h-full">
         <Button isIconOnly disableRipple variant="light" size="sm" onPress={() => openPickerDialogs('files')}>
-          <ImagePlus className="size-4"></ImagePlus>
+          <ImagePlus className="size-5"></ImagePlus>
         </Button>
         <Button isIconOnly disableRipple variant="light" size="sm" onPress={() => openPickerDialogs('folder')}>
-          <FolderPlus className="size-4"></FolderPlus>
+          <FolderPlus className="size-5"></FolderPlus>
         </Button>
         <Button isIconOnly disableRipple variant="light" size="sm" color="danger">
-          <Delete className="size-4"></Delete>
+          <Delete className="size-5"></Delete>
         </Button>
         <Button
           isIconOnly
@@ -26,18 +26,18 @@ function Toolbar() {
           size="sm"
           onPress={async () => await invoke('clear_list')}
         >
-          <Trash2 className="size-4"></Trash2>
+          <Trash2 className="size-5"></Trash2>
         </Button>
         <Button isIconOnly disableRipple variant="light" size="sm">
-          <Search className="size-4"></Search>
+          <Search className="size-5"></Search>
         </Button>
         <Button isIconOnly disableRipple variant="light" size="sm" color="primary">
-          <Play className="size-4"></Play>
+          <Play className="size-5"></Play>
         </Button>
       </div>
       <div className="h-full flex items-center gap-1">
         <Button isIconOnly disableRipple variant="light" size="sm">
-          <Settings className="size-4"></Settings>
+          <Settings className="size-5"></Settings>
         </Button>
       </div>
     </div>
