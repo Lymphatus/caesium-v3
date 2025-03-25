@@ -1,25 +1,42 @@
 import { RefObject, useEffect, useRef } from 'react';
-import { useWorker } from '@koale/useworker';
 import { convertFileSrc } from '@tauri-apps/api/core';
-import { CImage } from '@/types.ts';
+import { ImageLoaderRequest, ImageLoaderResponse } from '@/types.ts';
 import usePreviewStore from '@/stores/preview.store.ts';
 
-const loadImage = async (fileURL: string) => {
-  const response = await fetch(fileURL);
-  const blob = await response.blob();
-  return await createImageBitmap(blob);
+const worker = new Worker(new URL('@/workers/image-loader.ts', import.meta.url));
+
+const setImageToCanvas = (canvas: HTMLCanvasElement | null, image: ImageBitmap) => {
+  if (!canvas) {
+    console.error('Canvas is not defined');
+    return;
+  }
+  const context = canvas.getContext('2d');
+  if (!context) {
+    return;
+  }
+
+  canvas.width = image.width;
+  canvas.height = image.height;
+  context.drawImage(image, 0, 0);
 };
 
 function PreviewCanvas() {
   const canvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
   const { currentPreviewedCImage, setIsLoading } = usePreviewStore();
 
-  const [imageLoaderWorker] = useWorker(loadImage);
+  useEffect(() => {
+    const listener = (e: MessageEvent<ImageLoaderResponse>) => {
+      const data = e.data;
+      setImageToCanvas(canvasRef.current, data.imageBitmap);
 
-  const runImageLoader = async (cImage: CImage) => {
-    const fileURL = convertFileSrc(cImage.path);
-    return await imageLoaderWorker(fileURL); // non-blocking UI
-  };
+      setIsLoading(false);
+    };
+    worker.addEventListener('message', listener);
+
+    return () => {
+      worker.removeEventListener('message', listener);
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -31,24 +48,17 @@ function PreviewCanvas() {
       return;
     }
 
-    async function load(cImage: CImage) {
-      return await runImageLoader(cImage);
-    }
-
-    if (currentPreviewedCImage && canvas) {
-      context.clearRect(0, 0, canvas.width, canvas.height);
+    if (currentPreviewedCImage) {
       setIsLoading(true);
-      load(currentPreviewedCImage)
-        .then((image) => {
-          canvas.width = image.width;
-          canvas.height = image.height;
-          context.drawImage(image, 0, 0);
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          console.error(error);
-          setIsLoading(false);
-        });
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      const imageURL = convertFileSrc(currentPreviewedCImage.path);
+      const messagePayload: ImageLoaderRequest = {
+        mimeType: currentPreviewedCImage.mime_type,
+        imageUrl: imageURL,
+      };
+
+      worker.postMessage(messagePayload);
     }
 
     return () => {

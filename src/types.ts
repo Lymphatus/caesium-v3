@@ -8,3 +8,12 @@ export type CImage = {
   width: number;
   height: number;
 };
+
+export type ImageLoaderRequest = {
+  mimeType: string;
+  imageUrl: string;
+};
+
+export type ImageLoaderResponse = {
+  imageBitmap: ImageBitmap;
+};
