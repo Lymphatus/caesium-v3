@@ -4,7 +4,7 @@ function Footer() {
   const { baseFolder, totalFiles } = useFileListStore();
 
   return (
-    <div className="w-full h-[30px] flex items-center justify-between bg-content1">
+    <div className="bg-content1 flex h-[30px] w-full items-center justify-between">
       <div>{totalFiles}</div>
       <div>{baseFolder}</div>
     </div>

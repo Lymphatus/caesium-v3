@@ -1,0 +1,159 @@
+{
+  "app_name": "Caesium Image Compressor",
+  "unit": "Unit",
+  "select_dots": "Select...",
+  "importing_dots": "Importing...",
+  "width": "Width",
+  "height": "Height",
+  "long_edge": "Long edge",
+  "short_edge": "Short edge",
+  "fit_container": "Fit container",
+  "fill_container": "Fill container",
+  "zoom_out": "Zoom out",
+  "zoom_in": "Zoom in",
+  "actual_size": "Actual size",
+  "original": "Original",
+  "compressed": "Compressed",
+  "compression_completed": "Compression completed",
+  "compressing_dots": "Compressing...",
+  "settings_title": "Settings",
+  "close": "Close",
+  "ok": "Ok",
+  "threads": "Threads",
+  "quality": "Quality",
+  "size": "Size",
+  "formats": {
+    "original": "Same as input",
+    "jpeg": "JPEG",
+    "png": "PNG",
+    "tiff": "TIFF",
+    "webp": "WebP"
+  },
+  "file_list": {
+    "status": "Status",
+    "filename": "Filename",
+    "size": "Size",
+    "resolution": "Resolution",
+    "saved": "Saved",
+    "additional_info": "Info",
+    "actions": "Actions"
+  },
+  "formatting": {
+    "thousands_separator": ".",
+    "decimal_separator": ","
+  },
+  "size_units": {
+    "byte": "byte | bytes",
+    "kb": "Kb",
+    "mb": "Mb",
+    "gb": "Gb"
+  },
+  "compression_options": {
+    "progressive": "Progressive",
+    "compression": "Compression",
+    "resize": "Resize",
+    "output": "Output",
+    "max_output_size": "Maximum output size",
+    "lossless": "Lossless",
+    "keep_metadata": "Keep metadata",
+    "output_folder": "Output folder",
+    "chroma_subsampling": "Chroma subsampling",
+    "resize_options": {
+      "resize_enabled": "Enable resize",
+      "resize_mode": "Mode",
+      "keep_aspect_ratio": "Keep aspect ratio",
+      "do_not_enlarge": "Do not enlarge"
+    },
+    "output_options": {
+      "same_folder_as_input": "Same folder as input",
+      "keep_structure": "Keep folder structure",
+      "skip_if_output_is_bigger": "Skip if output is bigger than original",
+      "move_original": "Move original file to",
+      "keep_file_dates": "Keep file dates",
+      "output_format": "Output format",
+      "suffix": "Suffix"
+    },
+    "tiff": {
+      "compression_method": "Compression method",
+      "deflate_level": "Deflate level",
+      "uncompressed": "Uncompressed",
+      "lzw": "LZW",
+      "deflate": "Deflate",
+      "packbits": "Packbits"
+    }
+  },
+  "resize_modes": {
+    "dimensions": "Dimensions",
+    "percentage": "Percentage",
+    "short_edge": "Short edge",
+    "long_edge": "Long edge",
+    "width": "Width",
+    "height": "Height"
+  },
+  "move_original_files_modes": {
+    "trash": "Trash",
+    "delete": "Delete"
+  },
+  "file_dates": {
+    "creation": "Creation",
+    "last_modified": "Last modified",
+    "last_access": "Last access"
+  },
+  "chroma_subsampling_auto": "Auto",
+  "actions": {
+    "add_dots": "Add images...",
+    "add_folder_dots": "Add folder...",
+    "advanced_import": "Advanced import...",
+    "exit": "Exit",
+    "about": "About Caesium Image Compressor",
+    "donate": "Donate",
+    "compress": "Compress",
+    "add": "Add",
+    "clear": "Clear",
+    "select_all": "Select all",
+    "remove": "Remove",
+    "settings": "Settings...",
+    "preview": "Preview",
+    "auto_preview": "Auto preview",
+    "show_previews": "Show previews"
+  },
+  "settings": {
+    "general": "General",
+    "import": "Import",
+    "advanced": "Advanced",
+    "theme": "Theme",
+    "theme_dark": "Dark",
+    "theme_light": "Light",
+    "theme_auto": "Auto",
+    "language": "Language",
+    "prompt_on_exit": "Prompt on exit",
+    "auto_check_updates": "Auto check for updates",
+    "skip_dialogs": "Skip all dialogs",
+    "skip_dialogs_help": "Do not show any dialogs during compression",
+    "send_usage_statistics": "Send usage statistics",
+    "send_usage_statistics_help": "Show my info",
+    "scan_subfolders_on_import": "Import files in subfolders while opening a folder",
+    "direct_import_action": "When importing files directly",
+    "direct_import_action_help": "Perform an action while importing files directly",
+    "direct_import_actions": {
+      "import_only": "Import only",
+      "import_and_compress": "Import and compress"
+    },
+    "after_compression_actions": {
+      "none": "None",
+      "close_application": "Close the application",
+      "sleep": "Sleep",
+      "shutdown": "Shutdown",
+      "open_output_folder": "Open output folder"
+    },
+    "after_compression_action": "Perform an action after compression",
+    "max_compression_threads": "Max compression threads",
+    "threads_priority": "Threads priority"
+  },
+  "menubar": {
+    "file": "File",
+    "edit": "Edit",
+    "view": "View",
+    "help": "Help"
+  }
+}

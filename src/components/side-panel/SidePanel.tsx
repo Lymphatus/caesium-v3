@@ -7,12 +7,12 @@ function SidePanel() {
     <div className="size-full">
       <div className="bg-content1 size-full rounded">
         <Tabs
-          placement="end"
-          variant="light"
           classNames={{
             tabWrapper: 'h-full',
-            panel: 'size-full',
+            panel: 'size-full p-0',
           }}
+          placement="end"
+          variant="light"
         >
           <Tab key="compresion" title={<SlidersHorizontal className="size-4"></SlidersHorizontal>}>
             <CompressionOptions></CompressionOptions>

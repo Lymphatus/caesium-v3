@@ -46,6 +46,16 @@ export default [
       'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       'prettier/prettier': 'error',
+      'react/jsx-sort-props': [
+        2,
+        {
+          callbacksLast: true,
+          shorthandFirst: true,
+          ignoreCase: true,
+          reservedFirst: true,
+          noSortAlphabetically: false,
+        },
+      ],
     },
   },
 ];

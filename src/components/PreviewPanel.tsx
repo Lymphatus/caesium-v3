@@ -11,6 +11,8 @@ import { RefObject, useCallback, useRef } from 'react';
 import prettyBytes from 'pretty-bytes';
 import PreviewCanvas from '@/components/PreviewCanvas.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
+import { useTranslation } from 'react-i18next';
+import i18next from 'i18next';
 
 const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 'zoomIn' | 'zoomOut'>) => {
   const setZoomLevel = (value: number | number[], state: ReactZoomPanPinchState) => {
@@ -29,38 +31,52 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
     return (
       <>
         <NumberInput
-          value={zoomLevel}
           disableAnimation
+          hideStepper
+          aria-label="zoom"
+          className="max-w-20"
+          classNames={{
+            inputWrapper: 'p-1 h-8',
+            input: 'text-right',
+          }}
           endContent={
             <div className="pointer-events-none flex items-center">
               <span className="text-default-400 text-small">%</span>
             </div>
           }
-          classNames={{
-            inputWrapper: 'p-1 h-8',
-            input: 'text-right',
-          }}
-          aria-label="zoom"
-          size="sm"
-          minValue={1}
           maxValue={300}
-          hideStepper
-          className="max-w-20"
+          minValue={1}
+          size="sm"
+          value={zoomLevel}
           onValueChange={(value) => setZoomLevel(value, state)}
         ></NumberInput>
-        <Button size="sm" variant="light" onPress={() => zoomOut()} isIconOnly disableRipple>
+        <Button
+          disableRipple
+          isIconOnly
+          size="sm"
+          title={i18next.t('zoom_out')}
+          variant="light"
+          onPress={() => zoomOut()}
+        >
           <Minus className="size-3"></Minus>
         </Button>
         <Slider
-          minValue={1}
-          maxValue={300}
-          size="sm"
-          className="w-[150px]"
           aria-label="zoom"
+          className="w-[150px]"
+          maxValue={300}
+          minValue={1}
+          size="sm"
           value={zoomLevel}
           onChange={(value) => setZoomLevel(value, state)}
         ></Slider>
-        <Button size="sm" variant="light" onPress={() => zoomIn()} isIconOnly disableRipple>
+        <Button
+          disableRipple
+          isIconOnly
+          size="sm"
+          title={i18next.t('zoom_in')}
+          variant="light"
+          onPress={() => zoomIn()}
+        >
           <Plus className="size-3"></Plus>
         </Button>
       </>
@@ -72,6 +88,7 @@ function PreviewPanel() {
   const { currentPreviewedCImage, isLoading } = usePreviewStore();
   const wrapperRef: RefObject<HTMLDivElement | null> = useRef(null);
   const contentRef: RefObject<HTMLDivElement | null> = useRef(null);
+  const { t } = useTranslation();
 
   const fitContentToWrapper = useCallback((centerView: (scale: number) => void) => {
     if (wrapperRef.current && contentRef.current) {
@@ -91,25 +108,25 @@ function PreviewPanel() {
   }, []);
 
   return (
-    <div className="bg-content1 size-full rounded-sm relative">
+    <div className="bg-content1 relative size-full rounded-sm">
       <TransformWrapper
         centerOnInit
         centerZoomedOut
         disablePadding
         limitToBounds
-        minScale={0.01}
         maxScale={3}
+        minScale={0.01}
         smooth={false}
         zoomAnimation={{ disabled: true }}
       >
         {({ zoomIn, zoomOut, centerView }) => (
           <div
-            className="flex flex-col items-center justify-between size-full bg-content2 rounded-t-sm rounded-b-none"
             ref={wrapperRef}
+            className="bg-content2 flex size-full flex-col items-center justify-between rounded-t-sm rounded-b-none"
           >
             {isLoading && (
               <Spinner
-                className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"
+                className="absolute left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transform"
                 // TODO hack to have the spinner centered, because we have 40px as the control bar height
                 style={{
                   top: 'calc(50% - 20px)',
@@ -118,18 +135,19 @@ function PreviewPanel() {
             )}
 
             <TransformComponent wrapperClass="!w-full relative !h-full">
-              <div className="size-full" ref={contentRef}>
+              <div ref={contentRef} className="size-full">
                 <PreviewCanvas></PreviewCanvas>
               </div>
             </TransformComponent>
 
-            <div className="flex justify-between w-full items-center p-1 h-[40px] bg-content1">
+            <div className="bg-content1 flex h-[40px] w-full items-center justify-between p-1">
               <div>{currentPreviewedCImage && prettyBytes(currentPreviewedCImage.size)}</div>
-              <div className="flex gap-1 items-center">
+              <div className="flex items-center gap-1">
                 <Button
                   disableRipple
                   isIconOnly
                   size="sm"
+                  title={t('fit_container')}
                   variant="light"
                   onPress={() => {
                     fitContentToWrapper(centerView);
@@ -141,6 +159,7 @@ function PreviewPanel() {
                   disableRipple
                   isIconOnly
                   size="sm"
+                  title={t('actual_size')}
                   variant="light"
                   onPress={() => {
                     centerView(1);

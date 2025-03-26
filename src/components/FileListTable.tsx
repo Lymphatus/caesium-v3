@@ -3,37 +3,39 @@ import useFileListStore from '@/stores/file-list.store.ts';
 import { Circle } from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
 import usePreviewStore from '@/stores/preview.store.ts';
+import { useTranslation } from 'react-i18next';
 
 function FileListTable() {
   const { fileList } = useFileListStore();
   const { setCurrentPreviewedCImage } = usePreviewStore();
+  const { t } = useTranslation();
 
   return (
     <Table
-      selectionMode="multiple"
-      shadow="none"
-      radius="sm"
       fullWidth
-      removeWrapper
       isHeaderSticky
+      removeWrapper
       aria-label="File list"
-      onRowAction={(key) => setCurrentPreviewedCImage(fileList.find((cImage) => cImage.id === key) || null)}
+      checkboxesProps={{ disableAnimation: true, size: 'sm' }}
       classNames={{
         base: 'h-full justify-between overflow-auto',
         th: 'h-8 first:rounded-b-none first:rounded-t-sm last:rounded-b-none last:rounded-t-sm',
       }}
-      checkboxesProps={{ disableAnimation: true, size: 'sm' }}
+      radius="sm"
+      selectionMode="multiple"
+      shadow="none"
+      onRowAction={(key) => setCurrentPreviewedCImage(fileList.find((cImage) => cImage.id === key) || null)}
     >
       <TableHeader className="rounded-sm">
         {/*TODO Translations*/}
-        <TableColumn key="status" minWidth={100} align="center">
-          &nbsp;
+        <TableColumn key="status" align="center" minWidth={100}>
+          {t('file_list.status')}
         </TableColumn>
-        <TableColumn key="name">Name</TableColumn>
-        <TableColumn key="size">Size</TableColumn>
-        <TableColumn key="resolution">Resolution</TableColumn>
-        <TableColumn key="saved">Saved</TableColumn>
-        <TableColumn key="info">Info</TableColumn>
+        <TableColumn key="name">{t('file_list.filename')}</TableColumn>
+        <TableColumn key="size">{t('file_list.size')}</TableColumn>
+        <TableColumn key="resolution">{t('file_list.resolution')}</TableColumn>
+        <TableColumn key="saved">{t('file_list.saved')}</TableColumn>
+        <TableColumn key="info">{t('file_list.additional_info')}</TableColumn>
       </TableHeader>
       <TableBody items={fileList}>
         {(cImage) => (

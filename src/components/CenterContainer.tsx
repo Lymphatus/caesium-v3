@@ -2,24 +2,27 @@ import ListPanel from '@/components/ListPanel.tsx';
 import PreviewPanel from '@/components/PreviewPanel.tsx';
 import SidePanel from '@/components/side-panel/SidePanel.tsx';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import useUIStore from '@/stores/ui.store.ts';
 
 function CenterContainer() {
+  const { splitPanels } = useUIStore();
+
   return (
     <div className="center-container p-1">
       <PanelGroup direction="horizontal">
-        <Panel defaultSize={70} minSize={20} maxSize={80}>
+        <Panel defaultSize={splitPanels.main.left} maxSize={80} minSize={20}>
           <PanelGroup direction="vertical">
-            <Panel defaultSize={60} minSize={20} maxSize={80}>
+            <Panel defaultSize={splitPanels.center.top} maxSize={80} minSize={20}>
               <ListPanel></ListPanel>
             </Panel>
-            <PanelResizeHandle className="hover:bg-primary bg-transparent h-1 rounded" />
-            <Panel defaultSize={40} minSize={20} maxSize={80}>
+            <PanelResizeHandle className="hover:bg-primary h-1 rounded bg-transparent" />
+            <Panel defaultSize={splitPanels.center.bottom} maxSize={80} minSize={20}>
               <PreviewPanel></PreviewPanel>
             </Panel>
           </PanelGroup>
         </Panel>
-        <PanelResizeHandle className="hover:bg-primary bg-transparent w-1 rounded" />
-        <Panel defaultSize={30} minSize={20} maxSize={80}>
+        <PanelResizeHandle className="hover:bg-primary w-1 rounded bg-transparent" />
+        <Panel defaultSize={splitPanels.main.right} maxSize={80} minSize={20}>
           <SidePanel></SidePanel>
         </Panel>
       </PanelGroup>

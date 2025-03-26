@@ -17,3 +17,11 @@ export type ImageLoaderRequest = {
 export type ImageLoaderResponse = {
   imageBitmap: ImageBitmap;
 };
+
+export enum CHROMA_SUBSAMPLING {
+  AUTO = 'auto',
+  CS444 = '4:4:4',
+  CS422 = '4:2:2',
+  CS420 = '4:2:0',
+  CS411 = '4:1:1',
+}

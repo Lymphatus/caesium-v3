@@ -1,28 +1,30 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
+import { useTranslation } from 'react-i18next';
 
 function ImportDialog() {
   const { isImporting, importProgress } = useFileListStore();
+  const { t } = useTranslation();
 
   return (
     <Modal
-      isOpen={isImporting}
       hideCloseButton
-      backdrop="blur"
-      // shadow="none"
-      isDismissable={false}
       isKeyboardDismissDisabled
+      backdrop="blur"
+      isDismissable={false}
+      isOpen={isImporting}
+      shadow="none"
       size="sm"
     >
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">Importing...</ModalHeader>
+        <ModalHeader className="flex flex-col gap-1">{t('importing_dots')}</ModalHeader>
         <ModalBody>
           <Progress
-            size="sm"
-            isIndeterminate={!importProgress}
-            value={importProgress || 0}
+            aria-label={t('importing_dots')}
             className="w-full"
-            aria-label="Progress..."
+            isIndeterminate={!importProgress}
+            size="sm"
+            value={importProgress || 0}
           ></Progress>
         </ModalBody>
         <ModalFooter></ModalFooter>
