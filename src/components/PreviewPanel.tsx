@@ -36,7 +36,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           aria-label="zoom"
           className="max-w-20"
           classNames={{
-            inputWrapper: 'p-1 h-8',
+            inputWrapper: 'p-1 h-8 shadow-none',
             input: 'text-right',
           }}
           endContent={
@@ -48,6 +48,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           minValue={1}
           size="sm"
           value={zoomLevel}
+          variant="underlined"
           onValueChange={(value) => setZoomLevel(value, state)}
         ></NumberInput>
         <Button

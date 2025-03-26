@@ -58,6 +58,7 @@
     "keep_metadata": "Keep metadata",
     "output_folder": "Output folder",
     "chroma_subsampling": "Chroma subsampling",
+    "png_optimization_level": "PNG optimization level",
     "resize_options": {
       "resize_enabled": "Enable resize",
       "resize_mode": "Mode",

@@ -5,24 +5,30 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import useUIStore from '@/stores/ui.store.ts';
 
 function CenterContainer() {
-  const { splitPanels } = useUIStore();
+  const { splitPanels, setSplitPanels } = useUIStore();
 
   return (
     <div className="center-container p-1">
-      <PanelGroup direction="horizontal">
-        <Panel defaultSize={splitPanels.main.left} maxSize={80} minSize={20}>
-          <PanelGroup direction="vertical">
-            <Panel defaultSize={splitPanels.center.top} maxSize={80} minSize={20}>
+      <PanelGroup
+        direction="horizontal"
+        onLayout={(size) => setSplitPanels({ center: splitPanels.center, main: size })}
+      >
+        <Panel defaultSize={splitPanels.main[0]} maxSize={80} minSize={20}>
+          <PanelGroup
+            direction="vertical"
+            onLayout={(size) => setSplitPanels({ center: size, main: splitPanels.main })}
+          >
+            <Panel defaultSize={splitPanels.center[0]} maxSize={80} minSize={20}>
               <ListPanel></ListPanel>
             </Panel>
             <PanelResizeHandle className="hover:bg-primary h-1 rounded bg-transparent" />
-            <Panel defaultSize={splitPanels.center.bottom} maxSize={80} minSize={20}>
+            <Panel defaultSize={splitPanels.center[1]} maxSize={80} minSize={20}>
               <PreviewPanel></PreviewPanel>
             </Panel>
           </PanelGroup>
         </Panel>
         <PanelResizeHandle className="hover:bg-primary w-1 rounded bg-transparent" />
-        <Panel defaultSize={splitPanels.main.right} maxSize={80} minSize={20}>
+        <Panel defaultSize={splitPanels.main[1]} maxSize={80} minSize={20}>
           <SidePanel></SidePanel>
         </Panel>
       </PanelGroup>

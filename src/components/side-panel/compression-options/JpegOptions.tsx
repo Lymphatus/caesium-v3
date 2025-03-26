@@ -38,13 +38,14 @@ function JpegOptions() {
             aria-label={t('quality')}
             className="max-w-20"
             classNames={{
-              inputWrapper: 'p-1 h-8',
+              inputWrapper: 'p-1 h-8 shadow-none',
               input: 'text-right',
             }}
             maxValue={100}
             minValue={0}
             size="sm"
             value={jpegOptions.quality}
+            variant="underlined"
             onValueChange={(value) => setJpegOptions({ quality: value })}
           ></NumberInput>
         )}
@@ -63,6 +64,7 @@ function JpegOptions() {
         selectedKeys={[jpegOptions.chromaSubsampling]}
         selectionMode="single"
         size="sm"
+        variant="underlined"
         onSelectionChange={(value) =>
           setJpegOptions({ chromaSubsampling: (value.currentKey as CHROMA_SUBSAMPLING) || CHROMA_SUBSAMPLING.AUTO })
         }
