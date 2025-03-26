@@ -25,3 +25,16 @@ export enum CHROMA_SUBSAMPLING {
   CS420 = '4:2:0',
   CS411 = '4:1:1',
 }
+
+export enum TIFF_COMPRESSION_METHOD {
+  NONE = 'none',
+  LZW = 'lzw',
+  DEFLATE = 'deflate',
+  PACKBITS = 'packbits',
+}
+
+export enum TIFF_DEFLATE_LEVEL {
+  FAST,
+  BALANCED,
+  BEST,
+}

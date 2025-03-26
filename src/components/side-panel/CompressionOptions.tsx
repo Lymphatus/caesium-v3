@@ -1,8 +1,22 @@
-import { Accordion, AccordionItem, Checkbox, Selection, Tab, Tabs } from '@heroui/react';
+import {
+  Accordion,
+  AccordionItem,
+  Checkbox,
+  NumberInput,
+  Select,
+  SelectItem,
+  SharedSelection,
+  Tab,
+  Tabs,
+} from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import JpegOptions from '@/components/side-panel/compression-options/JpegOptions.tsx';
 import useUIStore from '@/stores/ui.store.ts';
 import PngOptions from '@/components/side-panel/compression-options/PngOptions.tsx';
+import WebpOptions from '@/components/side-panel/compression-options/WebpOptions.tsx';
+import TiffOptions from '@/components/side-panel/compression-options/TiffOptions.tsx';
+import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
+import type { Selection } from '@react-types/shared';
 
 enum ACCORDION_KEY {
   JPEG = 'jpeg_accordion',
@@ -23,6 +37,32 @@ function CompressionOptions() {
     setWebpAccordionOpen,
     setTiffAccordionOpen,
   } = useUIStore();
+
+  const { lossless, setLossless, keepMetadata, setKeepMetadata, maxSize, setMaxSize, maxSizeUnit, setMaxSizeUnit } =
+    useCompressionOptionsStore();
+
+  const handleChange = (value: SharedSelection) => {
+    let actualValue = 1024;
+    if (value instanceof Selection) {
+      setMaxSizeUnit(actualValue);
+
+      return;
+    }
+
+    actualValue = parseInt(value.currentKey || '1024');
+    setMaxSizeUnit(actualValue);
+  };
+
+  const maxSizeUnits = [
+    {
+      key: 1,
+      label: t('size_units.byte', {
+        count: 2,
+      }),
+    },
+    { key: 1024, label: t('size_units.kb') },
+    { key: 1024 * 1024, label: t('size_units.mb') },
+  ];
 
   const defaultAccordionOpen: ACCORDION_KEY[] = [];
   if (jpegAccordionOpen) {
@@ -55,7 +95,7 @@ function CompressionOptions() {
   };
 
   return (
-    <div className="size-full">
+    <div className="size-full overflow-auto">
       <div className="bg-content2 text-foreground-500 flex h-[32px] items-center justify-center rounded-t-sm text-xs font-semibold">
         {t('compression_options.compression')}
       </div>
@@ -83,23 +123,53 @@ function CompressionOptions() {
                   <PngOptions></PngOptions>
                 </AccordionItem>
                 <AccordionItem key={ACCORDION_KEY.WEBP} aria-label={t('formats.webp')} title={t('formats.webp')}>
-                  cccc
+                  <WebpOptions></WebpOptions>
                 </AccordionItem>
                 <AccordionItem key={ACCORDION_KEY.TIFF} aria-label={t('formats.tiff')} title={t('formats.tiff')}>
-                  dddd
+                  <TiffOptions></TiffOptions>
                 </AccordionItem>
               </Accordion>
 
-              <Checkbox disableAnimation size="sm">
+              <Checkbox disableAnimation isSelected={lossless} size="sm" onValueChange={setLossless}>
                 {t('compression_options.lossless')}
               </Checkbox>
-              <Checkbox disableAnimation size="sm">
+              <Checkbox disableAnimation isSelected={keepMetadata} size="sm" onValueChange={setKeepMetadata}>
                 {t('compression_options.keep_metadata')}
               </Checkbox>
             </div>
           </Tab>
           <Tab title={t('size')}>
-            <div>{t('size')}</div>
+            <NumberInput
+              endContent={
+                <Select
+                  disallowEmptySelection
+                  aria-label={'units'}
+                  className="max-w-[100px] p-1"
+                  classNames={{
+                    label: 'hidden',
+                  }}
+                  label={''}
+                  selectedKeys={[maxSizeUnit.toString()]}
+                  selectionMode="single"
+                  size="sm"
+                  onSelectionChange={(v) => handleChange(v)}
+                >
+                  {maxSizeUnits.map((unit) => (
+                    <SelectItem key={unit.key}>{unit.label}</SelectItem>
+                  ))}
+                </Select>
+              }
+              label={t('compression_options.max_output_size')}
+              labelPlacement="outside"
+              maxValue={999}
+              minValue={1}
+              placeholder="500"
+              size="sm"
+              step={1}
+              value={maxSize}
+              variant="underlined"
+              onValueChange={(v) => setMaxSize(v)}
+            />
           </Tab>
         </Tabs>
       </div>

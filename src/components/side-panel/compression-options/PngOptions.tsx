@@ -5,7 +5,7 @@ import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 function PngOptions() {
   const { t } = useTranslation();
 
-  const { pngOptions, setPngOptions } = useCompressionOptionsStore();
+  const { pngOptions, setPngOptions, lossless } = useCompressionOptionsStore();
 
   const handleChange = (type: 'quality' | 'optimizationLevel', value: number | number[]) => {
     if (Array.isArray(value)) {
@@ -26,6 +26,7 @@ function PngOptions() {
           base: 'max-w-md',
           label: 'text-sm',
         }}
+        isDisabled={lossless}
         label={t('quality')}
         maxValue={100}
         minValue={0}
@@ -56,12 +57,13 @@ function PngOptions() {
           base: 'max-w-md',
           label: 'text-sm',
         }}
-        label={t('compression_options.png_optimization_level')}
+        isDisabled={!lossless}
+        label={t('compression_options.optimization_level')}
         maxValue={6}
         minValue={1}
         renderValue={() => (
           <NumberInput
-            aria-label={t('compression_options.png_optimization_level')}
+            aria-label={t('compression_options.optimization_level')}
             className="max-w-20"
             classNames={{
               inputWrapper: 'p-1 h-8 shadow-none',

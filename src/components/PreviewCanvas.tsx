@@ -62,7 +62,7 @@ function PreviewCanvas() {
     }
 
     return () => {
-      console.log('cleanup');
+      console.debug('Preview cleanup');
     };
   }, [currentPreviewedCImage]);
 

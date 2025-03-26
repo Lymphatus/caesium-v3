@@ -6,7 +6,7 @@ import { CHROMA_SUBSAMPLING } from '@/types.ts';
 function JpegOptions() {
   const { t } = useTranslation();
 
-  const { jpegOptions, setJpegOptions } = useCompressionOptionsStore();
+  const { jpegOptions, setJpegOptions, lossless } = useCompressionOptionsStore();
 
   const chromaSubsamplings = [
     { key: CHROMA_SUBSAMPLING.AUTO, label: t('chroma_subsampling_auto') },
@@ -30,6 +30,7 @@ function JpegOptions() {
           base: 'max-w-md',
           label: 'text-sm',
         }}
+        isDisabled={lossless}
         label={t('quality')}
         maxValue={100}
         minValue={0}

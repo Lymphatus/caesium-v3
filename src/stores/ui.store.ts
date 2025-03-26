@@ -66,7 +66,6 @@ const useUIStore = create<UIOptions>()(
 
 // Subscribe to store changes and persist them
 useUIStore.subscribe((state) => {
-  console.log('UI options changed');
   // Extract only the data part without the functions
   const dataToSave = {
     splitPanels: state.splitPanels,
@@ -79,9 +78,7 @@ useUIStore.subscribe((state) => {
   // Save to Tauri store
   settings
     .set('ui_options', dataToSave)
-    .then(() => {
-      console.log('UI options saved');
-    })
+    .then(() => {})
     .catch(console.error);
 });
 

@@ -58,7 +58,7 @@
     "keep_metadata": "Keep metadata",
     "output_folder": "Output folder",
     "chroma_subsampling": "Chroma subsampling",
-    "png_optimization_level": "PNG optimization level",
+    "optimization_level": "Optimization level",
     "resize_options": {
       "resize_enabled": "Enable resize",
       "resize_mode": "Mode",
@@ -80,7 +80,11 @@
       "uncompressed": "Uncompressed",
       "lzw": "LZW",
       "deflate": "Deflate",
-      "packbits": "Packbits"
+      "packbits": "Packbits",
+      "fast": "Fast",
+      "none": "None",
+      "best": "Best",
+      "balanced": "Balanced"
     }
   },
   "resize_modes": {
