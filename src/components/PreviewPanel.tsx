@@ -39,6 +39,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
             inputWrapper: 'p-1 h-8 shadow-none',
             input: 'text-right',
           }}
+          color="primary"
           endContent={
             <div className="pointer-events-none flex items-center">
               <span className="text-default-400 text-small">%</span>

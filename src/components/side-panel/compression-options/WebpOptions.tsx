@@ -28,6 +28,7 @@ function WebpOptions() {
         minValue={0}
         renderValue={() => (
           <NumberInput
+            color="primary"
             aria-label={t('quality')}
             className="max-w-20"
             classNames={{

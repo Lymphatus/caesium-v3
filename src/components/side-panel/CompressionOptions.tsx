@@ -140,6 +140,7 @@ function CompressionOptions() {
           </Tab>
           <Tab title={t('size')}>
             <NumberInput
+              color="primary"
               endContent={
                 <Select
                   disallowEmptySelection

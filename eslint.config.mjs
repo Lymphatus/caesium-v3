@@ -14,7 +14,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/node_modules', '**/dist'],
+    ignores: ['**/node_modules', '**/dist', 'src/workers/UTIF.js'],
   },
   ...compat.extends(
     'eslint:recommended',

@@ -8,8 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "lint": "eslint src/**/*.{js,jsx,ts,tsx}",
-    "format": "prettier --write src/**/*.{js,jsx,ts,tsx}"
+    "lint": "eslint src/**/*.{js,ts,tsx} --no-warn-ignored",
+    "format": "prettier --write src/**/*.{js,ts,tsx}"
   },
   "dependencies": {
     "@heroui/react": "^2.7.6-beta.2",
