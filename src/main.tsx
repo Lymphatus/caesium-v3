@@ -9,7 +9,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <HeroUIProvider>
       <ToastProvider />
-      <main className="w-screen h-screen text-center bg-background text-foreground">
+      <main className="dark:bg-background bg-default-100 text-foreground h-screen w-screen text-center">
         <App />
       </main>
     </HeroUIProvider>
