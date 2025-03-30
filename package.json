@@ -15,6 +15,7 @@
     "@heroui/react": "^2.7.6-beta.2",
     "@tailwindcss/vite": "^4.0.9",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "^2.2.0",
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-store": "^2.2.0",
     "class-variance-authority": "^0.7.1",

@@ -39,7 +39,6 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
             inputWrapper: 'p-1 h-8 shadow-none',
             input: 'text-right',
           }}
-          color="primary"
           endContent={
             <div className="pointer-events-none flex items-center">
               <span className="text-default-400 text-small">%</span>
@@ -124,7 +123,7 @@ function PreviewPanel() {
         {({ zoomIn, zoomOut, centerView }) => (
           <div
             ref={wrapperRef}
-            className="bg-content2 flex size-full flex-col items-center justify-between rounded-t-sm rounded-b-none"
+            className="bg-content2 flex size-full flex-col items-center justify-between rounded-t-sm rounded-b-sm"
           >
             {isLoading && (
               <Spinner
@@ -142,7 +141,7 @@ function PreviewPanel() {
               </div>
             </TransformComponent>
 
-            <div className="bg-content1 flex h-[40px] w-full items-center justify-between p-1">
+            <div className="bg-content1 flex h-[40px] w-full items-center justify-between rounded-b-sm p-1">
               <div>{currentPreviewedCImage && prettyBytes(currentPreviewedCImage.size)}</div>
               <div className="flex items-center gap-1">
                 <Button

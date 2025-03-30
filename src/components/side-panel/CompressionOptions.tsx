@@ -96,9 +96,9 @@ function CompressionOptions() {
 
   return (
     <div className="size-full overflow-auto">
-      <div className="bg-content2 text-foreground-500 flex h-[32px] items-center justify-center rounded-t-sm text-xs font-semibold">
-        {t('compression_options.compression')}
-      </div>
+      {/*<div className="bg-content2 text-foreground-500 flex h-[32px] items-center justify-center rounded-t-sm text-xs font-semibold">*/}
+      {/*  {t('compression_options.compression')}*/}
+      {/*</div>*/}
       <div className="p-2 text-sm">
         <Tabs fullWidth size="sm">
           <Tab title={t('quality')}>
@@ -140,7 +140,6 @@ function CompressionOptions() {
           </Tab>
           <Tab title={t('size')}>
             <NumberInput
-              color="primary"
               endContent={
                 <Select
                   disallowEmptySelection

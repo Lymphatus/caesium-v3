@@ -101,7 +101,7 @@ export default {
               '700': '#c8b2fb',
               '800': '#dccefc',
               '900': '#f1ebfe',
-              foreground: '#000',
+              foreground: '#fff',
               DEFAULT: '#8b5cf6',
             },
             secondary: {

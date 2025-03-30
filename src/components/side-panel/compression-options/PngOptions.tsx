@@ -32,7 +32,6 @@ function PngOptions() {
         minValue={0}
         renderValue={() => (
           <NumberInput
-            color="primary"
             aria-label={t('quality')}
             className="max-w-20"
             classNames={{
@@ -64,7 +63,6 @@ function PngOptions() {
         minValue={1}
         renderValue={() => (
           <NumberInput
-            color="primary"
             aria-label={t('compression_options.optimization_level')}
             className="max-w-20"
             classNames={{

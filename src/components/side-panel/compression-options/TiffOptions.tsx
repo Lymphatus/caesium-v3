@@ -28,7 +28,7 @@ function TiffOptions() {
       <Select
         disallowEmptySelection
         classNames={{
-          label: 'text-sm',
+          label: 'text-md',
         }}
         label={t('compression_options.tiff.compression_method')}
         labelPlacement="outside"

@@ -10,6 +10,8 @@
     "opener:default",
     "dialog:allow-open",
     "window-state:default",
-    "store:default"
+    "store:default",
+    "dialog:default",
+    "dialog:default"
   ]
 }

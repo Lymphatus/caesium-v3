@@ -42,4 +42,9 @@ export default defineConfig(async () => ({
       '@/*': ['./src/*'],
     },
   },
+  esbuild: {
+    supported: {
+      'top-level-await': true,
+    },
+  },
 }));

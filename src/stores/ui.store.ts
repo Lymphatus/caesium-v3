@@ -1,6 +1,7 @@
 import { create } from 'zustand/index';
 import { immer } from 'zustand/middleware/immer';
 import { load } from '@tauri-apps/plugin-store';
+import { SIDE_PANEL_TAB } from '@/types.ts';
 
 interface SplitPanels {
   main: number[];
@@ -13,16 +14,18 @@ interface UIOptions {
   pngAccordionOpen: boolean;
   webpAccordionOpen: boolean;
   tiffAccordionOpen: boolean;
+  currentSelectedTab: SIDE_PANEL_TAB;
 
   setSplitPanels: (options: Partial<SplitPanels>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
   setPngAccordionOpen: (open: boolean) => void;
   setWebpAccordionOpen: (open: boolean) => void;
   setTiffAccordionOpen: (open: boolean) => void;
+  setCurrentSelectedTab: (tab: SIDE_PANEL_TAB) => void;
 }
 
 const settings = await load('settings.json', { autoSave: true });
-const preferences = (await settings.get('ui_options')) as UIOptions;
+const preferences = (await settings.get('ui')) as UIOptions;
 
 const defaultOptions = {
   splitPanels: { main: [70, 30], center: [60, 40] },
@@ -30,6 +33,7 @@ const defaultOptions = {
   pngAccordionOpen: true,
   webpAccordionOpen: true,
   tiffAccordionOpen: true,
+  currentSelectedTab: SIDE_PANEL_TAB.COMPRESSION,
 };
 
 const useUIStore = create<UIOptions>()(
@@ -61,10 +65,14 @@ const useUIStore = create<UIOptions>()(
         state.tiffAccordionOpen = open;
       });
     },
+    setCurrentSelectedTab: (tab: SIDE_PANEL_TAB) => {
+      set((state) => {
+        state.currentSelectedTab = tab;
+      });
+    },
   })),
 );
 
-// Subscribe to store changes and persist them
 useUIStore.subscribe((state) => {
   // Extract only the data part without the functions
   const dataToSave = {
@@ -73,11 +81,12 @@ useUIStore.subscribe((state) => {
     pngAccordionOpen: state.pngAccordionOpen,
     webpAccordionOpen: state.webpAccordionOpen,
     tiffAccordionOpen: state.tiffAccordionOpen,
+    currentSelectedTab: state.currentSelectedTab,
   };
 
   // Save to Tauri store
   settings
-    .set('ui_options', dataToSave)
+    .set('ui', dataToSave)
     .then(() => {})
     .catch(console.error);
 });

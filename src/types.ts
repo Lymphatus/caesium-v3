@@ -38,3 +38,28 @@ export enum TIFF_DEFLATE_LEVEL {
   BALANCED,
   BEST,
 }
+
+export enum SIDE_PANEL_TAB {
+  COMPRESSION = 'compression',
+  OUTPUT = 'output',
+  RESIZE = 'resize',
+}
+
+export enum MOVE_ORIGINAL_FILE {
+  TRASH = 'trash',
+  DELETE = 'delete',
+}
+
+export enum FILE_DATE {
+  CREATED = 'created',
+  MODIFIED = 'modified',
+  ACCESSED = 'accessed',
+}
+
+export enum OUTPUT_FORMAT {
+  ORIGINAL = 'original',
+  JPEG = 'jpeg',
+  PNG = 'png',
+  TIFF = 'tiff',
+  WEBP = 'webp',
+}

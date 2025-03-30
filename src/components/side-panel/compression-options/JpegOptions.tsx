@@ -36,7 +36,6 @@ function JpegOptions() {
         minValue={0}
         renderValue={() => (
           <NumberInput
-            color="primary"
             aria-label={t('quality')}
             className="max-w-20"
             classNames={{
@@ -59,7 +58,7 @@ function JpegOptions() {
       <Select
         disallowEmptySelection
         classNames={{
-          label: 'text-sm',
+          label: 'text-md',
         }}
         label={t('compression_options.chroma_subsampling')}
         labelPlacement="outside"
