@@ -18,7 +18,7 @@ function SidePanel() {
           classNames={{
             tabList: 'w-full p-0.5 h-[32px] rounded-b-none',
             tabWrapper: 'h-full',
-            panel: 'size-full p-0',
+            panel: 'w-full h-[calc(100%_-_32px)] p-0',
             base: 'w-full',
           }}
           // placement="end"

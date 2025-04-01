@@ -38,7 +38,7 @@ function WebpOptions() {
             minValue={0}
             size="sm"
             value={webpOptions.quality}
-            variant="underlined"
+            variant="faded"
             onValueChange={(value) => setWebpOptions({ quality: value })}
           ></NumberInput>
         )}

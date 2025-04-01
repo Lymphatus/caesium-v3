@@ -48,7 +48,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           minValue={1}
           size="sm"
           value={zoomLevel}
-          variant="underlined"
+          variant="faded"
           onValueChange={(value) => setZoomLevel(value, state)}
         ></NumberInput>
         <Button

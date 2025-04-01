@@ -46,7 +46,7 @@ function JpegOptions() {
             minValue={0}
             size="sm"
             value={jpegOptions.quality}
-            variant="underlined"
+            variant="faded"
             onValueChange={(value) => setJpegOptions({ quality: value })}
           ></NumberInput>
         )}
@@ -65,7 +65,7 @@ function JpegOptions() {
         selectedKeys={[jpegOptions.chromaSubsampling]}
         selectionMode="single"
         size="sm"
-        variant="underlined"
+        variant="faded"
         onSelectionChange={(value) =>
           setJpegOptions({ chromaSubsampling: (value.currentKey as CHROMA_SUBSAMPLING) || CHROMA_SUBSAMPLING.AUTO })
         }

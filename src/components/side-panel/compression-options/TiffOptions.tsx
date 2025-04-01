@@ -35,7 +35,7 @@ function TiffOptions() {
         selectedKeys={[tiffOptions.method]}
         selectionMode="single"
         size="sm"
-        variant="underlined"
+        variant="faded"
         onSelectionChange={(value) =>
           setTiffOptions({ method: (value.currentKey as TIFF_COMPRESSION_METHOD) || TIFF_COMPRESSION_METHOD.DEFLATE })
         }

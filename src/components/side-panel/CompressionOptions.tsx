@@ -151,6 +151,7 @@ function CompressionOptions() {
                   label={''}
                   selectedKeys={[maxSizeUnit.toString()]}
                   selectionMode="single"
+                  variant="faded"
                   size="sm"
                   onSelectionChange={(v) => handleChange(v)}
                 >
@@ -167,7 +168,7 @@ function CompressionOptions() {
               size="sm"
               step={1}
               value={maxSize}
-              variant="underlined"
+              variant="faded"
               onValueChange={(v) => setMaxSize(v)}
             />
           </Tab>

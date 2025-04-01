@@ -42,7 +42,7 @@ function PngOptions() {
             minValue={0}
             size="sm"
             value={pngOptions.quality}
-            variant="underlined"
+            variant="faded"
             onValueChange={(value) => setPngOptions({ quality: value })}
           ></NumberInput>
         )}
@@ -73,7 +73,7 @@ function PngOptions() {
             minValue={1}
             size="sm"
             value={pngOptions.optimizationLevel}
-            variant="underlined"
+            variant="faded"
             onValueChange={(value) => setPngOptions({ optimizationLevel: value })}
           ></NumberInput>
         )}
