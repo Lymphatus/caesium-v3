@@ -63,3 +63,13 @@ export enum OUTPUT_FORMAT {
   TIFF = 'tiff',
   WEBP = 'webp',
 }
+
+export enum RESIZE_MODE {
+  NONE = 'none',
+  DIMENSIONS = 'dimensions',
+  WIDTH = 'width',
+  HEIGHT = 'height',
+  LONG_EDGE = 'long_edge',
+  SHORT_EDGE = 'short_edge',
+  PERCENTAGE = 'percentage',
+}

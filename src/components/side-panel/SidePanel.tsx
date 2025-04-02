@@ -6,6 +6,7 @@ import OutputOptions from '@/components/side-panel/OutputOptions.tsx';
 import { SIDE_PANEL_TAB } from '@/types.ts';
 import useUIStore from '@/stores/ui.store.ts';
 import { Key } from 'react';
+import ResizeOptions from '@/components/side-panel/ResizeOptions.tsx';
 
 function SidePanel() {
   const { t } = useTranslation();
@@ -47,7 +48,7 @@ function SidePanel() {
               </div>
             }
           >
-            <div>resize</div>
+            <ResizeOptions></ResizeOptions>
           </Tab>
           <Tab
             key={SIDE_PANEL_TAB.OUTPUT}
