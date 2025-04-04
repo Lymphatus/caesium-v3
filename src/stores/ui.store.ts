@@ -25,7 +25,7 @@ interface UIOptions {
 }
 
 const settings = await load('settings.json', { autoSave: true });
-const preferences = (await settings.get('ui')) as UIOptions;
+const preferences = (await settings.get('ui')) || {};
 
 const defaultOptions = {
   splitPanels: { main: [70, 30], center: [60, 40] },

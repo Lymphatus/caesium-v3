@@ -23,7 +23,7 @@ interface ResizeOptionsStore {
 }
 
 const settings = await load('settings.json', { autoSave: true });
-const preferences = (await settings.get('resize')) as ResizeOptionsStore;
+const preferences = (await settings.get('compression_options.resize')) || {};
 
 const defaultOptions = {
   resizeMode: RESIZE_MODE.NONE,
@@ -65,7 +65,7 @@ useResizeOptionsStore.subscribe((state) => {
 
   // Save to Tauri store
   settings
-    .set('output', dataToSave)
+    .set('compression_options.resize', dataToSave)
     .then(() => {})
     .catch(console.error);
 });

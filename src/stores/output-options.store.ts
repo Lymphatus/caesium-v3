@@ -25,7 +25,7 @@ interface OutputOptionsStore {
 }
 
 const settings = await load('settings.json', { autoSave: true });
-const preferences = (await settings.get('output')) as OutputOptionsStore;
+const preferences = (await settings.get('compression_options.output')) || {};
 
 const defaultOptions = {
   outputFolder: '',
@@ -70,7 +70,7 @@ useOutputOptionsStore.subscribe((state) => {
 
   // Save to Tauri store
   settings
-    .set('output', dataToSave)
+    .set('compression_options.output', dataToSave)
     .then(() => {})
     .catch(console.error);
 });
