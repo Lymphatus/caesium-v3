@@ -15,7 +15,9 @@ function FileListPagination() {
         showShadow={false}
         size="sm"
         total={totalPages}
-        onChange={(page) => setCurrentPage(page)}
+        onChange={(page) => {
+          setCurrentPage(page);
+        }}
       />
     ) : null;
   return <div className="flex w-full justify-center">{pagination}</div>;

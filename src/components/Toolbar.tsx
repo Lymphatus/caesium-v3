@@ -3,9 +3,11 @@ import useFileListStore from '@/stores/file-list.store.ts';
 import { invoke } from '@tauri-apps/api/core';
 import { Button } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
+import useUIStore from '@/stores/ui.store.ts';
 
 function Toolbar() {
   const { openPickerDialogs } = useFileListStore();
+  const { setSettingsDialogOpen } = useUIStore();
   const { t } = useTranslation();
 
   return (
@@ -53,7 +55,14 @@ function Toolbar() {
         </Button>
       </div>
       <div className="flex h-full items-center gap-1">
-        <Button disableRipple isIconOnly size="sm" title={t('actions.settings')} variant="light">
+        <Button
+          disableRipple
+          isIconOnly
+          size="sm"
+          title={t('actions.settings')}
+          variant="light"
+          onPress={() => setSettingsDialogOpen(true)}
+        >
           <Settings className="size-5"></Settings>
         </Button>
       </div>

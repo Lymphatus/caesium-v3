@@ -90,9 +90,10 @@ pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>) {
             .file_list
             .sort_by(|a, b| a.path.partial_cmp(&b.path).unwrap()); //TODO
 
+        let offset = (state.current_page - 1) * 50;
         full_list = state
             .file_list
-            .get_range(0..min(state.file_list.len(), 50))
+            .get_range(offset..min(state.file_list.len(), 50)) //TODO check out of range
             .unwrap() //TODO
             .iter()
             .cloned()

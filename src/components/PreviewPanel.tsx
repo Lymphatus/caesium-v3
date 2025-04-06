@@ -94,7 +94,7 @@ function PreviewPanel() {
   const fitContentToWrapper = useCallback((centerView: (scale: number) => void) => {
     if (wrapperRef.current && contentRef.current) {
       const wrapperWidth = wrapperRef.current.clientWidth;
-      const wrapperHeight = wrapperRef.current.clientHeight;
+      const wrapperHeight = wrapperRef.current.clientHeight - 40;
 
       const contentWidth = contentRef.current.clientWidth;
       const contentHeight = contentRef.current.clientHeight;

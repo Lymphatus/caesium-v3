@@ -130,31 +130,38 @@
     "theme": "Theme",
     "theme_dark": "Dark",
     "theme_light": "Light",
-    "theme_auto": "Auto",
+    "theme_system": "System",
     "language": "Language",
     "prompt_on_exit": "Prompt on exit",
     "auto_check_updates": "Auto check for updates",
     "skip_dialogs": "Skip all dialogs",
-    "skip_dialogs_help": "Do not show any dialogs during compression",
+    "skip_dialogs_help": "Hides every dialogs requiring confirmation",
     "send_usage_statistics": "Send usage statistics",
     "send_usage_statistics_help": "Show my info",
-    "scan_subfolders_on_import": "Import files in subfolders while opening a folder",
+    "scan_subfolders_on_import": "Scan subfolders on import",
+    "scan_subfolders_on_import_help": "Import files in subfolders while opening a folder",
     "direct_import_action": "When importing files directly",
     "direct_import_action_help": "Perform an action while importing files directly",
     "direct_import_actions": {
       "import_only": "Import only",
       "import_and_compress": "Import and compress"
     },
-    "after_compression_actions": {
+    "post_compression_actions": {
       "none": "None",
       "close_application": "Close the application",
       "sleep": "Sleep",
       "shutdown": "Shutdown",
       "open_output_folder": "Open output folder"
     },
-    "after_compression_action": "Perform an action after compression",
+    "post_compression_action": "Post compression",
+    "post_compression_action_help": "Perform an action after compression",
     "max_compression_threads": "Max compression threads",
-    "threads_priority": "Threads priority"
+    "threads_priority": "Threads priority",
+    "threads_priorities": {
+      "lowest": "Lowest",
+      "normal": "Normal",
+      "highest": "Highest"
+    }
   },
   "menubar": {
     "file": "File",

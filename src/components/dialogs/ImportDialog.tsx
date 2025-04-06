@@ -11,6 +11,9 @@ function ImportDialog() {
       hideCloseButton
       isKeyboardDismissDisabled
       backdrop="blur"
+      classNames={{
+        backdrop: 'bg-content3/50',
+      }}
       isDismissable={false}
       isOpen={isImporting}
       shadow="none"
@@ -20,6 +23,7 @@ function ImportDialog() {
         <ModalHeader className="flex flex-col gap-1">{t('importing_dots')}</ModalHeader>
         <ModalBody>
           <Progress
+            disableAnimation
             aria-label={t('importing_dots')}
             className="w-full"
             isIndeterminate={!importProgress}

@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { Circle } from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
@@ -6,7 +6,7 @@ import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
 
 function FileListTable() {
-  const { fileList } = useFileListStore();
+  const { fileList, isListLoading } = useFileListStore();
   const { setCurrentPreviewedCImage } = usePreviewStore();
   const { t } = useTranslation();
 
@@ -27,7 +27,6 @@ function FileListTable() {
       onRowAction={(key) => setCurrentPreviewedCImage(fileList.find((cImage) => cImage.id === key) || null)}
     >
       <TableHeader className="rounded-sm">
-        {/*TODO Translations*/}
         <TableColumn key="status" align="center" minWidth={100}>
           {t('file_list.status')}
         </TableColumn>
@@ -37,7 +36,15 @@ function FileListTable() {
         <TableColumn key="saved">{t('file_list.saved')}</TableColumn>
         <TableColumn key="info">{t('file_list.additional_info')}</TableColumn>
       </TableHeader>
-      <TableBody items={fileList}>
+      <TableBody
+        isLoading={isListLoading}
+        items={fileList}
+        loadingContent={
+          <div className="bg-background/50 z-10 flex size-full items-center justify-center">
+            <Spinner />
+          </div>
+        }
+      >
         {(cImage) => (
           <TableRow key={cImage.id}>
             <TableCell>

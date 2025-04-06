@@ -73,3 +73,22 @@ export enum RESIZE_MODE {
   SHORT_EDGE = 'short_edge',
   PERCENTAGE = 'percentage',
 }
+
+export enum THEME {
+  LIGHT = 'light',
+  DARK = 'dark',
+  SYSTEM = 'system',
+}
+
+export enum DIRECT_IMPORT_ACTION {
+  IMPORT = 'import',
+  IMPORT_COMPRESS = 'import_compress',
+}
+
+export enum POST_COMPRESSION_ACTION {
+  NONE = 'none',
+  CLOSE_APP = 'close_app',
+  SLEEP = 'sleep',
+  SHUTDOWN = 'shutdown',
+  OPEN_OUTPUT_FOLDER = 'open_output_folder',
+}

@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import Toolbar from '@/components/Toolbar.tsx';
 import Footer from '@/components/Footer.tsx';
-import ImportDialog from '@/components/ImportDialog.tsx';
+import ImportDialog from '@/components/dialogs/ImportDialog.tsx';
 import CenterContainer from '@/components/CenterContainer.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { listen } from '@tauri-apps/api/event';
 import { CImage } from '@/types.ts';
 import { addToast } from '@heroui/react';
+import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
 
 function App() {
   const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress } = useFileListStore();
@@ -58,6 +59,7 @@ function App() {
       <Footer></Footer>
 
       <ImportDialog></ImportDialog>
+      <SettingsDialog></SettingsDialog>
     </>
   );
 }

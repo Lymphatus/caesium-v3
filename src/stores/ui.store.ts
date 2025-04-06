@@ -15,6 +15,7 @@ interface UIOptions {
   webpAccordionOpen: boolean;
   tiffAccordionOpen: boolean;
   currentSelectedTab: SIDE_PANEL_TAB;
+  settingsDialogOpen: boolean;
 
   setSplitPanels: (options: Partial<SplitPanels>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
@@ -22,6 +23,7 @@ interface UIOptions {
   setWebpAccordionOpen: (open: boolean) => void;
   setTiffAccordionOpen: (open: boolean) => void;
   setCurrentSelectedTab: (tab: SIDE_PANEL_TAB) => void;
+  setSettingsDialogOpen: (open: boolean) => void;
 }
 
 const settings = await load('settings.json', { autoSave: true });
@@ -34,6 +36,7 @@ const defaultOptions = {
   webpAccordionOpen: true,
   tiffAccordionOpen: true,
   currentSelectedTab: SIDE_PANEL_TAB.COMPRESSION,
+  settingsDialogOpen: false,
 };
 
 const useUIStore = create<UIOptions>()(
@@ -68,6 +71,11 @@ const useUIStore = create<UIOptions>()(
     setCurrentSelectedTab: (tab: SIDE_PANEL_TAB) => {
       set((state) => {
         state.currentSelectedTab = tab;
+      });
+    },
+    setSettingsDialogOpen: (open: boolean) => {
+      set((state) => {
+        state.settingsDialogOpen = open;
       });
     },
   })),
