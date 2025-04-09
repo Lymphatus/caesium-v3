@@ -1,5 +1,5 @@
 import { RESIZE_MODE } from '@/types.ts';
-import { Checkbox, NumberInput, Select, SelectItem, Switch } from '@heroui/react';
+import { NumberInput, Select, SelectItem, Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 

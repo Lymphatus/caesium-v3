@@ -1,14 +1,13 @@
 import {
   Accordion,
   AccordionItem,
-  Checkbox,
   NumberInput,
   Select,
   SelectItem,
   SharedSelection,
+  Switch,
   Tab,
   Tabs,
-  Switch
 } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import JpegOptions from '@/components/side-panel/compression-options/JpegOptions.tsx';
@@ -155,8 +154,8 @@ function CompressionOptions() {
                   label={''}
                   selectedKeys={[maxSizeUnit.toString()]}
                   selectionMode="single"
-                  variant="faded"
                   size="sm"
+                  variant="faded"
                   onSelectionChange={(v) => handleChange(v)}
                 >
                   {maxSizeUnits.map((unit) => (

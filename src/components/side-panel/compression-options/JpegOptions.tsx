@@ -1,4 +1,4 @@
-import { Checkbox, NumberInput, Select, SelectItem, Slider, Switch } from '@heroui/react';
+import { NumberInput, Select, SelectItem, Slider, Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import { CHROMA_SUBSAMPLING } from '@/types.ts';
@@ -78,7 +78,11 @@ function JpegOptions() {
         <div className="flex flex-col">
           <span>{t('compression_options.progressive')}</span>
         </div>
-        <Switch isSelected={jpegOptions.progressive} size="sm" onValueChange={(value) => setJpegOptions({ progressive: value })}></Switch>
+        <Switch
+          isSelected={jpegOptions.progressive}
+          size="sm"
+          onValueChange={(value) => setJpegOptions({ progressive: value })}
+        ></Switch>
       </div>
     </div>
   );
