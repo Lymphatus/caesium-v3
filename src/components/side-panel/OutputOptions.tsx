@@ -1,4 +1,4 @@
-import { Button, Checkbox, Divider, Input, Select, SelectItem } from '@heroui/react';
+import { Button, Checkbox, Divider, Input, Select, SelectItem, Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -83,21 +83,35 @@ function OutputOptions() {
             value={outputFolder}
             variant="faded"
           />
-          <Checkbox disableAnimation isSelected={sameFolderAsInput} size="sm" onValueChange={setSameFolderAsInput}>
-            {t('compression_options.output_options.same_folder_as_input')}
-          </Checkbox>
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-col">
+              <span>{t('compression_options.output_options.same_folder_as_input')}</span>
+            </div>
+            <Switch isSelected={sameFolderAsInput} size="sm" onValueChange={setSameFolderAsInput}></Switch>
+          </div>
         </div>
         <Divider></Divider>
-        <Checkbox disableAnimation isSelected={keepFolderStructure} size="sm" onValueChange={setKeepFolderStructure}>
-          {t('compression_options.output_options.keep_structure')}
-        </Checkbox>
-        <Checkbox disableAnimation isSelected={skipIfOutputIsBigger} size="sm" onValueChange={setSkipIfOutputIsBigger}>
-          {t('compression_options.output_options.skip_if_output_is_bigger')}
-        </Checkbox>
+        <div className="flex w-full items-center justify-between">
+          <div className="flex flex-col">
+            <span>{t('compression_options.output_options.keep_structure')}</span>
+          </div>
+          <Switch isSelected={keepFolderStructure} size="sm" onValueChange={setKeepFolderStructure}></Switch>
+        </div>
+
+        <div className="flex w-full items-center justify-between">
+          <div className="flex flex-col">
+            <span>{t('compression_options.output_options.skip_if_output_is_bigger')}</span>
+          </div>
+          <Switch isSelected={skipIfOutputIsBigger} size="sm" onValueChange={setSkipIfOutputIsBigger}></Switch>
+        </div>
+
         <div className="flex w-full flex-col justify-between gap-1">
-          <Checkbox disableAnimation isSelected={moveOriginalFile} size="sm" onValueChange={setMoveOriginalFile}>
-            {t('compression_options.output_options.move_original')}
-          </Checkbox>
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-col">
+              <span>{t('compression_options.output_options.move_original')}</span>
+            </div>
+            <Switch isSelected={moveOriginalFile} size="sm" onValueChange={setMoveOriginalFile}></Switch>
+          </div>
           <Select
             disallowEmptySelection
             aria-label={t('compression_options.output_options.move_original')}

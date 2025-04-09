@@ -1,5 +1,5 @@
 import { RESIZE_MODE } from '@/types.ts';
-import { Checkbox, NumberInput, Select, SelectItem } from '@heroui/react';
+import { Checkbox, NumberInput, Select, SelectItem, Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 
@@ -238,38 +238,43 @@ function ResizeOptions() {
                 onValueChange={(value) => setDimension(value)}
               ></NumberInput>
             )}
-            <Checkbox
-              disableAnimation
-              isSelected={doNotEnlarge}
-              size="sm"
-              onValueChange={(enabled) => {
-                setDoNotEnlarge(enabled);
-                if (enabled) {
-                  if (widthPercentage > 100) {
-                    setWidthPercentage(100);
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-col">
+                <span>{t('compression_options.resize_options.do_not_enlarge')}</span>
+              </div>
+              <Switch
+                isSelected={doNotEnlarge}
+                size="sm"
+                onValueChange={(enabled) => {
+                  setDoNotEnlarge(enabled);
+                  if (enabled) {
+                    if (widthPercentage > 100) {
+                      setWidthPercentage(100);
+                    }
+                    if (heightPercentage > 100) {
+                      setHeightPercentage(100);
+                    }
                   }
-                  if (heightPercentage > 100) {
-                    setHeightPercentage(100);
+                }}
+              ></Switch>
+            </div>
+
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-col">
+                <span>{t('compression_options.resize_options.keep_aspect_ratio')}</span>
+              </div>
+              <Switch
+                isDisabled={keepAspectRatioDisabled}
+                isSelected={keepAspectRatio}
+                size="sm"
+                onValueChange={(enabled) => {
+                  setKeepAspectRatio(enabled);
+                  if (enabled) {
+                    setHeightPercentage(widthPercentage);
                   }
-                }
-              }}
-            >
-              {t('compression_options.resize_options.do_not_enlarge')}
-            </Checkbox>
-            <Checkbox
-              disableAnimation
-              isDisabled={keepAspectRatioDisabled}
-              isSelected={keepAspectRatio}
-              size="sm"
-              onValueChange={(enabled) => {
-                setKeepAspectRatio(enabled);
-                if (enabled) {
-                  setHeightPercentage(widthPercentage);
-                }
-              }}
-            >
-              {t('compression_options.resize_options.keep_aspect_ratio')}
-            </Checkbox>
+                }}
+              ></Switch>
+            </div>
           </>
         )}
       </div>

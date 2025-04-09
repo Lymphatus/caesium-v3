@@ -8,6 +8,7 @@ import {
   SharedSelection,
   Tab,
   Tabs,
+  Switch
 } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import JpegOptions from '@/components/side-panel/compression-options/JpegOptions.tsx';
@@ -96,9 +97,6 @@ function CompressionOptions() {
 
   return (
     <div className="size-full overflow-auto">
-      {/*<div className="bg-content2 text-foreground-500 flex h-[32px] items-center justify-center rounded-t-sm text-xs font-semibold">*/}
-      {/*  {t('compression_options.compression')}*/}
-      {/*</div>*/}
       <div className="p-2 text-sm">
         <Tabs fullWidth size="sm">
           <Tab title={t('quality')}>
@@ -130,12 +128,18 @@ function CompressionOptions() {
                 </AccordionItem>
               </Accordion>
 
-              <Checkbox disableAnimation isSelected={lossless} size="sm" onValueChange={setLossless}>
-                {t('compression_options.lossless')}
-              </Checkbox>
-              <Checkbox disableAnimation isSelected={keepMetadata} size="sm" onValueChange={setKeepMetadata}>
-                {t('compression_options.keep_metadata')}
-              </Checkbox>
+              <div className="flex w-full items-center justify-between">
+                <div className="flex flex-col">
+                  <span>{t('compression_options.lossless')}</span>
+                </div>
+                <Switch isSelected={lossless} size="sm" onValueChange={setLossless}></Switch>
+              </div>
+              <div className="flex w-full items-center justify-between">
+                <div className="flex flex-col">
+                  <span>{t('compression_options.keep_metadata')}</span>
+                </div>
+                <Switch isSelected={keepMetadata} size="sm" onValueChange={setKeepMetadata}></Switch>
+              </div>
             </div>
           </Tab>
           <Tab title={t('size')}>
