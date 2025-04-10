@@ -1,6 +1,7 @@
 import { create } from 'zustand/index';
 import { load } from '@tauri-apps/plugin-store';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION, THEME } from '@/types.ts';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 interface SettingsOptionsStore {
   theme: THEME;
@@ -45,21 +46,23 @@ const defaultOptions = {
   threadsPriority: 4,
 };
 
-const useSettingsStore = create<SettingsOptionsStore>()((set) => ({
-  ...defaultOptions,
-  ...preferences,
-  setTheme: (theme: THEME) => set({ theme }),
-  setLanguage: (language: string) => set({ language }),
-  setCheckUpdatesAtStartup: (checkUpdatesAtStartup: boolean) => set({ checkUpdatesAtStartup }),
-  setPromptBeforeExit: (promptBeforeExit: boolean) => set({ promptBeforeExit }),
-  setSkipMessagesAndDialogs: (skipMessagesAndDialogs: boolean) => set({ skipMessagesAndDialogs }),
-  setSendUsageData: (sendUsageData: boolean) => set({ sendUsageData }),
-  setImportSubfolderOnInput: (importSubfolderOnInput: boolean) => set({ importSubfolderOnInput }),
-  setDirectImportAction: (directImportAction: DIRECT_IMPORT_ACTION) => set({ directImportAction }),
-  setPostCompressionAction: (postCompressionAction: POST_COMPRESSION_ACTION) => set({ postCompressionAction }),
-  setThreadsCount: (threadsCount: number) => set({ threadsCount }),
-  setThreadsPriority: (threadsPriority: number) => set({ threadsPriority }),
-}));
+const useSettingsStore = create<SettingsOptionsStore>()(
+  subscribeWithSelector((set) => ({
+    ...defaultOptions,
+    ...preferences,
+    setTheme: (theme: THEME) => set({ theme }),
+    setLanguage: (language: string) => set({ language }),
+    setCheckUpdatesAtStartup: (checkUpdatesAtStartup: boolean) => set({ checkUpdatesAtStartup }),
+    setPromptBeforeExit: (promptBeforeExit: boolean) => set({ promptBeforeExit }),
+    setSkipMessagesAndDialogs: (skipMessagesAndDialogs: boolean) => set({ skipMessagesAndDialogs }),
+    setSendUsageData: (sendUsageData: boolean) => set({ sendUsageData }),
+    setImportSubfolderOnInput: (importSubfolderOnInput: boolean) => set({ importSubfolderOnInput }),
+    setDirectImportAction: (directImportAction: DIRECT_IMPORT_ACTION) => set({ directImportAction }),
+    setPostCompressionAction: (postCompressionAction: POST_COMPRESSION_ACTION) => set({ postCompressionAction }),
+    setThreadsCount: (threadsCount: number) => set({ threadsCount }),
+    setThreadsPriority: (threadsPriority: number) => set({ threadsPriority }),
+  })),
+);
 
 useSettingsStore.subscribe((state) => {
   // Extract only the data part without the functions
@@ -83,5 +86,24 @@ useSettingsStore.subscribe((state) => {
     .then(() => {})
     .catch(console.error);
 });
+
+useSettingsStore.subscribe(
+  (state) => state.theme,
+  (theme: THEME) => {
+    if (
+      theme === THEME.LIGHT ||
+      (theme === THEME.SYSTEM && !window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      window.document.documentElement.classList.add('light');
+      window.document.documentElement.classList.remove('dark');
+    } else if (
+      theme === THEME.DARK ||
+      (theme === THEME.SYSTEM && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      window.document.documentElement.classList.add('dark');
+      window.document.documentElement.classList.remove('light');
+    }
+  },
+);
 
 export default useSettingsStore;
