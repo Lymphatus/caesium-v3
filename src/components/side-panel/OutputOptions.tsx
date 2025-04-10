@@ -58,7 +58,7 @@ function OutputOptions() {
           <Input
             readOnly
             classNames={{
-              inputWrapper: 'pr-0',
+              inputWrapper: 'pr-0 shadow-none',
             }}
             endContent={
               <Button
@@ -117,6 +117,7 @@ function OutputOptions() {
             aria-label={t('compression_options.output_options.move_original')}
             classNames={{
               label: 'text-md',
+              trigger: 'shadow-none',
             }}
             isDisabled={!moveOriginalFile}
             label={''}
@@ -182,6 +183,7 @@ function OutputOptions() {
           aria-label={t('compression_options.output_options.output_format')}
           classNames={{
             label: 'text-md',
+            trigger: 'shadow-none',
           }}
           label={t('compression_options.output_options.output_format')}
           labelPlacement="outside"
@@ -198,6 +200,9 @@ function OutputOptions() {
 
         <Input
           isClearable
+          classNames={{
+            inputWrapper: 'shadow-none',
+          }}
           label={t('compression_options.output_options.suffix')}
           labelPlacement="outside"
           placeholder="_compressed"

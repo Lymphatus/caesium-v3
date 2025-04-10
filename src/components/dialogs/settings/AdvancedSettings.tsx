@@ -41,6 +41,7 @@ function AdvancedSettings() {
             base: 'justify-between',
             mainWrapper: 'max-w-[250px]',
             label: 'text-md',
+            trigger: 'shadow-none',
           }}
           label={
             <div className="flex flex-col">
@@ -68,6 +69,7 @@ function AdvancedSettings() {
             base: 'justify-between',
             mainWrapper: 'max-w-[250px]',
             label: 'text-md',
+            trigger: 'shadow-none',
           }}
           label={
             <div className="flex flex-col">

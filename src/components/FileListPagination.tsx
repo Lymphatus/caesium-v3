@@ -9,12 +9,16 @@ function FileListPagination() {
   const pagination =
     totalPages > 0 ? (
       <Pagination
-        isCompact
+        disableAnimation
         showControls
+        classNames={{
+          wrapper: 'shadow-none',
+        }}
         page={currentPage}
         showShadow={false}
         size="sm"
         total={totalPages}
+        variant="light"
         onChange={(page) => {
           setCurrentPage(page);
         }}

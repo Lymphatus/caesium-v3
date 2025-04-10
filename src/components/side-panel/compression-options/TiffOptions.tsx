@@ -29,6 +29,7 @@ function TiffOptions() {
         disallowEmptySelection
         classNames={{
           label: 'text-md',
+          trigger: 'shadow-none',
         }}
         label={t('compression_options.tiff.compression_method')}
         labelPlacement="outside"

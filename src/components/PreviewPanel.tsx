@@ -7,7 +7,7 @@ import {
 } from 'react-zoom-pan-pinch';
 import { Button, NumberInput, Slider, Spinner } from '@heroui/react';
 import { Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
-import { RefObject, useCallback, useRef } from 'react';
+import { RefObject, useCallback, useEffect, useRef } from 'react';
 import prettyBytes from 'pretty-bytes';
 import PreviewCanvas from '@/components/PreviewCanvas.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
@@ -20,9 +20,9 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
     const zoomDiff = newScale - state.previousScale;
     const factor = Math.abs(zoomDiff);
     if (zoomDiff < 0) {
-      zoomOut(factor);
+      zoomOut(factor, undefined, 'linear');
     } else {
-      zoomIn(factor);
+      zoomIn(factor, undefined, 'linear');
     }
   };
 
@@ -57,7 +57,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           size="sm"
           title={i18next.t('zoom_out')}
           variant="light"
-          onPress={() => zoomOut()}
+          onPress={() => zoomOut(0.1)}
         >
           <Minus className="size-3"></Minus>
         </Button>
@@ -69,6 +69,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           size="sm"
           value={zoomLevel}
           onChange={(value) => setZoomLevel(value, state)}
+          // onChange={}
         ></Slider>
         <Button
           disableRipple
@@ -76,7 +77,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           size="sm"
           title={i18next.t('zoom_in')}
           variant="light"
-          onPress={() => zoomIn()}
+          onPress={() => zoomIn(0.1)}
         >
           <Plus className="size-3"></Plus>
         </Button>
@@ -109,7 +110,7 @@ function PreviewPanel() {
   }, []);
 
   return (
-    <div className="bg-content1 relative size-full rounded-sm">
+    <div className="bg-default-50 relative size-full rounded-sm">
       <TransformWrapper
         centerOnInit
         centerZoomedOut
@@ -118,61 +119,73 @@ function PreviewPanel() {
         maxScale={3}
         minScale={0.01}
         smooth={false}
+        wheel={{
+          step: 0.03,
+        }}
         zoomAnimation={{ disabled: true }}
       >
-        {({ zoomIn, zoomOut, centerView }) => (
-          <div
-            ref={wrapperRef}
-            className="bg-content2 flex size-full flex-col items-center justify-between rounded-t-sm rounded-b-sm"
-          >
-            {isLoading && (
-              <Spinner
-                className="absolute left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transform"
-                // TODO hack to have the spinner centered, because we have 40px as the control bar height
-                style={{
-                  top: 'calc(50% - 20px)',
-                }}
-              ></Spinner>
-            )}
+        {({ zoomIn, zoomOut, centerView, instance }) => {
+          useEffect(() => {
+            const currentScale = instance.getContext();
+            if (currentPreviewedCImage) {
+              centerView(currentScale.state.scale); // TODO can get ugly with different image sizes
+            }
+          }, [currentPreviewedCImage]);
 
-            <TransformComponent wrapperClass="!w-full relative !h-full">
-              <div ref={contentRef} className="size-full">
-                <PreviewCanvas></PreviewCanvas>
-              </div>
-            </TransformComponent>
+          return (
+            <div
+              ref={wrapperRef}
+              className="bg-default-50 flex size-full flex-col items-center justify-between rounded-t-sm rounded-b-sm"
+            >
+              {isLoading && (
+                <Spinner
+                  className="absolute left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transform"
+                  // TODO hack to have the spinner centered, because we have 40px as the control bar height
+                  style={{
+                    top: 'calc(50% - 20px)',
+                  }}
+                ></Spinner>
+              )}
 
-            <div className="bg-content1 flex h-[40px] w-full items-center justify-between rounded-b-sm p-1">
-              <div>{currentPreviewedCImage && prettyBytes(currentPreviewedCImage.size)}</div>
-              <div className="flex items-center gap-1">
-                <Button
-                  disableRipple
-                  isIconOnly
-                  size="sm"
-                  title={t('fit_container')}
-                  variant="light"
-                  onPress={() => {
-                    fitContentToWrapper(centerView);
-                  }}
-                >
-                  <Fullscreen className="size-4"></Fullscreen>
-                </Button>
-                <Button
-                  disableRipple
-                  isIconOnly
-                  size="sm"
-                  title={t('actual_size')}
-                  variant="light"
-                  onPress={() => {
-                    centerView(1);
-                  }}
-                >
-                  <Maximize className="size-4"></Maximize>
-                </Button>
-                <TransformControls zoomIn={zoomIn} zoomOut={zoomOut}></TransformControls>
+              <TransformComponent wrapperClass="!w-full relative !h-full">
+                <div ref={contentRef} className="size-full">
+                  <PreviewCanvas></PreviewCanvas>
+                </div>
+              </TransformComponent>
+
+              <div className="bg-content1 flex h-[40px] w-full items-center justify-between rounded-b-sm p-1">
+                <div>{currentPreviewedCImage && prettyBytes(currentPreviewedCImage.size)}</div>
+                <div className="flex items-center gap-1">
+                  <Button
+                    disableRipple
+                    isIconOnly
+                    size="sm"
+                    title={t('fit_container')}
+                    variant="light"
+                    onPress={() => {
+                      fitContentToWrapper(centerView);
+                    }}
+                  >
+                    <Fullscreen className="size-4"></Fullscreen>
+                  </Button>
+                  <Button
+                    disableRipple
+                    isIconOnly
+                    size="sm"
+                    title={t('actual_size')}
+                    variant="light"
+                    onPress={() => {
+                      centerView(1);
+                    }}
+                  >
+                    <Maximize className="size-4"></Maximize>
+                  </Button>
+                  <TransformControls zoomIn={zoomIn} zoomOut={zoomOut}></TransformControls>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        }}
       </TransformWrapper>
     </div>
   );

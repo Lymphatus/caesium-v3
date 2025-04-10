@@ -91,6 +91,7 @@ function ResizeOptions() {
           disallowEmptySelection
           classNames={{
             label: 'text-md',
+            trigger: 'shadow-none',
           }}
           label={t('compression_options.resize_options.resize_mode')}
           labelPlacement="outside"

@@ -1,5 +1,5 @@
 use std::cmp::min;
-use std::path::absolute;
+use std::path::{absolute, PathBuf};
 use crate::scan_files::{process_files, FileList};
 use crate::AppData;
 use std::sync::Mutex;
@@ -33,6 +33,8 @@ pub fn clear_list(app: tauri::AppHandle) {
     let state = app.state::<Mutex<AppData>>();
     let mut state = state.lock().unwrap(); //TODO
     state.file_list.clear();
+    state.base_path = PathBuf::default();
+    state.current_page = 1;
 
     app.emit(
         "fileList:getList",

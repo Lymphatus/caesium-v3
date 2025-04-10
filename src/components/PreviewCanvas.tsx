@@ -59,6 +59,8 @@ function PreviewCanvas() {
       };
 
       worker.postMessage(messagePayload);
+    } else {
+      context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     return () => {

@@ -150,6 +150,7 @@ function CompressionOptions() {
                   className="max-w-[100px] p-1"
                   classNames={{
                     label: 'hidden',
+                    trigger: 'shadow-none',
                   }}
                   label={''}
                   selectedKeys={[maxSizeUnit.toString()]}

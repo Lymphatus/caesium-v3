@@ -36,6 +36,7 @@ function GeneralSettings() {
             base: 'justify-between',
             mainWrapper: 'max-w-[250px]',
             label: 'text-md',
+            trigger: 'shadow-none',
           }}
           label={t('settings.theme')}
           labelPlacement="outside-left"
@@ -56,6 +57,7 @@ function GeneralSettings() {
             base: 'justify-between',
             mainWrapper: 'max-w-[250px]',
             label: 'text-md',
+            trigger: 'shadow-none',
           }}
           label={t('settings.language')}
           labelPlacement="outside-left"

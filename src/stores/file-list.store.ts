@@ -11,6 +11,7 @@ interface FileListStore {
   totalFiles: number;
   importProgress: number;
   isListLoading: boolean;
+  selectedItems: CImage[];
 
   totalPages: () => number;
 
@@ -22,6 +23,7 @@ interface FileListStore {
   setTotalFiles: (totalFiles: number) => void;
   setImportProgress: (progress: number) => void;
   setIsListLoading: (isListLoading: boolean) => void;
+  setSelectedItems: (items: CImage[]) => void;
 }
 
 const useFileListStore = create<FileListStore>()(
@@ -33,6 +35,7 @@ const useFileListStore = create<FileListStore>()(
     totalFiles: 0,
     importProgress: 0,
     isListLoading: false,
+    selectedItems: [],
 
     totalPages: () => Math.ceil(get().totalFiles / 50),
 
@@ -50,6 +53,7 @@ const useFileListStore = create<FileListStore>()(
     setTotalFiles: (totalFiles: number) => set({ totalFiles }),
     setImportProgress: (progress: number) => set({ importProgress: progress }),
     setIsListLoading: (isListLoading: boolean) => set({ isListLoading }),
+    setSelectedItems: (items: CImage[]) => set({ selectedItems: items }),
   })),
 );
 
@@ -60,6 +64,15 @@ useFileListStore.subscribe(
     useFileListStore.getState().setIsListLoading(true);
     await invoke('change_page', { page: currentPage });
     useFileListStore.getState().setIsListLoading(false);
+  },
+);
+
+useFileListStore.subscribe(
+  (state) => state.fileList,
+  async (fileList) => {
+    if (fileList.length === 0) {
+      useFileListStore.getState().setSelectedItems([]);
+    }
   },
 );
 export default useFileListStore;

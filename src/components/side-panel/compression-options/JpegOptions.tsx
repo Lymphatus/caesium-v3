@@ -59,6 +59,7 @@ function JpegOptions() {
         disallowEmptySelection
         classNames={{
           label: 'text-md',
+          trigger: 'shadow-none',
         }}
         label={t('compression_options.chroma_subsampling')}
         labelPlacement="outside"

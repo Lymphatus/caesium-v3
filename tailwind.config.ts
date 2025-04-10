@@ -11,6 +11,13 @@ export default {
     heroui({
       themes: {
         light: {
+          layout: {
+            boxShadow: {
+              small: 'none',
+              medium: 'none',
+              large: 'none',
+            },
+          },
           colors: {
             ...colors,
             primary: {
@@ -24,7 +31,7 @@ export default {
               '700': '#5a3ca0',
               '800': '#422c75',
               '900': '#2a1c4a',
-              foreground: '#000',
+              foreground: '#fff',
               DEFAULT: '#8b5cf6',
             },
             secondary: {
@@ -88,6 +95,13 @@ export default {
           },
         },
         dark: {
+          layout: {
+            boxShadow: {
+              small: 'none',
+              medium: 'none',
+              large: 'none',
+            },
+          },
           colors: {
             ...colors,
             primary: {

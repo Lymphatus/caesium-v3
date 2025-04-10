@@ -13,7 +13,7 @@ function SettingsDialog() {
   return (
     <Modal
       backdrop="blur"
-      className="min-h-[50%] rounded-sm"
+      className="min-h-[50%] rounded-sm shadow-none"
       classNames={{
         backdrop: 'bg-content3/50',
       }}

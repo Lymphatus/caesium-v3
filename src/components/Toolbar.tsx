@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
 
 function Toolbar() {
-  const { openPickerDialogs } = useFileListStore();
+  const { openPickerDialogs, fileList, selectedItems } = useFileListStore();
   const { setSettingsDialogOpen } = useUIStore();
   const { t } = useTranslation();
 
@@ -33,13 +33,22 @@ function Toolbar() {
         >
           <FolderPlus className="size-5"></FolderPlus>
         </Button>
-        <Button disableRipple isIconOnly color="danger" size="sm" title={t('actions.remove')} variant="light">
+        <Button
+          disableRipple
+          isIconOnly
+          color="danger"
+          isDisabled={selectedItems.length === 0}
+          size="sm"
+          title={t('actions.remove')}
+          variant="light"
+        >
           <Delete className="size-5"></Delete>
         </Button>
         <Button
           disableRipple
           isIconOnly
           color="danger"
+          isDisabled={fileList.length === 0}
           size="sm"
           title={t('actions.clear')}
           variant="light"
@@ -47,10 +56,25 @@ function Toolbar() {
         >
           <Trash2 className="size-5"></Trash2>
         </Button>
-        <Button disableRipple isIconOnly size="sm" title={t('actions.preview')} variant="light">
+        <Button
+          disableRipple
+          isIconOnly
+          isDisabled={selectedItems.length === 0}
+          size="sm"
+          title={t('actions.preview')}
+          variant="light"
+        >
           <Search className="size-5"></Search>
         </Button>
-        <Button disableRipple isIconOnly color="primary" size="sm" title={t('actions.compress')} variant="light">
+        <Button
+          disableRipple
+          isIconOnly
+          color="primary"
+          isDisabled={fileList.length === 0}
+          size="sm"
+          title={t('actions.compress')}
+          variant="light"
+        >
           <Play className="size-5"></Play>
         </Button>
       </div>
