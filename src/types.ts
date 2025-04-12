@@ -7,6 +7,13 @@ export type CImage = {
   size: number;
   width: number;
   height: number;
+
+  compressed_width: number;
+  compressed_height: number;
+  compressed_size: number;
+  compressed_file_path: string;
+  info: string;
+  status: IMAGE_STATUS;
 };
 
 export type ImageLoaderRequest = {
@@ -18,6 +25,13 @@ export type ImageLoaderResponse = {
   imageBitmap: ImageBitmap;
 };
 
+export enum IMAGE_STATUS {
+  NEW = 0,
+  SUCCESS = 1,
+  WARNING = 2,
+  ERROR = 3,
+  COMPRESSING = -1,
+}
 export enum CHROMA_SUBSAMPLING {
   AUTO = 'auto',
   CS444 = '4:4:4',
@@ -72,6 +86,11 @@ export enum RESIZE_MODE {
   LONG_EDGE = 'long_edge',
   SHORT_EDGE = 'short_edge',
   PERCENTAGE = 'percentage',
+}
+
+export enum COMPRESSION_MODE {
+  QUALITY,
+  SIZE,
 }
 
 export enum THEME {

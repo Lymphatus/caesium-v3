@@ -1,12 +1,17 @@
+use crate::commands::{
+    change_page, clear_list, compress, open_import_files_dialog, open_import_folder_dialog,
+    remove_items_from_list,
+};
+use indexmap::IndexSet;
 use std::borrow::Borrow;
 use std::hash::{Hash, Hasher};
-use crate::commands::{clear_list, open_import_files_dialog, open_import_folder_dialog, change_page, remove_items_from_list};
-use indexmap::IndexSet;
 use std::path::PathBuf;
 use std::sync::Mutex;
 use tauri::Manager;
+use serde_repr::*;
 
 mod commands;
+mod compressor;
 mod scan_files;
 
 #[derive(Default)]
@@ -26,6 +31,23 @@ pub struct CImage {
     pub size: u64,
     pub width: usize,
     pub height: usize,
+
+    pub compressed_width: usize,
+    pub compressed_height: usize,
+    pub compressed_size: u64,
+    pub compressed_file_path: String,
+    pub info: String,
+    pub status: ImageStatus,
+}
+
+#[derive(Serialize_repr, Deserialize_repr,  Clone, Debug, Default)]
+#[repr(u8)]
+pub enum ImageStatus {
+    #[default]
+    New = 0,
+    Success = 1,
+    Warning = 2,
+    Error = 3,
 }
 
 // Equality and hashing only based on `id`
@@ -70,7 +92,8 @@ pub fn run() {
             open_import_folder_dialog,
             clear_list,
             change_page,
-            remove_items_from_list
+            remove_items_from_list,
+            compress
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -83,4 +106,3 @@ fn initialize_store() -> AppData {
         current_page: 1,
     }
 }
-

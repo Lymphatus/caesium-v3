@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { CHROMA_SUBSAMPLING, TIFF_COMPRESSION_METHOD, TIFF_DEFLATE_LEVEL } from '@/types.ts';
+import { CHROMA_SUBSAMPLING, COMPRESSION_MODE, TIFF_COMPRESSION_METHOD, TIFF_DEFLATE_LEVEL } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { load, Store } from '@tauri-apps/plugin-store';
 
@@ -24,6 +24,30 @@ interface TiffOptions {
   deflateLevel: TIFF_DEFLATE_LEVEL;
 }
 
+interface CompressionOptions {
+  jpeg: {
+    quality: number;
+    chroma_subsampling: CHROMA_SUBSAMPLING;
+    progressive: boolean;
+  };
+  png: {
+    quality: number;
+    optimization_level: number;
+  };
+  webp: {
+    quality: number;
+  };
+  tiff: {
+    method: TIFF_COMPRESSION_METHOD;
+    deflate_level: TIFF_DEFLATE_LEVEL;
+  };
+  compression_mode: COMPRESSION_MODE;
+  keep_metadata: boolean;
+  lossless: boolean;
+  max_size_value: number;
+  max_size_unit: number;
+}
+
 interface CompressionOptionsStore {
   jpegOptions: JpegOptions;
   pngOptions: PngOptions;
@@ -42,6 +66,8 @@ interface CompressionOptionsStore {
   setKeepMetadata: (keepMetadata: boolean) => void;
   setMaxSize: (maxSize: number) => void;
   setMaxSizeUnit: (maxSizeUnit: number) => void;
+
+  getCompressionOptions: () => CompressionOptions;
 }
 
 const defaultValues = {
@@ -73,7 +99,7 @@ const preferences = (await settings.get('compression_options.compression')) || {
 // Create store with default values first
 const useCompressionOptionsStore = create<CompressionOptionsStore>()(
   subscribeWithSelector(
-    immer((set) => ({
+    immer((set, get) => ({
       ...defaultValues,
       ...preferences,
       setJpegOptions: (options: Partial<JpegOptions>) =>
@@ -108,6 +134,29 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
         set((state) => {
           state.maxSizeUnit = maxSizeUnit;
         }),
+      getCompressionOptions: () => ({
+        jpeg: {
+          quality: get().jpegOptions.quality,
+          chroma_subsampling: get().jpegOptions.chromaSubsampling,
+          progressive: get().jpegOptions.progressive,
+        },
+        png: {
+          quality: get().pngOptions.quality,
+          optimization_level: get().pngOptions.optimizationLevel,
+        },
+        webp: {
+          quality: get().webpOptions.quality,
+        },
+        tiff: {
+          method: get().tiffOptions.method,
+          deflate_level: get().tiffOptions.deflateLevel,
+        },
+        compression_mode: COMPRESSION_MODE.QUALITY, //TODO needs a variable
+        keep_metadata: get().keepMetadata,
+        lossless: get().lossless,
+        max_size_value: get().maxSize,
+        max_size_unit: get().maxSizeUnit,
+      }),
     })),
   ),
 );

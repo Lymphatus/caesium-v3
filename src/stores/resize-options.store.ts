@@ -20,6 +20,19 @@ interface ResizeOptionsStore {
   setDimension: (dimension: number) => void;
   setKeepAspectRatio: (keepAspectRatio: boolean) => void;
   setDoNotEnlarge: (doNotEnlarge: boolean) => void;
+
+  getResizeOptions: () => ResizeOptions;
+}
+
+interface ResizeOptions {
+  resize_enabled: boolean;
+  resize_mode: RESIZE_MODE;
+  keep_aspect_ratio: boolean;
+  do_not_enlarge: boolean;
+  width: number;
+  height: number;
+  long_edge: number;
+  short_edge: number;
 }
 
 const settings = await load('settings.json', { autoSave: true });
@@ -36,7 +49,7 @@ const defaultOptions = {
   doNotEnlarge: true,
 };
 
-const useResizeOptionsStore = create<ResizeOptionsStore>()((set) => ({
+const useResizeOptionsStore = create<ResizeOptionsStore>()((set, get) => ({
   ...defaultOptions,
   ...preferences,
 
@@ -48,6 +61,17 @@ const useResizeOptionsStore = create<ResizeOptionsStore>()((set) => ({
   setDimension: (dimension: number) => set({ dimension }),
   setKeepAspectRatio: (keepAspectRatio: boolean) => set({ keepAspectRatio }),
   setDoNotEnlarge: (doNotEnlarge: boolean) => set({ doNotEnlarge }),
+
+  getResizeOptions: () => ({
+    resize_enabled: get().resizeMode !== RESIZE_MODE.NONE,
+    resize_mode: get().resizeMode,
+    keep_aspect_ratio: get().keepAspectRatio,
+    do_not_enlarge: get().doNotEnlarge,
+    width: get().width,
+    height: get().height,
+    long_edge: get().dimension,
+    short_edge: get().dimension,
+  }),
 }));
 
 useResizeOptionsStore.subscribe((state) => {

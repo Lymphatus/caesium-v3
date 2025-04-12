@@ -1,12 +1,27 @@
 import { Button, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Circle, Delete, Search } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowUp,
+  Circle,
+  CircleAlert,
+  CircleCheck,
+  CircleDashed,
+  CircleX,
+  Delete,
+  Search,
+} from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
 import { sep } from '@tauri-apps/api/path';
 import { Selection } from '@react-types/shared';
 import { invoke } from '@tauri-apps/api/core';
+import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
+import useResizeOptionsStore from '@/stores/resize-options.store.ts';
+import useOutputOptionsStore from '@/stores/output-options.store.ts';
+import { CImage, IMAGE_STATUS } from '@/types.ts';
+import { getSavedPercentage } from '@/utils/utils.ts';
 
 function getSubpart(baseFolder: string | null, fullPath: string, filename: string) {
   if (!baseFolder) {
@@ -16,9 +31,40 @@ function getSubpart(baseFolder: string | null, fullPath: string, filename: strin
   return fullPath.replace(baseFolder, '').replace(filename, '').replace(separator, '');
 }
 
+function StatusIcon({ cImage }: { cImage: CImage }) {
+  if (cImage.status === IMAGE_STATUS.SUCCESS) {
+    return <CircleCheck className="text-success size-4" />;
+  } else if (cImage.status === IMAGE_STATUS.ERROR) {
+    return <CircleX className="text-danger size-4" />;
+  } else if (cImage.status === IMAGE_STATUS.WARNING) {
+    return <CircleAlert className="text-warning size-4" />;
+  } else if (cImage.status === IMAGE_STATUS.COMPRESSING) {
+    return <CircleDashed className="text-primary size-4 animate-spin" />;
+  }
+  return <Circle className="text-primary size-4"></Circle>;
+}
+
+function SavedLabel({ cImage }: { cImage: CImage }) {
+  if (cImage.compressed_size === 0) {
+    return <span className="text-default-400">&nbsp;</span>;
+  }
+  const saved = getSavedPercentage(cImage.size, cImage.compressed_size);
+  const textColor = saved < 0 ? 'text-danger' : 'text-success';
+  const icon = saved < 0 ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />;
+  return (
+    <span className={textColor + ' flex items-center gap-0.5'}>
+      {icon}
+      <span>{cImage.compressed_size !== 0 ? saved * -1 : 0}%</span>
+    </span>
+  );
+}
+
 function FileListTable() {
-  const { fileList, isListLoading, baseFolder, setSelectedItems, selectedItems } = useFileListStore();
+  const { fileList, isListLoading, baseFolder, setSelectedItems, selectedItems, updateFile } = useFileListStore();
   const { setCurrentPreviewedCImage } = usePreviewStore();
+  const { getCompressionOptions } = useCompressionOptionsStore();
+  const { getResizeOptions } = useResizeOptionsStore();
+  const { getOutputOptions } = useOutputOptionsStore();
   const { t } = useTranslation();
 
   const handleSelectionChange = function (keys: Selection) {
@@ -27,6 +73,19 @@ function FileListTable() {
     // if (selectedItems.length === 0) {
     //   setCurrentPreviewedCImage(selectedItems[0]);
     // }
+  };
+
+  const invokePreview = (id: string) => {
+    updateFile(id, { status: IMAGE_STATUS.COMPRESSING });
+    invoke('compress', {
+      ids: [id],
+      options: {
+        compression_options: getCompressionOptions(),
+        resize_options: getResizeOptions(),
+        output_options: getOutputOptions(),
+      },
+      preview: true,
+    }).then();
   };
 
   return (
@@ -74,21 +133,49 @@ function FileListTable() {
           <TableRow key={cImage.id}>
             <TableCell>
               <div className="flex items-center justify-center">
-                <Circle className="text-primary size-4"></Circle>
+                <StatusIcon cImage={cImage}></StatusIcon>
               </div>
             </TableCell>
             <TableCell>
               <small className="text-default-400">{getSubpart(baseFolder, cImage.path, cImage.name)}</small>
               <span>{cImage.name}</span>
             </TableCell>
-            <TableCell>{prettyBytes(cImage.size)}</TableCell>
             <TableCell>
-              <span>
-                {cImage.width}x{cImage.height}
-              </span>
+              <div className="flex items-center gap-1">
+                <span
+                  className={
+                    cImage.compressed_size && cImage.compressed_size !== cImage.size
+                      ? 'text-default-400 line-through'
+                      : ''
+                  }
+                >
+                  {prettyBytes(cImage.size)}
+                </span>
+                {cImage.compressed_size !== 0 && <span>{prettyBytes(cImage.compressed_size)}</span>}
+              </div>
             </TableCell>
-            <TableCell>-</TableCell>
-            <TableCell>-</TableCell>
+            <TableCell>
+              <div className="flex items-center gap-1">
+                <span
+                  className={
+                    cImage.compressed_width !== 0 &&
+                    cImage.compressed_height == 0 &&
+                    (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height)
+                      ? 'text-default-400 line-through'
+                      : ''
+                  }
+                >{`${cImage.width}x${cImage.height}`}</span>
+                {cImage.compressed_width !== 0 &&
+                  cImage.compressed_height == 0 &&
+                  (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height) && (
+                    <span>{`${cImage.width}x${cImage.height}`}</span>
+                  )}
+              </div>
+            </TableCell>
+            <TableCell>
+              <SavedLabel cImage={cImage} />
+            </TableCell>
+            <TableCell>{cImage.info}</TableCell>
             <TableCell>
               <div className="flex items-center justify-between gap-1">
                 <Button
@@ -97,9 +184,7 @@ function FileListTable() {
                   size="sm"
                   title={t('actions.preview')}
                   variant="light"
-                  onPress={() => {
-                    console.log('preview pressed'); //TODO
-                  }}
+                  onPress={() => invokePreview(cImage.id)}
                 >
                   <Search className="size-4"></Search>
                 </Button>
@@ -111,7 +196,6 @@ function FileListTable() {
                   title={t('actions.remove')}
                   variant="light"
                   onPress={async () => {
-                    console.log('delete pressed'); //TODO
                     await invoke('remove_items_from_list', { keys: [cImage.id] });
                   }}
                 >

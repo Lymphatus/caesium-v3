@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { CImage } from '@/types.ts';
 import { invoke } from '@tauri-apps/api/core';
 import { subscribeWithSelector } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 
 interface FileListStore {
   fileList: CImage[];
@@ -24,37 +25,47 @@ interface FileListStore {
   setImportProgress: (progress: number) => void;
   setIsListLoading: (isListLoading: boolean) => void;
   setSelectedItems: (items: CImage[]) => void;
+  updateFile: (id: string, updatedData: Partial<CImage>) => void;
 }
 
 const useFileListStore = create<FileListStore>()(
-  subscribeWithSelector((set, get) => ({
-    fileList: [],
-    baseFolder: null,
-    isImporting: false,
-    currentPage: 1,
-    totalFiles: 0,
-    importProgress: 0,
-    isListLoading: false,
-    selectedItems: [],
+  subscribeWithSelector(
+    immer((set, get) => ({
+      fileList: [],
+      baseFolder: null,
+      isImporting: false,
+      currentPage: 1,
+      totalFiles: 0,
+      importProgress: 0,
+      isListLoading: false,
+      selectedItems: [],
 
-    totalPages: () => Math.ceil(get().totalFiles / 50),
+      totalPages: () => Math.ceil(get().totalFiles / 50),
 
-    openPickerDialogs: async (type: 'files' | 'folder') => {
-      if (type === 'files') {
-        await invoke('open_import_files_dialog');
-      } else {
-        await invoke('open_import_folder_dialog');
-      }
-    },
-    setFileList: (files: CImage[]) => set({ fileList: files }),
-    setBaseFolder: (folder: string) => set({ baseFolder: folder }),
-    setIsImporting: (isImporting: boolean) => set({ isImporting }),
-    setCurrentPage: (page: number) => set({ currentPage: page }),
-    setTotalFiles: (totalFiles: number) => set({ totalFiles }),
-    setImportProgress: (progress: number) => set({ importProgress: progress }),
-    setIsListLoading: (isListLoading: boolean) => set({ isListLoading }),
-    setSelectedItems: (items: CImage[]) => set({ selectedItems: items }),
-  })),
+      openPickerDialogs: async (type: 'files' | 'folder') => {
+        if (type === 'files') {
+          await invoke('open_import_files_dialog');
+        } else {
+          await invoke('open_import_folder_dialog');
+        }
+      },
+      setFileList: (files: CImage[]) => set({ fileList: files }),
+      setBaseFolder: (folder: string) => set({ baseFolder: folder }),
+      setIsImporting: (isImporting: boolean) => set({ isImporting }),
+      setCurrentPage: (page: number) => set({ currentPage: page }),
+      setTotalFiles: (totalFiles: number) => set({ totalFiles }),
+      setImportProgress: (progress: number) => set({ importProgress: progress }),
+      setIsListLoading: (isListLoading: boolean) => set({ isListLoading }),
+      setSelectedItems: (items: CImage[]) => set({ selectedItems: items }),
+      updateFile: (id: string, updatedData: Partial<CImage>) =>
+        set((state) => {
+          const index = state.fileList.findIndex((file) => file.id === id);
+          if (index !== -1) {
+            state.fileList[index] = { ...state.fileList[index], ...updatedData };
+          }
+        }),
+    })),
+  ),
 );
 
 // Subscribe to changes in currentPage to fetch new images

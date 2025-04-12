@@ -10,10 +10,11 @@ import { addToast } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
 
 function App() {
-  const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress } = useFileListStore();
+  const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress, updateFile } =
+    useFileListStore();
 
   useEffect(() => {
-    const unlistenFinished = listen('fileImporter:importFinished', () => {
+    const importFinishedListener = listen('fileImporter:importFinished', () => {
       setIsImporting(false);
       addToast({
         title: 'Import finished',
@@ -23,7 +24,7 @@ function App() {
       });
     });
 
-    const unlistenGetList = listen<{ files: CImage[]; base_folder: string; total_files: number }>(
+    const getListListener = listen<{ files: CImage[]; base_folder: string; total_files: number }>(
       'fileList:getList',
       (event) => {
         const { files, base_folder, total_files } = event.payload;
@@ -34,19 +35,33 @@ function App() {
       },
     );
 
-    const unlistenStarted = listen('fileImporter:importStarted', () => {
+    const importStartedListener = listen('fileImporter:importStarted', () => {
       setImportProgress(0);
       setIsImporting(true);
     });
 
-    const unlistenProgress = listen<{ progress: number; total: number }>('fileImporter:importProgress', (event) => {
-      const { progress } = event.payload;
-      setImportProgress(progress);
+    const importProgressListener = listen<{ progress: number; total: number }>(
+      'fileImporter:importProgress',
+      (event) => {
+        const { progress } = event.payload;
+        setImportProgress(progress);
+      },
+    );
+
+    const updateCImageListener = listen<{ status: number; cimage: CImage }>('fileList:updateCImage', async (event) => {
+      const { cimage } = event.payload;
+      updateFile(cimage.id, cimage);
     });
 
     // Cleanup function to remove listeners when component unmounts
     return () => {
-      Promise.all([unlistenFinished, unlistenGetList, unlistenStarted, unlistenProgress]).then((cleanupFns) => {
+      Promise.all([
+        importFinishedListener,
+        getListListener,
+        importStartedListener,
+        importProgressListener,
+        updateCImageListener,
+      ]).then((cleanupFns) => {
         cleanupFns.forEach((cleanupFn) => cleanupFn());
       });
     };

@@ -1,7 +1,8 @@
+use crate::compressor::{preview_cimage, OptionsPayload};
+use crate::scan_files::{compute_base_path, process_files, FileList};
+use crate::AppData;
 use std::cmp::min;
 use std::path::{absolute, PathBuf};
-use crate::scan_files::{compute_base_path, process_files, FileList};
-use crate::{AppData};
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
@@ -65,12 +66,11 @@ pub fn remove_items_from_list(app: tauri::AppHandle, keys: Vec<String>) {
     let offset = (state.current_page - 1) * files_per_page;
     let paged_list = state
         .file_list
-        .get_range(offset..min(state.file_list.len(),offset + files_per_page)) //TODO check out of range
+        .get_range(offset..min(state.file_list.len(), offset + files_per_page)) //TODO check out of range
         .unwrap() //TODO
         .iter()
         .cloned()
         .collect();
-
 
     app.emit(
         "fileList:getList",
@@ -84,7 +84,7 @@ pub fn remove_items_from_list(app: tauri::AppHandle, keys: Vec<String>) {
                 .to_string(),
         },
     )
-        .unwrap(); //TODO
+    .unwrap(); //TODO
 }
 
 #[tauri::command]
@@ -98,7 +98,7 @@ pub fn change_page(app: tauri::AppHandle, page: usize) {
     let offset = (state.current_page - 1) * files_per_page;
     let paged_list = state
         .file_list
-        .get_range(offset..min(state.file_list.len(),offset + files_per_page)) //TODO check out of range
+        .get_range(offset..min(state.file_list.len(), offset + files_per_page)) //TODO check out of range
         .unwrap() //TODO
         .iter()
         .cloned()
@@ -115,6 +115,22 @@ pub fn change_page(app: tauri::AppHandle, page: usize) {
                 .to_string(),
         },
     )
-        .unwrap(); //TODO
+    .unwrap(); //TODO
 }
 
+#[tauri::command]
+pub async fn compress(app: tauri::AppHandle, ids: Vec<String>, options: OptionsPayload, preview: bool) {
+    if preview {
+        for id in ids {
+            println!("Previewing {}", id);
+            let state = app.state::<Mutex<AppData>>();
+            let mut state = state.lock().unwrap(); //TODO
+            let cimage = state.file_list.get(id.as_str()).unwrap(); //TODO
+            let result = preview_cimage(&app, cimage.clone(), options.clone());
+
+            state.file_list.replace(result.clone().cimage);
+
+            app.emit("fileList:updateCImage", result).unwrap(); //TODO
+        }
+    }
+}

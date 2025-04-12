@@ -1,4 +1,4 @@
-use crate::{AppData, CImage};
+use crate::{AppData, CImage, ImageStatus};
 use file_format::FileFormat;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -225,6 +225,12 @@ pub fn map_file(file: &PathBuf) -> Option<CImage> {
         size,
         width,
         height,
+        compressed_width: 0,
+        compressed_height: 0,
+        compressed_size: 0,
+        compressed_file_path: String::new(),
+        info: String::new(),
+        status: ImageStatus::New
     };
 
     Some(cimage)

@@ -22,6 +22,23 @@ interface OutputOptionsStore {
   setKeepFileDates: (keepFileDates: FILE_DATE[]) => void;
   setOutputFormat: (outputFormat: OUTPUT_FORMAT) => void;
   setSuffix: (suffix: string) => void;
+
+  getOutputOptions: () => OutputOptions;
+}
+
+interface OutputOptions {
+  output_folder: string;
+  same_folder_as_input: boolean;
+  keep_folder_structure: boolean;
+  skip_if_output_is_bigger: boolean;
+  move_original_file_enabled: boolean;
+  move_original_file_mode: MOVE_ORIGINAL_FILE;
+  keep_file_dates_enabled: boolean;
+  keep_creation_date: boolean;
+  keep_last_modified_date: boolean;
+  keep_last_access_date: boolean;
+  output_format: OUTPUT_FORMAT;
+  suffix: string;
 }
 
 const settings = await load('settings.json', { autoSave: true });
@@ -39,7 +56,7 @@ const defaultOptions = {
   suffix: '',
 };
 
-const useOutputOptionsStore = create<OutputOptionsStore>()((set) => ({
+const useOutputOptionsStore = create<OutputOptionsStore>()((set, get) => ({
   ...defaultOptions,
   ...preferences,
 
@@ -52,6 +69,21 @@ const useOutputOptionsStore = create<OutputOptionsStore>()((set) => ({
   setKeepFileDates: (keepFileDates: FILE_DATE[]) => set({ keepFileDates }),
   setOutputFormat: (outputFormat: OUTPUT_FORMAT) => set({ outputFormat }),
   setSuffix: (suffix: string) => set({ suffix }),
+
+  getOutputOptions: () => ({
+    output_folder: get().outputFolder,
+    same_folder_as_input: get().sameFolderAsInput,
+    keep_folder_structure: get().keepFolderStructure,
+    skip_if_output_is_bigger: get().skipIfOutputIsBigger,
+    move_original_file_enabled: get().moveOriginalFile,
+    move_original_file_mode: get().moveOriginalFileType,
+    keep_file_dates_enabled: get().keepFileDates.length > 0,
+    keep_creation_date: get().keepFileDates.includes(FILE_DATE.CREATED),
+    keep_last_modified_date: get().keepFileDates.includes(FILE_DATE.MODIFIED),
+    keep_last_access_date: get().keepFileDates.includes(FILE_DATE.ACCESSED),
+    output_format: get().outputFormat,
+    suffix: get().suffix,
+  }),
 }));
 
 useOutputOptionsStore.subscribe((state) => {
