@@ -6,13 +6,13 @@ self.onmessage = async function (event) {
   const eventData = event.data as ImageLoaderRequest;
   if (eventData.mimeType === 'image/tiff') {
     const imageBitmap = await loadTiff(eventData.imageUrl);
-    const responseMessage: ImageLoaderResponse = { imageBitmap };
+    const responseMessage: ImageLoaderResponse = { imageBitmap, type: eventData.type };
     postMessage(responseMessage);
   } else {
     const response = await fetch(eventData.imageUrl);
     const blob = await response.blob();
     const imageBitmap = await createImageBitmap(blob);
-    const responseMessage: ImageLoaderResponse = { imageBitmap };
+    const responseMessage: ImageLoaderResponse = { imageBitmap, type: eventData.type };
     postMessage(responseMessage);
   }
 };

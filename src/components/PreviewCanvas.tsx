@@ -22,14 +22,17 @@ const setImageToCanvas = (canvas: HTMLCanvasElement | null, image: ImageBitmap) 
 
 function PreviewCanvas() {
   const canvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
-  const { currentPreviewedCImage, setIsLoading } = usePreviewStore();
+  const compressedCanvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
+
+  const { currentPreviewedCImage, visualizationMode, setIsLoading, setVisualizationMode } = usePreviewStore();
 
   useEffect(() => {
     const listener = (e: MessageEvent<ImageLoaderResponse>) => {
       const data = e.data;
-      setImageToCanvas(canvasRef.current, data.imageBitmap);
+      const canvas = data.type === 'compressed' ? compressedCanvasRef.current : canvasRef.current;
+      setImageToCanvas(canvas, data.imageBitmap);
 
-      setIsLoading(false);
+      setIsLoading(false); // TODO if we are loading original and preview, this is out of sync
     };
     worker.addEventListener('message', listener);
 
@@ -39,38 +42,57 @@ function PreviewCanvas() {
   }, []);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) {
+    const originalCanvas = canvasRef.current;
+    const compressedCanvas = compressedCanvasRef.current;
+    if (!originalCanvas || !compressedCanvas) {
       return;
     }
-    const context = canvas.getContext('2d');
-    if (!context) {
+    const originalContext = originalCanvas.getContext('2d');
+    const compressedContext = compressedCanvas.getContext('2d');
+    if (!originalContext || !compressedContext) {
       return;
     }
 
     if (currentPreviewedCImage) {
       setIsLoading(true);
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      if (visualizationMode === 'compressed' && !currentPreviewedCImage?.compressed_file_path) {
+        setVisualizationMode('original');
+      }
+      originalContext.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+      compressedContext.clearRect(0, 0, compressedCanvas.width, compressedCanvas.height);
 
       const imageURL = convertFileSrc(currentPreviewedCImage.path);
+      let compressedImageURL = '';
+      if (currentPreviewedCImage?.compressed_file_path) {
+        compressedImageURL = convertFileSrc(currentPreviewedCImage.compressed_file_path);
+
+        const messagePayload: ImageLoaderRequest = {
+          mimeType: currentPreviewedCImage.mime_type, // TODO if compressed, use compressed mime type
+          imageUrl: compressedImageURL,
+          type: 'compressed',
+        };
+
+        worker.postMessage(messagePayload);
+      }
       const messagePayload: ImageLoaderRequest = {
         mimeType: currentPreviewedCImage.mime_type,
         imageUrl: imageURL,
+        type: 'original',
       };
 
       worker.postMessage(messagePayload);
-    } else {
-      context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     return () => {
-      console.debug('Preview cleanup');
+      originalContext.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+      compressedContext.clearRect(0, 0, compressedCanvas.width, compressedCanvas.height);
     };
   }, [currentPreviewedCImage]);
 
   return (
     <>
-      <canvas ref={canvasRef} />
+      <canvas ref={canvasRef} className={visualizationMode !== 'original' ? 'hidden' : ''} />
+      <canvas ref={compressedCanvasRef} className={visualizationMode !== 'compressed' ? 'hidden' : ''} />
     </>
   );
 }

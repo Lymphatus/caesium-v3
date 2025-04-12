@@ -19,10 +19,12 @@ export type CImage = {
 export type ImageLoaderRequest = {
   mimeType: string;
   imageUrl: string;
+  type: 'original' | 'compressed';
 };
 
 export type ImageLoaderResponse = {
   imageBitmap: ImageBitmap;
+  type: 'original' | 'compressed';
 };
 
 export enum IMAGE_STATUS {

@@ -133,6 +133,7 @@ pub fn preview_cimage(
         )
         .is_ok()
     };
+    println!("Compression finished");
 
     if !result {
         return CompressionResult {

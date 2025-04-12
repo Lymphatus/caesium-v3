@@ -5,16 +5,25 @@ import useFileListStore from '@/stores/file-list.store.ts';
 interface PreviewStore {
   isLoading: boolean;
   currentPreviewedCImage: CImage | null;
+  visualizationMode: 'original' | 'compressed';
+
   setIsLoading: (isLoading: boolean) => void;
   setCurrentPreviewedCImage: (cImage: CImage | null) => void;
+  setVisualizationMode: (visualizationMode: 'original' | 'compressed') => void;
+
+  getCurrentPreviewedCImage: () => CImage | null;
 }
 
-const usePreviewStore = create<PreviewStore>()((set) => ({
+const usePreviewStore = create<PreviewStore>()((set, get) => ({
   isLoading: false,
   currentPreviewedCImage: null,
+  visualizationMode: 'original',
 
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   setCurrentPreviewedCImage: (cImage: CImage | null) => set({ currentPreviewedCImage: cImage }),
+  setVisualizationMode: (visualizationMode: 'original' | 'compressed') => set({ visualizationMode }),
+
+  getCurrentPreviewedCImage: () => get().currentPreviewedCImage,
 }));
 
 useFileListStore.subscribe(

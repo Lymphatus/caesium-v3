@@ -8,10 +8,13 @@ import { listen } from '@tauri-apps/api/event';
 import { CImage } from '@/types.ts';
 import { addToast } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
+import usePreviewStore from '@/stores/preview.store.ts';
 
 function App() {
   const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress, updateFile } =
     useFileListStore();
+
+  const { getCurrentPreviewedCImage } = usePreviewStore();
 
   useEffect(() => {
     const importFinishedListener = listen('fileImporter:importFinished', () => {
@@ -51,6 +54,9 @@ function App() {
     const updateCImageListener = listen<{ status: number; cimage: CImage }>('fileList:updateCImage', async (event) => {
       const { cimage } = event.payload;
       updateFile(cimage.id, cimage);
+      if (getCurrentPreviewedCImage()?.id === cimage.id) {
+        usePreviewStore.setState({ currentPreviewedCImage: cimage });
+      }
     });
 
     // Cleanup function to remove listeners when component unmounts

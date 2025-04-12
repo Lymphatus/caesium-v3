@@ -6,7 +6,7 @@ import {
   useTransformComponent,
 } from 'react-zoom-pan-pinch';
 import { Button, NumberInput, Slider, Spinner } from '@heroui/react';
-import { Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
+import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
 import { RefObject, useCallback, useEffect, useRef } from 'react';
 import prettyBytes from 'pretty-bytes';
 import PreviewCanvas from '@/components/PreviewCanvas.tsx';
@@ -69,7 +69,6 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           size="sm"
           value={zoomLevel}
           onChange={(value) => setZoomLevel(value, state)}
-          // onChange={}
         ></Slider>
         <Button
           disableRipple
@@ -87,7 +86,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
 };
 
 function PreviewPanel() {
-  const { currentPreviewedCImage, isLoading } = usePreviewStore();
+  const { currentPreviewedCImage, isLoading, visualizationMode, setVisualizationMode } = usePreviewStore();
   const wrapperRef: RefObject<HTMLDivElement | null> = useRef(null);
   const contentRef: RefObject<HTMLDivElement | null> = useRef(null);
   const { t } = useTranslation();
@@ -156,6 +155,20 @@ function PreviewPanel() {
               <div className="bg-content1 flex h-[40px] w-full items-center justify-between rounded-b-sm p-1">
                 <div>{currentPreviewedCImage && prettyBytes(currentPreviewedCImage.size)}</div>
                 <div className="flex items-center gap-1">
+                  <span>{visualizationMode}</span>
+                  <Button
+                    disableRipple
+                    isIconOnly
+                    isDisabled={!currentPreviewedCImage?.compressed_file_path}
+                    size="sm"
+                    title={t('actual_size')}
+                    variant="light"
+                    onPress={() => {
+                      setVisualizationMode(visualizationMode === 'original' ? 'compressed' : 'original');
+                    }}
+                  >
+                    <ArrowLeftRight className="size-4"></ArrowLeftRight>
+                  </Button>
                   <Button
                     disableRipple
                     isIconOnly
