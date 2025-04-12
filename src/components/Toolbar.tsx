@@ -41,6 +41,7 @@ function Toolbar() {
           size="sm"
           title={t('actions.remove')}
           variant="light"
+          onPress={async () => await invoke('remove_items_from_list', { keys: selectedItems.map((c) => c.id) })}
         >
           <Delete className="size-5"></Delete>
         </Button>

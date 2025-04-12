@@ -1,11 +1,12 @@
-import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import { Button, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Circle } from 'lucide-react';
+import { Circle, Delete, Search } from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
 import { sep } from '@tauri-apps/api/path';
 import { Selection } from '@react-types/shared';
+import { invoke } from '@tauri-apps/api/core';
 
 function getSubpart(baseFolder: string | null, fullPath: string, filename: string) {
   if (!baseFolder) {
@@ -56,6 +57,9 @@ function FileListTable() {
         <TableColumn key="resolution">{t('file_list.resolution')}</TableColumn>
         <TableColumn key="saved">{t('file_list.saved')}</TableColumn>
         <TableColumn key="info">{t('file_list.additional_info')}</TableColumn>
+        <TableColumn key="actions" width={40}>
+          {t('file_list.actions')}
+        </TableColumn>
       </TableHeader>
       <TableBody
         isLoading={isListLoading}
@@ -85,6 +89,36 @@ function FileListTable() {
             </TableCell>
             <TableCell>-</TableCell>
             <TableCell>-</TableCell>
+            <TableCell>
+              <div className="flex items-center justify-between gap-1">
+                <Button
+                  disableRipple
+                  isIconOnly
+                  size="sm"
+                  title={t('actions.preview')}
+                  variant="light"
+                  onPress={() => {
+                    console.log('preview pressed'); //TODO
+                  }}
+                >
+                  <Search className="size-4"></Search>
+                </Button>
+                <Button
+                  disableRipple
+                  isIconOnly
+                  color="danger"
+                  size="sm"
+                  title={t('actions.remove')}
+                  variant="light"
+                  onPress={async () => {
+                    console.log('delete pressed'); //TODO
+                    await invoke('remove_items_from_list', { keys: [cImage.id] });
+                  }}
+                >
+                  <Delete className="size-4"></Delete>
+                </Button>
+              </div>
+            </TableCell>
           </TableRow>
         )}
       </TableBody>

@@ -156,7 +156,7 @@ pub fn scan_files(
     (base_path, files)
 }
 
-fn compute_base_path(path: &Path, base_path: &Path) -> Option<PathBuf> {
+pub fn compute_base_path(path: &Path, base_path: &Path) -> Option<PathBuf> {
     if let Ok(ap) = absolute(path) {
         let bp = compute_base_folder(base_path, &ap)?;
         return Some(bp);

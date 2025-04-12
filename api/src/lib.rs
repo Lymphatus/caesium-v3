@@ -1,4 +1,6 @@
-use crate::commands::{clear_list, open_import_files_dialog, open_import_folder_dialog, change_page};
+use std::borrow::Borrow;
+use std::hash::{Hash, Hasher};
+use crate::commands::{clear_list, open_import_files_dialog, open_import_folder_dialog, change_page, remove_items_from_list};
 use indexmap::IndexSet;
 use std::path::PathBuf;
 use std::sync::Mutex;
@@ -14,7 +16,7 @@ pub struct AppData {
     current_page: usize,
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default, Hash, Eq, PartialEq)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default)]
 pub struct CImage {
     pub id: String,
     pub name: String,
@@ -24,6 +26,26 @@ pub struct CImage {
     pub size: u64,
     pub width: usize,
     pub height: usize,
+}
+
+// Equality and hashing only based on `id`
+impl PartialEq for CImage {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+impl Eq for CImage {}
+
+impl Hash for CImage {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state);
+    }
+}
+
+impl Borrow<str> for CImage {
+    fn borrow(&self) -> &str {
+        &self.id
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -47,7 +69,8 @@ pub fn run() {
             open_import_files_dialog,
             open_import_folder_dialog,
             clear_list,
-            change_page
+            change_page,
+            remove_items_from_list
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -60,3 +83,4 @@ fn initialize_store() -> AppData {
         current_page: 1,
     }
 }
+
