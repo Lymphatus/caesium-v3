@@ -10,11 +10,11 @@ import useUIStore from '@/stores/ui.store.ts';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { invoke } from '@tauri-apps/api/core';
 
+let appMenu: Menu | null = null;
 function MenuBar() {
   const { t } = useTranslation();
   const { openPickerDialogs } = useFileListStore();
   const { setSettingsDialogOpen } = useUIStore();
-  let appMenu: Menu | null = null;
 
   useEffect(() => {
     buildAppMenu().then((menu) => {
@@ -25,20 +25,6 @@ function MenuBar() {
       appMenu = null;
     };
   }, []);
-
-  const toggleMenuVisibility = async (showing: boolean) => {
-    if (appMenu) {
-      const items = await appMenu.items();
-      for (const i of items) {
-        if (i instanceof PredefinedMenuItem) {
-          continue;
-        }
-        await i.setEnabled(!showing);
-      }
-    }
-  };
-  useUIStore.subscribe((state) => state.settingsDialogOpen, toggleMenuVisibility);
-  useFileListStore.subscribe((state) => state.isImporting, toggleMenuVisibility);
 
   async function buildFileMenu() {
     const fileMenu = await Submenu.new({
@@ -221,4 +207,33 @@ function MenuBar() {
   return null;
 }
 
+const toggleMenuVisibility = async (showing: boolean) => {
+  if (appMenu) {
+    const items = await appMenu.items();
+    for (const i of items) {
+      if (i instanceof PredefinedMenuItem) {
+        continue;
+      }
+      await i.setEnabled(!showing);
+    }
+  }
+};
+useUIStore.subscribe((state) => state.settingsDialogOpen, toggleMenuVisibility);
+useFileListStore.subscribe((state) => state.isImporting, toggleMenuVisibility);
+useFileListStore.subscribe(
+  (state) => state.fileList,
+  async (fileList) => {
+    if (!appMenu) return;
+    const menuEntry = await appMenu.get('edit');
+
+    if (!(menuEntry instanceof Submenu)) {
+      return;
+    }
+    const item = await menuEntry.get('edit.clear');
+
+    if (item instanceof MenuItem) {
+      await item.setEnabled(fileList.length > 0);
+    }
+  },
+);
 export default MenuBar;
