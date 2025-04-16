@@ -27,7 +27,6 @@ function JpegOptions() {
     <div className="flex flex-col gap-2">
       <Slider
         classNames={{
-          base: 'max-w-md',
           label: 'text-sm',
         }}
         isDisabled={lossless}

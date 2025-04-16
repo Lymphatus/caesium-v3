@@ -49,7 +49,6 @@ function TiffOptions() {
       <Slider
         hideValue
         classNames={{
-          base: 'max-w-md',
           label: 'text-sm',
         }}
         isDisabled={tiffOptions.method !== TIFF_COMPRESSION_METHOD.DEFLATE}
