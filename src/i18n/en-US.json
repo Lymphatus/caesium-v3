@@ -118,10 +118,11 @@
     "clear": "Clear",
     "select_all": "Select all",
     "remove": "Remove",
-    "settings": "Settings...",
+    "settings": "Settings",
     "preview": "Preview",
     "auto_preview": "Auto preview",
-    "show_previews": "Show previews"
+    "show_previews": "Show previews",
+    "show_toolbar_labels": "Show labels in toolbar"
   },
   "settings": {
     "general": "General",

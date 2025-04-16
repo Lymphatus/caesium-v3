@@ -14,6 +14,6 @@
     "dialog:default",
     "dialog:default",
     "core:menu:default",
-    "core:window:allow-set-theme"
+    "core:app:allow-set-app-theme"
   ]
 }

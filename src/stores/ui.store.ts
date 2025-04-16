@@ -17,6 +17,9 @@ interface UIOptions {
   tiffAccordionOpen: boolean;
   currentSelectedTab: SIDE_PANEL_TAB;
   settingsDialogOpen: boolean;
+  showPreviewPanel: boolean;
+  autoPreview: boolean;
+  showLabelsInToolbar: boolean;
 
   setSplitPanels: (options: Partial<SplitPanels>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
@@ -25,6 +28,11 @@ interface UIOptions {
   setTiffAccordionOpen: (open: boolean) => void;
   setCurrentSelectedTab: (tab: SIDE_PANEL_TAB) => void;
   setSettingsDialogOpen: (open: boolean) => void;
+  setShowPreviewPanel: (show: boolean) => void;
+  setAutoPreview: (autoPreview: boolean) => void;
+  setShowLabelsInToolbar: (show: boolean) => void;
+
+  getAppMenuSelectedItems: () => string[];
 }
 
 const settings = await load('settings.json', { autoSave: true });
@@ -38,11 +46,14 @@ const defaultOptions = {
   tiffAccordionOpen: true,
   currentSelectedTab: SIDE_PANEL_TAB.COMPRESSION,
   settingsDialogOpen: false,
+  showPreviewPanel: true,
+  autoPreview: true,
+  showLabelsInToolbar: false,
 };
 
 const useUIStore = create<UIOptions>()(
   subscribeWithSelector(
-    immer((set) => ({
+    immer((set, get) => ({
       ...defaultOptions,
       ...preferences,
       setSplitPanels: (options: Partial<SplitPanels>) =>
@@ -80,6 +91,29 @@ const useUIStore = create<UIOptions>()(
           state.settingsDialogOpen = open;
         });
       },
+      setShowPreviewPanel: (show: boolean) => {
+        set((state) => {
+          state.showPreviewPanel = show;
+        });
+      },
+      setAutoPreview: (autoPreview: boolean) => {
+        set((state) => {
+          state.autoPreview = autoPreview;
+        });
+      },
+      setShowLabelsInToolbar: (show: boolean) => {
+        set((state) => {
+          state.showLabelsInToolbar = show;
+        });
+      },
+
+      getAppMenuSelectedItems: () => {
+        const selectedItems = [];
+        if (get().showPreviewPanel) selectedItems.push('showPreview');
+        if (get().autoPreview) selectedItems.push('autoPreview');
+        if (get().showLabelsInToolbar) selectedItems.push('showToolbarLabels');
+        return selectedItems;
+      },
     })),
   ),
 );
@@ -93,6 +127,9 @@ useUIStore.subscribe((state) => {
     webpAccordionOpen: state.webpAccordionOpen,
     tiffAccordionOpen: state.tiffAccordionOpen,
     currentSelectedTab: state.currentSelectedTab,
+    showPreviewPanel: state.showPreviewPanel,
+    autoPreview: state.autoPreview,
+    showLabelsInToolbar: state.showLabelsInToolbar,
   };
 
   // Save to Tauri store
