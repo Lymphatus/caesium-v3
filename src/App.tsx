@@ -9,6 +9,7 @@ import { CImage } from '@/types.ts';
 import { addToast } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
+import MenuBar from '@/components/MenuBar.tsx';
 
 function App() {
   const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress, updateFile } =
@@ -75,6 +76,7 @@ function App() {
 
   return (
     <>
+      <MenuBar></MenuBar>
       <Toolbar></Toolbar>
       <CenterContainer></CenterContainer>
       <Footer></Footer>

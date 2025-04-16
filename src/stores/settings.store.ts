@@ -2,6 +2,7 @@ import { create } from 'zustand/index';
 import { load } from '@tauri-apps/plugin-store';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION, THEME } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
+import { Window } from '@tauri-apps/api/window';
 
 interface SettingsOptionsStore {
   theme: THEME;
@@ -89,19 +90,22 @@ useSettingsStore.subscribe((state) => {
 
 useSettingsStore.subscribe(
   (state) => state.theme,
-  (theme: THEME) => {
+  async (theme: THEME) => {
+    const appWindow = Window.getCurrent();
     if (
       theme === THEME.LIGHT ||
       (theme === THEME.SYSTEM && !window.matchMedia('(prefers-color-scheme: dark)').matches)
     ) {
       window.document.documentElement.classList.add('light');
       window.document.documentElement.classList.remove('dark');
+      await appWindow.setTheme('light');
     } else if (
       theme === THEME.DARK ||
       (theme === THEME.SYSTEM && window.matchMedia('(prefers-color-scheme: dark)').matches)
     ) {
       window.document.documentElement.classList.add('dark');
       window.document.documentElement.classList.remove('light');
+      await appWindow.setTheme('dark');
     }
   },
 );

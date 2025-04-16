@@ -12,6 +12,8 @@
     "window-state:default",
     "store:default",
     "dialog:default",
-    "dialog:default"
+    "dialog:default",
+    "core:menu:default",
+    "core:window:allow-set-theme"
   ]
 }

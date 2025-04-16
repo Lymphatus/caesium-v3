@@ -2,6 +2,7 @@ import { create } from 'zustand/index';
 import { immer } from 'zustand/middleware/immer';
 import { load } from '@tauri-apps/plugin-store';
 import { SIDE_PANEL_TAB } from '@/types.ts';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 interface SplitPanels {
   main: number[];
@@ -40,45 +41,47 @@ const defaultOptions = {
 };
 
 const useUIStore = create<UIOptions>()(
-  immer((set) => ({
-    ...defaultOptions,
-    ...preferences,
-    setSplitPanels: (options: Partial<SplitPanels>) =>
-      set((state) => {
-        Object.assign(state.splitPanels, options);
-      }),
+  subscribeWithSelector(
+    immer((set) => ({
+      ...defaultOptions,
+      ...preferences,
+      setSplitPanels: (options: Partial<SplitPanels>) =>
+        set((state) => {
+          Object.assign(state.splitPanels, options);
+        }),
 
-    setJpegAccordionOpen: (open: boolean) => {
-      set((state) => {
-        state.jpegAccordionOpen = open;
-      });
-    },
-    setPngAccordionOpen: (open: boolean) => {
-      set((state) => {
-        state.pngAccordionOpen = open;
-      });
-    },
-    setWebpAccordionOpen: (open: boolean) => {
-      set((state) => {
-        state.webpAccordionOpen = open;
-      });
-    },
-    setTiffAccordionOpen: (open: boolean) => {
-      set((state) => {
-        state.tiffAccordionOpen = open;
-      });
-    },
-    setCurrentSelectedTab: (tab: SIDE_PANEL_TAB) => {
-      set((state) => {
-        state.currentSelectedTab = tab;
-      });
-    },
-    setSettingsDialogOpen: (open: boolean) => {
-      set((state) => {
-        state.settingsDialogOpen = open;
-      });
-    },
-  })),
+      setJpegAccordionOpen: (open: boolean) => {
+        set((state) => {
+          state.jpegAccordionOpen = open;
+        });
+      },
+      setPngAccordionOpen: (open: boolean) => {
+        set((state) => {
+          state.pngAccordionOpen = open;
+        });
+      },
+      setWebpAccordionOpen: (open: boolean) => {
+        set((state) => {
+          state.webpAccordionOpen = open;
+        });
+      },
+      setTiffAccordionOpen: (open: boolean) => {
+        set((state) => {
+          state.tiffAccordionOpen = open;
+        });
+      },
+      setCurrentSelectedTab: (tab: SIDE_PANEL_TAB) => {
+        set((state) => {
+          state.currentSelectedTab = tab;
+        });
+      },
+      setSettingsDialogOpen: (open: boolean) => {
+        set((state) => {
+          state.settingsDialogOpen = open;
+        });
+      },
+    })),
+  ),
 );
 
 useUIStore.subscribe((state) => {

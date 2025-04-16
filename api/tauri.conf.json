@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "caesium-image-compressor",
+        "title": "Caesium Image Compressor",
         "width": 1200,
         "height": 900
       }
