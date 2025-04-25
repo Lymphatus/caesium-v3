@@ -13,6 +13,7 @@ function AppMenu() {
     setAutoPreview,
     setShowLabelsInToolbar,
     getAppMenuSelectedItems,
+    setAboutDialogOpen,
   } = useUIStore();
 
   return (
@@ -57,7 +58,12 @@ function AppMenu() {
       >
         {t('actions.donate')}
       </DropdownItem>
-      <DropdownItem key="about" hideSelectedIcon startContent={<Info className="size-4" />}>
+      <DropdownItem
+        key="about"
+        hideSelectedIcon
+        startContent={<Info className="size-4" />}
+        onPress={() => setAboutDialogOpen(true)}
+      >
         {t('actions.about')}
       </DropdownItem>
     </DropdownMenu>

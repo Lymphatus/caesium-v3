@@ -20,6 +20,7 @@ interface UIOptions {
   showPreviewPanel: boolean;
   autoPreview: boolean;
   showLabelsInToolbar: boolean;
+  aboutDialogOpen: boolean;
 
   setSplitPanels: (options: Partial<SplitPanels>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
@@ -31,6 +32,7 @@ interface UIOptions {
   setShowPreviewPanel: (show: boolean) => void;
   setAutoPreview: (autoPreview: boolean) => void;
   setShowLabelsInToolbar: (show: boolean) => void;
+  setAboutDialogOpen: (open: boolean) => void;
 
   getAppMenuSelectedItems: () => string[];
 }
@@ -49,6 +51,7 @@ const defaultOptions = {
   showPreviewPanel: true,
   autoPreview: true,
   showLabelsInToolbar: false,
+  aboutDialogOpen: false,
 };
 
 const useUIStore = create<UIOptions>()(
@@ -104,6 +107,12 @@ const useUIStore = create<UIOptions>()(
       setShowLabelsInToolbar: (show: boolean) => {
         set((state) => {
           state.showLabelsInToolbar = show;
+        });
+      },
+
+      setAboutDialogOpen: (open: boolean) => {
+        set((state) => {
+          state.aboutDialogOpen = open;
         });
       },
 

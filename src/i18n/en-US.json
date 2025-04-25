@@ -22,6 +22,8 @@
   "threads": "Threads",
   "quality": "Quality",
   "size": "Size",
+  "check_for_updates": "Check for updates",
+  "copyright_note": "© SaeraSoft and Matteo Paonessa, all rights reserved",
   "formats": {
     "original": "Same as input",
     "jpeg": "JPEG",
