@@ -3,6 +3,7 @@ import { load } from '@tauri-apps/plugin-store';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION, THEME } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { app } from '@tauri-apps/api';
+import { v4 as uuidv4 } from 'uuid';
 
 interface SettingsOptionsStore {
   theme: THEME;
@@ -16,6 +17,7 @@ interface SettingsOptionsStore {
   postCompressionAction: POST_COMPRESSION_ACTION;
   threadsCount: number;
   threadsPriority: number;
+  uuid: string;
 
   setTheme: (theme: THEME) => void;
   setLanguage: (language: string) => void;
@@ -45,6 +47,7 @@ const defaultOptions = {
   postCompressionAction: POST_COMPRESSION_ACTION.NONE,
   threadsCount: navigator.hardwareConcurrency || 2, //TODO on safari this is limited
   threadsPriority: 4,
+  uuid: uuidv4(),
 };
 
 const useSettingsStore = create<SettingsOptionsStore>()(
@@ -79,12 +82,13 @@ useSettingsStore.subscribe((state) => {
     postCompressionAction: state.postCompressionAction,
     threadsCount: state.threadsCount,
     threadsPriority: state.threadsPriority,
+    uuid: state.uuid,
   };
 
   // Save to Tauri store
   settings
     .set('settings', dataToSave)
-    .then(() => {})
+    .then(() => console.log('Saved to Tauri store'))
     .catch(console.error);
 });
 
