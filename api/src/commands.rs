@@ -2,6 +2,7 @@ use crate::compressor::{preview_cimage, OptionsPayload};
 use crate::scan_files::{compute_base_path, process_files, FileList};
 use crate::AppData;
 use std::cmp::min;
+use std::env;
 use std::path::{absolute, PathBuf};
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
@@ -119,7 +120,12 @@ pub fn change_page(app: tauri::AppHandle, page: usize) {
 }
 
 #[tauri::command]
-pub async fn compress(app: tauri::AppHandle, ids: Vec<String>, options: OptionsPayload, preview: bool) {
+pub async fn compress(
+    app: tauri::AppHandle,
+    ids: Vec<String>,
+    options: OptionsPayload,
+    preview: bool,
+) {
     if preview {
         for id in ids {
             println!("Previewing {}", id);
@@ -133,4 +139,11 @@ pub async fn compress(app: tauri::AppHandle, ids: Vec<String>, options: OptionsP
             app.emit("fileList:updateCImage", result).unwrap(); //TODO
         }
     }
+}
+
+#[tauri::command]
+pub fn get_executable_dir() -> Option<String> {
+    env::current_exe()
+        .ok()
+        .and_then(|p| p.parent().map(|dir| dir.to_string_lossy().to_string()))
 }

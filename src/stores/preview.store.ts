@@ -1,6 +1,12 @@
-import { CImage } from '@/types.ts';
+import { CImage, IMAGE_STATUS } from '@/types.ts';
 import { create } from 'zustand/index';
 import useFileListStore from '@/stores/file-list.store.ts';
+import { invoke } from '@tauri-apps/api/core';
+import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
+import useResizeOptionsStore from '@/stores/resize-options.store.ts';
+import useOutputOptionsStore from '@/stores/output-options.store.ts';
+import { subscribeWithSelector } from 'zustand/middleware';
+import useUIStore from '@/stores/ui.store.ts';
 
 interface PreviewStore {
   isLoading: boolean;
@@ -12,19 +18,43 @@ interface PreviewStore {
   setVisualizationMode: (visualizationMode: 'original' | 'compressed') => void;
 
   getCurrentPreviewedCImage: () => CImage | null;
+  invokePreview: (id: string) => void;
 }
 
-const usePreviewStore = create<PreviewStore>()((set, get) => ({
-  isLoading: false,
-  currentPreviewedCImage: null,
-  visualizationMode: 'original',
+const usePreviewStore = create<PreviewStore>()(
+  subscribeWithSelector((set, get) => ({
+    isLoading: false,
+    currentPreviewedCImage: null,
+    visualizationMode: 'original',
 
-  setIsLoading: (isLoading: boolean) => set({ isLoading }),
-  setCurrentPreviewedCImage: (cImage: CImage | null) => set({ currentPreviewedCImage: cImage }),
-  setVisualizationMode: (visualizationMode: 'original' | 'compressed') => set({ visualizationMode }),
+    setIsLoading: (isLoading: boolean) => set({ isLoading }),
+    setCurrentPreviewedCImage: (cImage: CImage | null) => set({ currentPreviewedCImage: cImage }),
+    setVisualizationMode: (visualizationMode: 'original' | 'compressed') => set({ visualizationMode }),
 
-  getCurrentPreviewedCImage: () => get().currentPreviewedCImage,
-}));
+    getCurrentPreviewedCImage: () => get().currentPreviewedCImage,
+    invokePreview: (id: string) => {
+      useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.COMPRESSING });
+      invoke('compress', {
+        ids: [id],
+        options: {
+          compression_options: useCompressionOptionsStore.getState().getCompressionOptions(),
+          resize_options: useResizeOptionsStore.getState().getResizeOptions(),
+          output_options: useOutputOptionsStore.getState().getOutputOptions(),
+        },
+        preview: true,
+      }).then();
+    },
+  })),
+);
+
+usePreviewStore.subscribe(
+  (state) => state.currentPreviewedCImage?.id,
+  (id) => {
+    if (id && useUIStore.getState().autoPreview && useUIStore.getState().showPreviewPanel) {
+      usePreviewStore.getState().invokePreview(id);
+    }
+  },
+);
 
 useFileListStore.subscribe(
   (state) => state.fileList,

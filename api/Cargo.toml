@@ -34,3 +34,4 @@ indexmap = "2.7"
 tauri-plugin-store = "2"
 libcaesium = "0.17"
 serde_repr = "0.1"
+uuid = { version = "1.16.0", features = ["v4"] }

@@ -2,8 +2,8 @@ import { create } from 'zustand/index';
 import { load } from '@tauri-apps/plugin-store';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION, THEME } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { app } from '@tauri-apps/api';
-import { v4 as uuidv4 } from 'uuid';
+import { app, path } from '@tauri-apps/api';
+import { invoke } from '@tauri-apps/api/core';
 
 interface SettingsOptionsStore {
   theme: THEME;
@@ -17,7 +17,6 @@ interface SettingsOptionsStore {
   postCompressionAction: POST_COMPRESSION_ACTION;
   threadsCount: number;
   threadsPriority: number;
-  uuid: string;
 
   setTheme: (theme: THEME) => void;
   setLanguage: (language: string) => void;
@@ -32,7 +31,8 @@ interface SettingsOptionsStore {
   setThreadsPriority: (threadsPriority: number) => void;
 }
 
-const settings = await load('settings.json', { autoSave: true });
+const exeDir = await invoke<string>('get_executable_dir');
+const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
 const preferences = (await settings.get('settings')) || {};
 
 const defaultOptions = {
@@ -47,7 +47,6 @@ const defaultOptions = {
   postCompressionAction: POST_COMPRESSION_ACTION.NONE,
   threadsCount: navigator.hardwareConcurrency || 2, //TODO on safari this is limited
   threadsPriority: 4,
-  uuid: uuidv4(),
 };
 
 const useSettingsStore = create<SettingsOptionsStore>()(
@@ -82,7 +81,6 @@ useSettingsStore.subscribe((state) => {
     postCompressionAction: state.postCompressionAction,
     threadsCount: state.threadsCount,
     threadsPriority: state.threadsPriority,
-    uuid: state.uuid,
   };
 
   // Save to Tauri store

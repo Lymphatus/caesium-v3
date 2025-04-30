@@ -1,6 +1,8 @@
 import { create } from 'zustand/index';
 import { load } from '@tauri-apps/plugin-store';
 import { FILE_DATE, MOVE_ORIGINAL_FILE, OUTPUT_FORMAT } from '@/types.ts';
+import { invoke } from '@tauri-apps/api/core';
+import { path } from '@tauri-apps/api';
 
 interface OutputOptionsStore {
   outputFolder: string;
@@ -41,7 +43,8 @@ interface OutputOptions {
   suffix: string;
 }
 
-const settings = await load('settings.json', { autoSave: true });
+const exeDir = await invoke<string>('get_executable_dir');
+const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
 const preferences = (await settings.get('compression_options.output')) || {};
 
 const defaultOptions = {

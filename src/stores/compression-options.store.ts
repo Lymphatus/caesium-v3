@@ -2,7 +2,9 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { CHROMA_SUBSAMPLING, COMPRESSION_MODE, TIFF_COMPRESSION_METHOD, TIFF_DEFLATE_LEVEL } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { load, Store } from '@tauri-apps/plugin-store';
+import { load } from '@tauri-apps/plugin-store';
+import { invoke } from '@tauri-apps/api/core';
+import { path } from '@tauri-apps/api';
 
 interface JpegOptions {
   quality: number;
@@ -93,7 +95,8 @@ const defaultValues = {
   keepMetadata: true,
 };
 
-const settings: Store = await load('settings.json', { autoSave: true });
+const exeDir = await invoke<string>('get_executable_dir');
+const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
 const preferences = (await settings.get('compression_options.compression')) || {};
 
 // Create store with default values first

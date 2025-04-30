@@ -17,9 +17,6 @@ import { useTranslation } from 'react-i18next';
 import { sep } from '@tauri-apps/api/path';
 import { Selection } from '@react-types/shared';
 import { invoke } from '@tauri-apps/api/core';
-import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
-import useResizeOptionsStore from '@/stores/resize-options.store.ts';
-import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { CImage, IMAGE_STATUS } from '@/types.ts';
 import { getSavedPercentage } from '@/utils/utils.ts';
 
@@ -60,11 +57,9 @@ function SavedLabel({ cImage }: { cImage: CImage }) {
 }
 
 function FileListTable() {
-  const { fileList, isListLoading, baseFolder, setSelectedItems, selectedItems, updateFile } = useFileListStore();
-  const { setCurrentPreviewedCImage } = usePreviewStore();
-  const { getCompressionOptions } = useCompressionOptionsStore();
-  const { getResizeOptions } = useResizeOptionsStore();
-  const { getOutputOptions } = useOutputOptionsStore();
+  const { fileList, isListLoading, baseFolder, setSelectedItems, selectedItems } = useFileListStore();
+  const { setCurrentPreviewedCImage, invokePreview } = usePreviewStore();
+
   const { t } = useTranslation();
 
   const handleSelectionChange = function (keys: Selection) {
@@ -73,19 +68,6 @@ function FileListTable() {
     // if (selectedItems.length === 0) {
     //   setCurrentPreviewedCImage(selectedItems[0]);
     // }
-  };
-
-  const invokePreview = (id: string) => {
-    updateFile(id, { status: IMAGE_STATUS.COMPRESSING });
-    invoke('compress', {
-      ids: [id],
-      options: {
-        compression_options: getCompressionOptions(),
-        resize_options: getResizeOptions(),
-        output_options: getOutputOptions(),
-      },
-      preview: true,
-    }).then();
   };
 
   return (
@@ -196,7 +178,7 @@ function FileListTable() {
                   title={t('actions.remove')}
                   variant="light"
                   onPress={async () => {
-                    await invoke('remove_items_from_list', { keys: [cImage.id] });
+                    await invoke('remove_items_from_list', { keys: [cImage] });
                   }}
                 >
                   <Delete className="size-4"></Delete>

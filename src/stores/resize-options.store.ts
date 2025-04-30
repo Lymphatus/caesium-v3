@@ -1,6 +1,8 @@
 import { create } from 'zustand/index';
 import { load } from '@tauri-apps/plugin-store';
 import { RESIZE_MODE } from '@/types.ts';
+import { invoke } from '@tauri-apps/api/core';
+import { path } from '@tauri-apps/api';
 
 interface ResizeOptionsStore {
   resizeMode: RESIZE_MODE;
@@ -35,7 +37,8 @@ interface ResizeOptions {
   short_edge: number;
 }
 
-const settings = await load('settings.json', { autoSave: true });
+const exeDir = await invoke<string>('get_executable_dir');
+const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
 const preferences = (await settings.get('compression_options.resize')) || {};
 
 const defaultOptions = {

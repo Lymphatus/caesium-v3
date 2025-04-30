@@ -2,15 +2,19 @@ import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store';
 import appLogo from '@/assets/images/app-icon.png';
-import { app } from '@tauri-apps/api';
-import useSettingsStore from '@/stores/settings.store.ts';
+import { app, path } from '@tauri-apps/api';
+import { load } from '@tauri-apps/plugin-store';
+import { AppPreferences } from '@/types.ts';
+import { invoke } from '@tauri-apps/api/core';
 
 const appVersion = await app.getVersion();
+const exeDir = await invoke<string>('get_executable_dir');
+const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: false });
+const preferences = (await settings.get('app')) as AppPreferences;
 
 function AboutDialog() {
   const { aboutDialogOpen, setAboutDialogOpen } = useUIStore();
   const { t } = useTranslation();
-  const { uuid } = useSettingsStore();
 
   return (
     <Modal
@@ -43,7 +47,7 @@ function AboutDialog() {
               {t('check_for_updates')}
             </Button>
             <div className="flex flex-col items-center justify-center">
-              <small className="font-mono text-xs">UUID: {uuid}</small>
+              <small className="font-mono text-xs">UUID: {preferences.uuid}</small>
               <a
                 className="text-primary text-sm hover:underline"
                 href="https://saerasoft.com/caesium"

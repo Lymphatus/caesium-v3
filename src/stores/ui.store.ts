@@ -3,6 +3,8 @@ import { immer } from 'zustand/middleware/immer';
 import { load } from '@tauri-apps/plugin-store';
 import { SIDE_PANEL_TAB } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
+import { invoke } from '@tauri-apps/api/core';
+import { path } from '@tauri-apps/api';
 
 interface SplitPanels {
   main: number[];
@@ -37,7 +39,8 @@ interface UIOptions {
   getAppMenuSelectedItems: () => string[];
 }
 
-const settings = await load('settings.json', { autoSave: true });
+const exeDir = await invoke<string>('get_executable_dir');
+const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
 const preferences = (await settings.get('ui')) || {};
 
 const defaultOptions = {
@@ -49,7 +52,7 @@ const defaultOptions = {
   currentSelectedTab: SIDE_PANEL_TAB.COMPRESSION,
   settingsDialogOpen: false,
   showPreviewPanel: true,
-  autoPreview: true,
+  autoPreview: false,
   showLabelsInToolbar: false,
   aboutDialogOpen: false,
 };

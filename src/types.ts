@@ -27,6 +27,10 @@ export type ImageLoaderResponse = {
   type: 'original' | 'compressed';
 };
 
+export type AppPreferences = {
+  uuid: string;
+};
+
 export enum IMAGE_STATUS {
   NEW = 0,
   SUCCESS = 1,

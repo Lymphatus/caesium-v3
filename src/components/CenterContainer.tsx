@@ -5,7 +5,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import useUIStore from '@/stores/ui.store.ts';
 
 function CenterContainer() {
-  const { splitPanels, setSplitPanels } = useUIStore();
+  const { splitPanels, setSplitPanels, showPreviewPanel } = useUIStore();
 
   return (
     <div className="center-container p-1">
@@ -21,10 +21,12 @@ function CenterContainer() {
             <Panel defaultSize={splitPanels.center[0]} maxSize={80} minSize={20}>
               <ListPanel></ListPanel>
             </Panel>
-            <PanelResizeHandle className="hover:bg-primary h-1 rounded bg-transparent" />
-            <Panel defaultSize={splitPanels.center[1]} maxSize={80} minSize={20}>
-              <PreviewPanel></PreviewPanel>
-            </Panel>
+            {showPreviewPanel && <PanelResizeHandle className="hover:bg-primary h-1 rounded bg-transparent" />}
+            {showPreviewPanel && (
+              <Panel defaultSize={splitPanels.center[1]} maxSize={80} minSize={20}>
+                <PreviewPanel></PreviewPanel>
+              </Panel>
+            )}
           </PanelGroup>
         </Panel>
         <PanelResizeHandle className="hover:bg-primary w-1 rounded bg-transparent" />
