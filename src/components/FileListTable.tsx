@@ -58,16 +58,13 @@ function SavedLabel({ cImage }: { cImage: CImage }) {
 
 function FileListTable() {
   const { fileList, isListLoading, baseFolder, setSelectedItems, selectedItems } = useFileListStore();
-  const { setCurrentPreviewedCImage, invokePreview } = usePreviewStore();
+  const { setCurrentPreviewedCImage, invokePreview, currentPreviewedCImage } = usePreviewStore();
 
   const { t } = useTranslation();
 
   const handleSelectionChange = function (keys: Selection) {
     const selectedItems = fileList.filter((item) => (keys === 'all' ? true : keys.has(item.id)));
     setSelectedItems(selectedItems);
-    // if (selectedItems.length === 0) {
-    //   setCurrentPreviewedCImage(selectedItems[0]);
-    // }
   };
 
   return (
@@ -93,10 +90,18 @@ function FileListTable() {
         <TableColumn key="status" align="center" width={40}>
           &nbsp;
         </TableColumn>
-        <TableColumn key="name">{t('file_list.filename')}</TableColumn>
-        <TableColumn key="size">{t('file_list.size')}</TableColumn>
-        <TableColumn key="resolution">{t('file_list.resolution')}</TableColumn>
-        <TableColumn key="saved">{t('file_list.saved')}</TableColumn>
+        <TableColumn key="name" allowsSorting>
+          {t('file_list.filename')}
+        </TableColumn>
+        <TableColumn key="size" allowsSorting>
+          {t('file_list.size')}
+        </TableColumn>
+        <TableColumn key="resolution" allowsSorting>
+          {t('file_list.resolution')}
+        </TableColumn>
+        <TableColumn key="saved" allowsSorting>
+          {t('file_list.saved')}
+        </TableColumn>
         <TableColumn key="info">{t('file_list.additional_info')}</TableColumn>
         <TableColumn key="actions" width={40}>
           {t('file_list.actions')}
@@ -104,15 +109,15 @@ function FileListTable() {
       </TableHeader>
       <TableBody
         isLoading={isListLoading}
-        items={fileList}
+        // items={fileList}
         loadingContent={
           <div className="bg-background/50 z-10 flex size-full items-center justify-center">
             <Spinner />
           </div>
         }
       >
-        {(cImage) => (
-          <TableRow key={cImage.id}>
+        {fileList.map((cImage) => (
+          <TableRow key={cImage.id} className={cImage.id === currentPreviewedCImage?.id ? 'bg-default-100' : ''}>
             <TableCell>
               <div className="flex items-center justify-center">
                 <StatusIcon cImage={cImage}></StatusIcon>
@@ -137,7 +142,7 @@ function FileListTable() {
               </div>
             </TableCell>
             <TableCell>
-              <div className="flex items-center gap-1">
+              <div className="flex size-full items-center">
                 <span
                   className={
                     cImage.compressed_width !== 0 &&
@@ -178,7 +183,7 @@ function FileListTable() {
                   title={t('actions.remove')}
                   variant="light"
                   onPress={async () => {
-                    await invoke('remove_items_from_list', { keys: [cImage] });
+                    await invoke('remove_items_from_list', { keys: [cImage.id] });
                   }}
                 >
                   <Delete className="size-4"></Delete>
@@ -186,7 +191,7 @@ function FileListTable() {
               </div>
             </TableCell>
           </TableRow>
-        )}
+        ))}
       </TableBody>
     </Table>
   );

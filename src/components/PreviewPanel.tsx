@@ -153,28 +153,42 @@ function PreviewPanel() {
               </TransformComponent>
 
               <div className="bg-content1 flex h-[40px] w-full items-center justify-between rounded-b-sm p-1">
-                <div>{currentPreviewedCImage && prettyBytes(currentPreviewedCImage.size)}</div>
                 <div className="flex items-center gap-1">
-                  <span>{visualizationMode}</span>
                   <Button
                     disableRipple
-                    isIconOnly
+                    className="text-sm"
                     isDisabled={!currentPreviewedCImage?.compressed_file_path}
                     size="sm"
-                    title={t('actual_size')}
-                    variant="light"
+                    title={t('swap')}
+                    variant="faded"
                     onPress={() => {
                       setVisualizationMode(visualizationMode === 'original' ? 'compressed' : 'original');
                     }}
                   >
-                    <ArrowLeftRight className="size-4"></ArrowLeftRight>
+                    <ArrowLeftRight className="size-4"></ArrowLeftRight> <span>{t('swap')}</span>
                   </Button>
+                  <span className="text-sm uppercase">
+                    [{visualizationMode === 'original' ? t('original') : t('compressed')}]
+                  </span>
+                  <div>
+                    {currentPreviewedCImage &&
+                      visualizationMode === 'original' &&
+                      prettyBytes(currentPreviewedCImage.size)}
+                  </div>
+                  <div>
+                    {currentPreviewedCImage &&
+                      visualizationMode === 'compressed' &&
+                      prettyBytes(currentPreviewedCImage.compressed_size)}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1">
                   <Button
                     disableRipple
                     isIconOnly
                     size="sm"
                     title={t('fit_container')}
-                    variant="light"
+                    variant="faded"
                     onPress={() => {
                       fitContentToWrapper(centerView);
                     }}
@@ -186,7 +200,7 @@ function PreviewPanel() {
                     isIconOnly
                     size="sm"
                     title={t('actual_size')}
-                    variant="light"
+                    variant="faded"
                     onPress={() => {
                       centerView(1);
                     }}
