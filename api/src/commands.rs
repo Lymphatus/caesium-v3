@@ -1,6 +1,8 @@
 use crate::compressor::{preview_cimage, OptionsPayload};
 use crate::scan_files::{compute_base_path, process_files, FileList};
-use crate::AppData;
+use crate::{AppData, CImage};
+use rayon::iter::ParallelIterator;
+use rayon::prelude::*;
 use std::cmp::min;
 use std::env;
 use std::path::{absolute, PathBuf};
@@ -126,16 +128,27 @@ pub async fn compress(
     options: OptionsPayload,
     preview: bool,
 ) {
+    // rayon::ThreadPoolBuilder::new().num_threads(8);
     if preview {
-        for id in ids {
-            println!("Previewing {}", id);
-            let state = app.state::<Mutex<AppData>>();
-            let mut state = state.lock().unwrap(); //TODO
-            let cimage = state.file_list.get(id.as_str()).unwrap(); //TODO
-            let result = preview_cimage(&app, cimage.clone(), options.clone());
+        let state = app.state::<Mutex<AppData>>();
+        let state = state.lock().unwrap(); //TODO
 
+        let images: Vec<CImage> = ids
+            .iter()
+            .map(|id| state.file_list.get(id.as_str()).cloned().unwrap())
+            .collect();
+
+        drop(state);
+
+        let results: Vec<_> = images
+            .par_iter()
+            .map(|cimage| preview_cimage(&app, cimage, &options))
+            .collect();
+
+        let state = app.state::<Mutex<AppData>>();
+        let mut state = state.lock().unwrap(); //TODO
+        for result in results {
             state.file_list.replace(result.clone().cimage);
-
             app.emit("fileList:updateCImage", result).unwrap(); //TODO
         }
     }

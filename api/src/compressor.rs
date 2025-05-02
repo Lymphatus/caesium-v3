@@ -105,11 +105,11 @@ enum ResizeMode {
 // TODO I don't like using the payload here
 pub fn preview_cimage(
     app: &tauri::AppHandle,
-    cimage: CImage,
-    options: OptionsPayload,
+    cimage: &CImage,
+    options: &OptionsPayload,
 ) -> CompressionResult {
-    let filename = options_payload_to_sha256(&cimage.id, &options);
-    let mut parameters = parse_compression_options(&options, &cimage);
+    let filename = options_payload_to_sha256(&cimage.id, options);
+    let mut parameters = parse_compression_options(options, &cimage);
     let output_path = app.path().resolve(filename, BaseDirectory::Temp).unwrap(); //TODO
 
     println!("Preview in: {:?}", output_path);
@@ -140,7 +140,7 @@ pub fn preview_cimage(
             status: CompressionStatus::Error,
             cimage: CImage {
                 status: ImageStatus::Error,
-                ..cimage
+                ..cimage.clone()
             }
         };
     }
@@ -161,7 +161,7 @@ pub fn preview_cimage(
             compressed_file_path: output_path.display().to_string(),
             info: String::new(),
             status: ImageStatus::Success,
-            ..cimage
+            ..cimage.clone()
         },
     }
 }

@@ -428,6 +428,7 @@ dependencies = [
  "indexmap 2.9.0",
  "kamadak-exif",
  "libcaesium",
+ "rayon",
  "serde",
  "serde_json",
  "serde_repr",

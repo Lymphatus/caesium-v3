@@ -142,20 +142,20 @@ function FileListTable() {
               </div>
             </TableCell>
             <TableCell>
-              <div className="flex size-full items-center">
+              <div className="flex size-full items-center gap-1">
                 <span
                   className={
                     cImage.compressed_width !== 0 &&
-                    cImage.compressed_height == 0 &&
+                    cImage.compressed_height !== 0 &&
                     (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height)
                       ? 'text-default-400 line-through'
                       : ''
                   }
                 >{`${cImage.width}x${cImage.height}`}</span>
                 {cImage.compressed_width !== 0 &&
-                  cImage.compressed_height == 0 &&
+                  cImage.compressed_height !== 0 &&
                   (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height) && (
-                    <span>{`${cImage.width}x${cImage.height}`}</span>
+                    <span>{`${cImage.compressed_width}x${cImage.compressed_height}`}</span>
                   )}
               </div>
             </TableCell>
