@@ -25,9 +25,8 @@ function PreviewCanvas() {
   const canvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
   const compressedCanvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
 
-  const { currentPreviewedCImage, visualizationMode, setIsLoading, setVisualizationMode, invokePreview } =
-    usePreviewStore();
-  const { showPreviewPanel, autoPreview } = useUIStore();
+  const { currentPreviewedCImage, visualizationMode, setIsLoading, setVisualizationMode } = usePreviewStore();
+  const { showPreviewPanel } = useUIStore();
 
   useEffect(() => {
     if (!showPreviewPanel) {
@@ -65,9 +64,6 @@ function PreviewCanvas() {
 
     if (currentPreviewedCImage) {
       setIsLoading(true);
-      if (autoPreview) {
-        invokePreview(currentPreviewedCImage);
-      }
       if (visualizationMode === 'compressed' && !currentPreviewedCImage?.compressed_file_path) {
         setVisualizationMode('original');
       }

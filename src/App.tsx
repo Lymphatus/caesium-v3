@@ -10,9 +10,10 @@ import { addToast } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 import AboutDialog from './components/dialogs/AboutDialog';
+import { invoke } from '@tauri-apps/api/core';
 
 function App() {
-  const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress, updateFile } =
+  const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress, updateFile, currentPage } =
     useFileListStore();
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
@@ -59,6 +60,8 @@ function App() {
         usePreviewStore.setState({ currentPreviewedCImage: cimage });
       }
     });
+
+    invoke('change_page', { page: currentPage }).then();
 
     return () => {
       Promise.all([

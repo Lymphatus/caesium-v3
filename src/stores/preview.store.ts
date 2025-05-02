@@ -18,7 +18,7 @@ interface PreviewStore {
   setVisualizationMode: (visualizationMode: 'original' | 'compressed') => void;
 
   getCurrentPreviewedCImage: () => CImage | null;
-  invokePreview: (id: string) => void;
+  invokePreview: (ids: string[]) => void;
 }
 
 const usePreviewStore = create<PreviewStore>()(
@@ -32,10 +32,12 @@ const usePreviewStore = create<PreviewStore>()(
     setVisualizationMode: (visualizationMode: 'original' | 'compressed') => set({ visualizationMode }),
 
     getCurrentPreviewedCImage: () => get().currentPreviewedCImage,
-    invokePreview: (id: string) => {
-      useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.COMPRESSING });
+    invokePreview: (ids: string[]) => {
+      for (const id of ids) {
+        useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.COMPRESSING });
+      }
       invoke('compress', {
-        ids: [id],
+        ids,
         options: {
           compression_options: useCompressionOptionsStore.getState().getCompressionOptions(),
           resize_options: useResizeOptionsStore.getState().getResizeOptions(),
@@ -51,7 +53,7 @@ usePreviewStore.subscribe(
   (state) => state.currentPreviewedCImage?.id,
   (id) => {
     if (id && useUIStore.getState().autoPreview && useUIStore.getState().showPreviewPanel) {
-      usePreviewStore.getState().invokePreview(id);
+      usePreviewStore.getState().invokePreview([id]);
     }
   },
 );

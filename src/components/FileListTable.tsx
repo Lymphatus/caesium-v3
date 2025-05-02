@@ -168,10 +168,11 @@ function FileListTable() {
                 <Button
                   disableRipple
                   isIconOnly
+                  isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING}
                   size="sm"
                   title={t('actions.preview')}
                   variant="light"
-                  onPress={() => invokePreview(cImage.id)}
+                  onPress={() => invokePreview([cImage.id])}
                 >
                   <Search className="size-4"></Search>
                 </Button>
@@ -179,6 +180,7 @@ function FileListTable() {
                   disableRipple
                   isIconOnly
                   color="danger"
+                  isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING}
                   size="sm"
                   title={t('actions.remove')}
                   variant="light"

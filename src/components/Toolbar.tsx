@@ -5,10 +5,12 @@ import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
 import { Button, Divider, Dropdown, DropdownTrigger } from '@heroui/react';
 import AppMenu from '@/components/AppMenu.tsx';
+import usePreviewStore from '@/stores/preview.store.ts';
 
 function Toolbar() {
   const { openPickerDialogs, fileList, selectedItems } = useFileListStore();
   const { setSettingsDialogOpen, showLabelsInToolbar } = useUIStore();
+  const { invokePreview } = usePreviewStore();
   const { t } = useTranslation();
 
   return (
@@ -75,6 +77,7 @@ function Toolbar() {
           size="sm"
           title={t('actions.preview')}
           variant="light"
+          onPress={() => invokePreview(selectedItems.map((c) => c.id))}
         >
           <Search className="size-5"></Search>
           {showLabelsInToolbar && <span>{t('actions.preview')}</span>}
