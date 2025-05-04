@@ -51,6 +51,8 @@ struct ResizeOptions {
     do_not_enlarge: bool,
     width: u32,
     height: u32,
+    width_percentage: u32,
+    height_percentage: u32,
     long_edge: u32,
     short_edge: u32,
 }
@@ -189,9 +191,9 @@ fn parse_compression_options(options: &OptionsPayload, cimage: &CImage) -> CSPar
             parameters.height = options.resize_options.height;
         } else if matches!(resize_mode, ResizeMode::Percentage) {
             parameters.width =
-                f64::from(options.resize_options.width * cimage.width as u32 / 100).round() as u32;
+                f64::from(options.resize_options.width_percentage * cimage.width as u32 / 100).round() as u32;
             parameters.height =
-                f64::from(options.resize_options.height * cimage.height as u32 / 100).round()
+                f64::from(options.resize_options.height_percentage * cimage.height as u32 / 100).round()
                     as u32;
         } else if matches!(resize_mode, ResizeMode::ShortEdge) {
             if cimage.width > cimage.height {

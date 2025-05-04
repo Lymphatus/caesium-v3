@@ -140,17 +140,13 @@ pub async fn compress(
 
         drop(state);
 
-        let results: Vec<_> = images
-            .par_iter()
-            .map(|cimage| preview_cimage(&app, cimage, &options))
-            .collect();
-
-        let state = app.state::<Mutex<AppData>>();
-        let mut state = state.lock().unwrap(); //TODO
-        for result in results {
+        images.par_iter().for_each(|cimage| {
+            let result = preview_cimage(&app, cimage, &options);
+            let state = app.state::<Mutex<AppData>>();
+            let mut state = state.lock().unwrap(); //TODO
             state.file_list.replace(result.clone().cimage);
             app.emit("fileList:updateCImage", result).unwrap(); //TODO
-        }
+        });
     }
 }
 

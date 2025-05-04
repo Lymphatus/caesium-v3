@@ -77,6 +77,7 @@ function FileListTable() {
       classNames={{
         base: 'h-full justify-between overflow-auto',
         th: 'h-8 first:rounded-b-none first:rounded-t-sm last:rounded-b-none last:rounded-t-sm [&:first-child]:w-[32px]',
+        td: 'text-nowrap',
       }}
       layout="auto"
       radius="sm"
@@ -128,41 +129,45 @@ function FileListTable() {
               <span>{cImage.name}</span>
             </TableCell>
             <TableCell>
-              <div className="flex items-center gap-1">
+              <div className="flex flex-nowrap items-center gap-1">
                 <span
                   className={
                     cImage.compressed_size && cImage.compressed_size !== cImage.size
-                      ? 'text-default-400 line-through'
-                      : ''
+                      ? 'text-default-400 text-nowrap line-through'
+                      : 'text-nowrap'
                   }
                 >
                   {prettyBytes(cImage.size)}
                 </span>
-                {cImage.compressed_size !== 0 && <span>{prettyBytes(cImage.compressed_size)}</span>}
+                {cImage.compressed_size !== 0 && (
+                  <span className="text-nowrap">{prettyBytes(cImage.compressed_size)}</span>
+                )}
               </div>
             </TableCell>
             <TableCell>
-              <div className="flex size-full items-center gap-1">
+              <div className="flex size-full flex-nowrap items-center gap-1">
                 <span
                   className={
                     cImage.compressed_width !== 0 &&
                     cImage.compressed_height !== 0 &&
                     (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height)
-                      ? 'text-default-400 line-through'
-                      : ''
+                      ? 'text-default-400 text-nowrap line-through'
+                      : 'text-nowrap'
                   }
                 >{`${cImage.width}x${cImage.height}`}</span>
                 {cImage.compressed_width !== 0 &&
                   cImage.compressed_height !== 0 &&
                   (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height) && (
-                    <span>{`${cImage.compressed_width}x${cImage.compressed_height}`}</span>
+                    <span className="text-nowrap">{`${cImage.compressed_width}x${cImage.compressed_height}`}</span>
                   )}
               </div>
             </TableCell>
             <TableCell>
               <SavedLabel cImage={cImage} />
             </TableCell>
-            <TableCell>{cImage.info}</TableCell>
+            <TableCell>
+              <span>{cImage.info}</span>
+            </TableCell>
             <TableCell>
               <div className="flex items-center justify-between gap-1">
                 <Button

@@ -72,6 +72,8 @@ const useResizeOptionsStore = create<ResizeOptionsStore>()((set, get) => ({
     do_not_enlarge: get().doNotEnlarge,
     width: get().width,
     height: get().height,
+    width_percentage: get().widthPercentage,
+    height_percentage: get().heightPercentage,
     long_edge: get().dimension,
     short_edge: get().dimension,
   }),

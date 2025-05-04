@@ -44,7 +44,11 @@ const usePreviewStore = create<PreviewStore>()(
           output_options: useOutputOptionsStore.getState().getOutputOptions(),
         },
         preview: true,
-      }).then();
+      }).catch((e) => {
+        for (const id of ids) {
+          useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.ERROR, info: e.toString() }); //TODO maybe we don't need to set all of them as errors
+        }
+      });
     },
   })),
 );
