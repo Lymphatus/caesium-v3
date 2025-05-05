@@ -21,7 +21,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.5.0",
-    "i18next": "^24.2.3",
+    "i18next": "^25.0.2",
     "immer": "^10.1.1",
     "lucide-react": "^0.507.0",
     "pretty-bytes": "^7.0.0",
