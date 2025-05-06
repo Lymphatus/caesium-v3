@@ -11,14 +11,14 @@ use tauri::{Emitter, Manager};
 use tauri_plugin_dialog::DialogExt;
 
 #[tauri::command]
-pub fn open_import_folder_dialog(app: tauri::AppHandle) {
+pub fn open_import_folder_dialog(app: tauri::AppHandle, recursive: bool) {
     app.dialog().file().pick_folder(move |f| {
         let folders = match f {
             Some(a) => vec![a],
             None => return,
         };
 
-        process_files(&app, folders);
+        process_files(&app, folders, recursive);
     })
 }
 #[tauri::command]
@@ -28,7 +28,7 @@ pub fn open_import_files_dialog(app: tauri::AppHandle) {
             Some(a) => a,
             None => return,
         };
-        process_files(&app, files);
+        process_files(&app, files, false);
     });
 }
 

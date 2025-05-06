@@ -3,6 +3,7 @@ import { CImage } from '@/types.ts';
 import { invoke } from '@tauri-apps/api/core';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import useSettingsStore from '@/stores/settings.store.ts';
 
 interface FileListStore {
   fileList: CImage[];
@@ -46,7 +47,8 @@ const useFileListStore = create<FileListStore>()(
         if (type === 'files') {
           await invoke('open_import_files_dialog');
         } else {
-          await invoke('open_import_folder_dialog');
+          const recursive = useSettingsStore.getState().importSubfolderOnInput;
+          await invoke('open_import_folder_dialog', { recursive });
         }
       },
       setFileList: (files: CImage[]) => set({ fileList: files }),

@@ -50,11 +50,11 @@ fn is_valid(entry: &Path) -> bool {
     entry.exists() && entry.is_file() && is_filetype_supported(entry)
 }
 
-pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>) {
+pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>, recursive: bool) {
     app.emit("fileImporter:importStarted", ()).unwrap(); //TODO
     let state = app.state::<Mutex<AppData>>();
     let mut state = state.lock().unwrap();
-    let (base_folder, imported_files) = scan_files(&file_paths, &state.base_path, false);
+    let (base_folder, imported_files) = scan_files(&file_paths, &state.base_path, recursive);
 
     state.base_path = base_folder;
 

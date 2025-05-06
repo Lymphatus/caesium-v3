@@ -75,13 +75,13 @@ function GeneralSettings() {
           <div className="flex flex-col">
             <span>{t('settings.prompt_on_exit')}</span>
           </div>
-          <Switch isSelected={checkUpdatesAtStartup} size="sm" onValueChange={setCheckUpdatesAtStartup}></Switch>
+          <Switch isSelected={promptBeforeExit} size="sm" onValueChange={setPromptBeforeExit}></Switch>
         </div>
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
             <span>{t('settings.auto_check_updates')}</span>
           </div>
-          <Switch isSelected={promptBeforeExit} size="sm" onValueChange={setPromptBeforeExit}></Switch>
+          <Switch isSelected={checkUpdatesAtStartup} size="sm" onValueChange={setCheckUpdatesAtStartup}></Switch>
         </div>
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">

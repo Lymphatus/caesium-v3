@@ -4,19 +4,26 @@ import Footer from '@/components/Footer.tsx';
 import ImportDialog from '@/components/dialogs/ImportDialog.tsx';
 import CenterContainer from '@/components/CenterContainer.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
-import { listen } from '@tauri-apps/api/event';
+import { listen, TauriEvent } from '@tauri-apps/api/event';
 import { CImage } from '@/types.ts';
-import { addToast } from '@heroui/react';
+import { addToast, Button } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 import AboutDialog from './components/dialogs/AboutDialog';
 import { invoke } from '@tauri-apps/api/core';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import useSettingsStore from '@/stores/settings.store.ts';
+import useUIStore from '@/stores/ui.store.ts';
+import AskDialog from '@/components/dialogs/AskDialog.tsx';
+import { useTranslation } from 'react-i18next';
 
 function App() {
   const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress, updateFile, currentPage } =
     useFileListStore();
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
+  const { setPromptExitDialogOpen } = useUIStore();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const importFinishedListener = listen('fileImporter:importFinished', () => {
@@ -61,6 +68,23 @@ function App() {
       }
     });
 
+    const closeRequestedListener = getCurrentWindow().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async (event) => {
+      console.log(event);
+      if (useSettingsStore.getState().promptBeforeExit) {
+        console.log('prompt');
+        setPromptExitDialogOpen(true);
+        // const confirmation = confirm('Uscire?');
+        // if (confirmation) {
+        //   (await closeRequestedListener)();
+        //   await getCurrentWindow().close();
+        // }
+      } else {
+        console.log('no prompt');
+        //Avoid infinite loop
+        await getCurrentWindow().destroy();
+      }
+    });
+
     invoke('change_page', { page: currentPage }).then();
 
     return () => {
@@ -70,6 +94,7 @@ function App() {
         importStartedListener,
         importProgressListener,
         updateCImageListener,
+        closeRequestedListener,
       ]).then((cleanupFns) => {
         cleanupFns.forEach((cleanupFn) => cleanupFn());
       });
@@ -85,6 +110,17 @@ function App() {
       <ImportDialog></ImportDialog>
       <SettingsDialog></SettingsDialog>
       <AboutDialog></AboutDialog>
+      <AskDialog
+        buttons={
+          <>
+            <Button disableRipple color="primary" onPress={async () => await getCurrentWindow().destroy()}>
+              {t('affirmative_answer')}
+            </Button>
+            <Button onPress={() => setPromptExitDialogOpen(false)}>{t('negative_answer')}</Button>
+          </>
+        }
+        message={t('confirm_exit_message')}
+      ></AskDialog>
     </>
   );
 }

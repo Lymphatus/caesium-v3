@@ -25,6 +25,9 @@
   "size": "Size",
   "check_for_updates": "Check for updates",
   "copyright_note": "© SaeraSoft and Matteo Paonessa, all rights reserved",
+  "confirm_exit_message": "Are you sure you want to exit?",
+  "affirmative_answer": "Yes",
+  "negative_answer": "No",
   "formats": {
     "original": "Same as input",
     "jpeg": "JPEG",
