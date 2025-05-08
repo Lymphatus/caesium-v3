@@ -28,6 +28,7 @@ function App() {
   useEffect(() => {
     const importFinishedListener = listen('fileImporter:importFinished', () => {
       setIsImporting(false);
+      //TODO correct text and translation
       addToast({
         title: 'Import finished',
         description: 'Imported a few files',
@@ -71,15 +72,8 @@ function App() {
     const closeRequestedListener = getCurrentWindow().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async (event) => {
       console.log(event);
       if (useSettingsStore.getState().promptBeforeExit) {
-        console.log('prompt');
         setPromptExitDialogOpen(true);
-        // const confirmation = confirm('Uscire?');
-        // if (confirmation) {
-        //   (await closeRequestedListener)();
-        //   await getCurrentWindow().close();
-        // }
       } else {
-        console.log('no prompt');
         //Avoid infinite loop
         await getCurrentWindow().destroy();
       }
@@ -116,7 +110,9 @@ function App() {
             <Button disableRipple color="primary" onPress={async () => await getCurrentWindow().destroy()}>
               {t('affirmative_answer')}
             </Button>
-            <Button onPress={() => setPromptExitDialogOpen(false)}>{t('negative_answer')}</Button>
+            <Button disableRipple onPress={() => setPromptExitDialogOpen(false)}>
+              {t('negative_answer')}
+            </Button>
           </>
         }
         message={t('confirm_exit_message')}
