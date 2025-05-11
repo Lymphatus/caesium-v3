@@ -36,3 +36,4 @@ libcaesium = "0.17"
 serde_repr = "0.1"
 uuid = { version = "1.16.0", features = ["v4"] }
 rayon = "1.10"
+tauri-plugin-os = "2"

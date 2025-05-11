@@ -6,11 +6,11 @@ type AskDialogProps = {
   title?: string;
   message?: string;
   buttons?: ReactNode;
+  isOpen: boolean;
 };
 
-function AskDialog({ title, message, buttons }: AskDialogProps) {
-  const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
-
+function AskDialog({ title, message, buttons, isOpen }: AskDialogProps) {
+  const { setPromptExitDialogOpen } = useUIStore();
   return (
     <Modal
       isDismissable
@@ -18,7 +18,7 @@ function AskDialog({ title, message, buttons }: AskDialogProps) {
       classNames={{
         backdrop: 'bg-content3/50',
       }}
-      isOpen={promptExitDialogOpen}
+      isOpen={isOpen}
       shadow="none"
       size="sm"
       onClose={() => setPromptExitDialogOpen(false)}

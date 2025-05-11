@@ -46,7 +46,7 @@ function AdvancedSettings() {
           label={
             <div className="flex flex-col">
               <span>{t('settings.direct_import_action')}</span>
-              <small className="text-default-500">{t('settings.direct_import_action_help')}</small>
+              <span className="text-default-500 text-sm">{t('settings.direct_import_action_help')}</span>
             </div>
           }
           labelPlacement="outside-left"
@@ -74,7 +74,7 @@ function AdvancedSettings() {
           label={
             <div className="flex flex-col">
               <span>{t('settings.post_compression_action')}</span>
-              <small className="text-default-500">{t('settings.post_compression_action_help')}</small>
+              <span className="text-default-500 text-sm">{t('settings.post_compression_action_help')}</span>
             </div>
           }
           labelPlacement="outside-left"
@@ -93,7 +93,7 @@ function AdvancedSettings() {
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
             <span>{t('settings.max_compression_threads')}</span>
-            {/*<small className="text-default-500">{t('settings.send_usage_statistics_help')}</small>*/}
+            {/*<span className="text-default-500 text-sm">{t('settings.send_usage_statistics_help')}</span>*/}
           </div>
           <Slider
             aria-label={t('settings.max_compression_threads')}
@@ -119,7 +119,7 @@ function AdvancedSettings() {
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
             <span>{t('settings.threads_priority')}</span>
-            {/*<small className="text-default-500">{t('settings.send_usage_statistics_help')}</small>*/}
+            {/*<span className="text-default-500 text-sm">{t('settings.send_usage_statistics_help')}</span>*/}
           </div>
           <Slider
             hideValue

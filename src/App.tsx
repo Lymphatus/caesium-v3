@@ -22,7 +22,8 @@ function App() {
     useFileListStore();
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
-  const { setPromptExitDialogOpen } = useUIStore();
+  const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
+  const { skipMessagesAndDialogs } = useSettingsStore();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -69,9 +70,8 @@ function App() {
       }
     });
 
-    const closeRequestedListener = getCurrentWindow().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async (event) => {
-      console.log(event);
-      if (useSettingsStore.getState().promptBeforeExit) {
+    const closeRequestedListener = getCurrentWindow().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {
+      if (useSettingsStore.getState().promptBeforeExit && !useSettingsStore.getState().skipMessagesAndDialogs) {
         setPromptExitDialogOpen(true);
       } else {
         //Avoid infinite loop
@@ -115,6 +115,7 @@ function App() {
             </Button>
           </>
         }
+        isOpen={promptExitDialogOpen && !skipMessagesAndDialogs}
         message={t('confirm_exit_message')}
       ></AskDialog>
     </>

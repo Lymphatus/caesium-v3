@@ -143,7 +143,7 @@ pub fn preview_cimage(
             cimage: CImage {
                 status: ImageStatus::Error,
                 ..cimage.clone()
-            }
+            },
         };
     }
     let output_path = Path::new(&output_path);
@@ -191,10 +191,11 @@ fn parse_compression_options(options: &OptionsPayload, cimage: &CImage) -> CSPar
             parameters.height = options.resize_options.height;
         } else if matches!(resize_mode, ResizeMode::Percentage) {
             parameters.width =
-                f64::from(options.resize_options.width_percentage * cimage.width as u32 / 100).round() as u32;
+                f64::from(options.resize_options.width_percentage * cimage.width as u32 / 100)
+                    .round() as u32;
             parameters.height =
-                f64::from(options.resize_options.height_percentage * cimage.height as u32 / 100).round()
-                    as u32;
+                f64::from(options.resize_options.height_percentage * cimage.height as u32 / 100)
+                    .round() as u32;
         } else if matches!(resize_mode, ResizeMode::ShortEdge) {
             if cimage.width > cimage.height {
                 parameters.height = options.resize_options.short_edge;

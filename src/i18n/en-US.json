@@ -28,6 +28,8 @@
   "confirm_exit_message": "Are you sure you want to exit?",
   "affirmative_answer": "Yes",
   "negative_answer": "No",
+  "usage_stats": "Usage stats",
+  "copy": "Copy",
   "formats": {
     "original": "Same as input",
     "jpeg": "JPEG",

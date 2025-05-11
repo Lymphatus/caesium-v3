@@ -12,7 +12,7 @@ function ImportSettings() {
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
             <span>{t('settings.scan_subfolders_on_import')}</span>
-            <small className="text-default-500">{t('settings.scan_subfolders_on_import_help')}</small>
+            <span className="text-default-500 text-sm">{t('settings.scan_subfolders_on_import_help')}</span>
           </div>
           <Switch isSelected={importSubfolderOnInput} size="sm" onValueChange={setImportSubfolderOnInput}></Switch>
         </div>

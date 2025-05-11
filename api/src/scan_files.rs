@@ -230,7 +230,7 @@ pub fn map_file(file: &PathBuf) -> Option<CImage> {
         compressed_size: 0,
         compressed_file_path: String::new(),
         info: String::new(),
-        status: ImageStatus::New
+        status: ImageStatus::New,
     };
 
     Some(cimage)
