@@ -10,6 +10,7 @@ function AdvancedSettings() {
     postCompressionAction,
     threadsCount,
     threadsPriority,
+    maxThreads,
     setDirectImportAction,
     setPostCompressionAction,
     setThreadsCount,
@@ -31,6 +32,8 @@ function AdvancedSettings() {
       label: t('settings.post_compression_actions.open_output_folder'),
     },
   ];
+
+  const threadsValue = Math.min(threadsCount, maxThreads);
   return (
     <div className="h-full">
       <div className="flex size-full flex-col gap-4">
@@ -101,12 +104,12 @@ function AdvancedSettings() {
             classNames={{
               label: 'text-sm',
             }}
-            endContent={<span>{threadsCount}</span>}
-            maxValue={navigator.hardwareConcurrency || 2}
+            endContent={<span>{threadsValue}</span>}
+            maxValue={maxThreads}
             minValue={1}
             size="sm"
             step={1}
-            value={threadsCount}
+            value={threadsValue}
             onChange={(v) => {
               if (Array.isArray(v)) {
                 v = v[0];

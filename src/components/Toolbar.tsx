@@ -8,7 +8,7 @@ import AppMenu from '@/components/AppMenu.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 
 function Toolbar() {
-  const { openPickerDialogs, fileList, selectedItems } = useFileListStore();
+  const { openPickerDialogs, fileList, selectedItems, invokeCompress } = useFileListStore();
   const { setSettingsDialogOpen, showLabelsInToolbar } = useUIStore();
   const { invokePreview } = usePreviewStore();
   const { t } = useTranslation();
@@ -90,6 +90,7 @@ function Toolbar() {
           size="sm"
           title={t('actions.compress')}
           variant="light"
+          onPress={() => invokeCompress()}
         >
           <Play className="size-5"></Play>
           {showLabelsInToolbar && <span>{t('actions.compress')}</span>}

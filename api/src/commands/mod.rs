@@ -1,3 +1,5 @@
+pub(crate) mod post_compression_actions;
+
 use crate::compressor::{preview_cimage, OptionsPayload};
 use crate::scan_files::{compute_base_path, process_files, FileList};
 use crate::{AppData, CImage};
@@ -5,6 +7,7 @@ use rayon::iter::ParallelIterator;
 use rayon::prelude::*;
 use std::cmp::min;
 use std::env;
+use std::num::NonZero;
 use std::path::{absolute, PathBuf};
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
@@ -155,4 +158,11 @@ pub fn get_executable_dir() -> Option<String> {
     env::current_exe()
         .ok()
         .and_then(|p| p.parent().map(|dir| dir.to_string_lossy().to_string()))
+}
+
+#[tauri::command]
+pub fn get_max_threads() -> usize {
+    std::thread::available_parallelism()
+        .unwrap_or(NonZero::new(1).unwrap())
+        .get()
 }

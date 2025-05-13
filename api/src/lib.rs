@@ -1,7 +1,8 @@
 use crate::commands::{
     change_page, clear_list, compress, get_executable_dir, open_import_files_dialog,
-    open_import_folder_dialog, remove_items_from_list,
+    open_import_folder_dialog, remove_items_from_list, get_max_threads
 };
+use crate::commands::post_compression_actions::exec_post_compression_action;
 use crate::config::set_app_id;
 use indexmap::IndexSet;
 use serde_repr::*;
@@ -99,7 +100,9 @@ pub fn run() {
             change_page,
             remove_items_from_list,
             compress,
-            get_executable_dir
+            get_executable_dir,
+            get_max_threads,
+            exec_post_compression_action
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

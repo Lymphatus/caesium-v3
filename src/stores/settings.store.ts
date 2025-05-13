@@ -17,6 +17,7 @@ interface SettingsOptionsStore {
   postCompressionAction: POST_COMPRESSION_ACTION;
   threadsCount: number;
   threadsPriority: number;
+  maxThreads: number;
 
   setTheme: (theme: THEME) => void;
   setLanguage: (language: string) => void;
@@ -34,6 +35,7 @@ interface SettingsOptionsStore {
 const exeDir = await invoke<string>('get_executable_dir');
 const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
 const preferences = (await settings.get('settings')) || {};
+const maxThreads = (await invoke<number>('get_max_threads')) || 1;
 
 const defaultOptions = {
   theme: THEME.SYSTEM,
@@ -45,7 +47,7 @@ const defaultOptions = {
   importSubfolderOnInput: true,
   directImportAction: DIRECT_IMPORT_ACTION.IMPORT,
   postCompressionAction: POST_COMPRESSION_ACTION.NONE,
-  threadsCount: navigator.hardwareConcurrency || 2, //TODO on safari this is limited
+  threadsCount: maxThreads,
   threadsPriority: 4,
 };
 
@@ -53,6 +55,7 @@ const useSettingsStore = create<SettingsOptionsStore>()(
   subscribeWithSelector((set) => ({
     ...defaultOptions,
     ...preferences,
+    maxThreads: maxThreads,
     setTheme: (theme: THEME) => set({ theme }),
     setLanguage: (language: string) => set({ language }),
     setCheckUpdatesAtStartup: (checkUpdatesAtStartup: boolean) => set({ checkUpdatesAtStartup }),

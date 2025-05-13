@@ -4,6 +4,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import useSettingsStore from '@/stores/settings.store.ts';
+import { execPostCompressionAction } from '@/utils/post-compression-actions.ts';
 
 interface FileListStore {
   fileList: CImage[];
@@ -27,6 +28,8 @@ interface FileListStore {
   setIsListLoading: (isListLoading: boolean) => void;
   setSelectedItems: (items: CImage[]) => void;
   updateFile: (id: string, updatedData: Partial<CImage>) => void;
+
+  invokeCompress: (ids?: string[]) => void;
 }
 
 const useFileListStore = create<FileListStore>()(
@@ -59,6 +62,14 @@ const useFileListStore = create<FileListStore>()(
       setImportProgress: (progress: number) => set({ importProgress: progress }),
       setIsListLoading: (isListLoading: boolean) => set({ isListLoading }),
       setSelectedItems: (items: CImage[]) => set({ selectedItems: items }),
+      invokeCompress: async (ids?: string[]) => {
+        new Promise<void>((resolve) => {
+          console.log('compress invoked', ids);
+          resolve();
+        }).then(() => {
+          execPostCompressionAction(useSettingsStore.getState().postCompressionAction);
+        });
+      },
       updateFile: (id: string, updatedData: Partial<CImage>) =>
         set((state) => {
           const index = state.fileList.findIndex((file) => file.id === id);
