@@ -4,7 +4,9 @@ import { invoke } from '@tauri-apps/api/core';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import useSettingsStore from '@/stores/settings.store.ts';
-import { execPostCompressionAction } from '@/utils/post-compression-actions.ts';
+import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
+import useResizeOptionsStore from '@/stores/resize-options.store.ts';
+import useOutputOptionsStore from '@/stores/output-options.store.ts';
 
 interface FileListStore {
   fileList: CImage[];
@@ -62,13 +64,23 @@ const useFileListStore = create<FileListStore>()(
       setImportProgress: (progress: number) => set({ importProgress: progress }),
       setIsListLoading: (isListLoading: boolean) => set({ isListLoading }),
       setSelectedItems: (items: CImage[]) => set({ selectedItems: items }),
-      invokeCompress: async (ids?: string[]) => {
-        new Promise<void>((resolve) => {
-          console.log('compress invoked', ids);
-          resolve();
-        }).finally(() => {
-          execPostCompressionAction(useSettingsStore.getState().postCompressionAction);
+      invokeCompress: () => {
+        invoke('compress', {
+          options: {
+            compression_options: useCompressionOptionsStore.getState().getCompressionOptions(),
+            resize_options: useResizeOptionsStore.getState().getResizeOptions(),
+            output_options: useOutputOptionsStore.getState().getOutputOptions(),
+          },
+          threads: useSettingsStore.getState().threadsCount,
+        }).catch((e) => {
+          console.error(e);
+          // for (const id of ids) {
+          //   useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.ERROR, info: e.toString() }); //TODO maybe we don't need to set all of them as errors
+          // }
         });
+        // .finally(() => {
+        // });
+        // execPostCompressionAction(useSettingsStore.getState().postCompressionAction);
       },
       updateFile: (id: string, updatedData: Partial<CImage>) =>
         set((state) => {

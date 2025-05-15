@@ -5,7 +5,7 @@ use caesium::{compress, compress_to_size};
 use serde_json::to_string;
 use sha2::{Digest, Sha256};
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use tauri::path::BaseDirectory;
 use tauri::Manager;
 
@@ -104,6 +104,29 @@ enum ResizeMode {
     Percentage,
 }
 
+
+pub fn compress_cimage(
+    _app: &tauri::AppHandle,
+    cimage: &CImage,
+    options: &OptionsPayload,
+) -> CompressionResult {
+    let output_path = PathBuf::from(&options.output_options.output_folder).join(&cimage.name).display().to_string(); //.join(&cimage.name, options.output_options.output_folder.to_string()).unwrap(); //TODO
+    let parameters = parse_compression_options(options, cimage);
+    println!("Compressing in {:?}", output_path);
+    compress(
+        cimage.path.clone(),
+        output_path,
+        &parameters,
+    ).unwrap();
+
+    CompressionResult {
+        status: CompressionStatus::Success,
+        cimage: CImage {
+            status: ImageStatus::Success,
+            ..cimage.clone()
+        },
+    }
+}
 // TODO I don't like using the payload here
 pub fn preview_cimage(
     app: &tauri::AppHandle,
@@ -111,7 +134,7 @@ pub fn preview_cimage(
     options: &OptionsPayload,
 ) -> CompressionResult {
     let filename = options_payload_to_sha256(&cimage.id, options);
-    let mut parameters = parse_compression_options(options, &cimage);
+    let mut parameters = parse_compression_options(options, cimage);
     let output_path = app.path().resolve(filename, BaseDirectory::Temp).unwrap(); //TODO
 
     println!("Preview in: {:?}", output_path);

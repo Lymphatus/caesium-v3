@@ -7,6 +7,7 @@ import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
 import useUIStore from '@/stores/ui.store.ts';
+import useSettingsStore from '@/stores/settings.store.ts';
 
 interface PreviewStore {
   isLoading: boolean;
@@ -36,14 +37,14 @@ const usePreviewStore = create<PreviewStore>()(
       for (const id of ids) {
         useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.COMPRESSING });
       }
-      invoke('compress', {
+      invoke('preview', {
         ids,
         options: {
           compression_options: useCompressionOptionsStore.getState().getCompressionOptions(),
           resize_options: useResizeOptionsStore.getState().getResizeOptions(),
           output_options: useOutputOptionsStore.getState().getOutputOptions(),
         },
-        preview: true,
+        threads: useSettingsStore.getState().threadsCount,
       }).catch((e) => {
         for (const id of ids) {
           useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.ERROR, info: e.toString() }); //TODO maybe we don't need to set all of them as errors

@@ -1,10 +1,8 @@
+pub(crate) mod compression;
 pub(crate) mod post_compression_actions;
 
-use crate::compressor::{preview_cimage, OptionsPayload};
 use crate::scan_files::{compute_base_path, process_files, FileList};
-use crate::{AppData, CImage};
-use rayon::iter::ParallelIterator;
-use rayon::prelude::*;
+use crate::AppData;
 use std::cmp::min;
 use std::env;
 use std::num::NonZero;
@@ -122,35 +120,6 @@ pub fn change_page(app: tauri::AppHandle, page: usize) {
         },
     )
     .unwrap(); //TODO
-}
-
-#[tauri::command]
-pub async fn compress(
-    app: tauri::AppHandle,
-    ids: Vec<String>,
-    options: OptionsPayload,
-    preview: bool,
-) {
-    // rayon::ThreadPoolBuilder::new().num_threads(8);
-    if preview {
-        let state = app.state::<Mutex<AppData>>();
-        let state = state.lock().unwrap(); //TODO
-
-        let images: Vec<CImage> = ids
-            .iter()
-            .map(|id| state.file_list.get(id.as_str()).cloned().unwrap())
-            .collect();
-
-        drop(state);
-
-        images.par_iter().for_each(|cimage| {
-            let result = preview_cimage(&app, cimage, &options);
-            let state = app.state::<Mutex<AppData>>();
-            let mut state = state.lock().unwrap(); //TODO
-            state.file_list.replace(result.clone().cimage);
-            app.emit("fileList:updateCImage", result).unwrap(); //TODO
-        });
-    }
 }
 
 #[tauri::command]
