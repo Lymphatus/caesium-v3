@@ -111,9 +111,9 @@ export enum DIRECT_IMPORT_ACTION {
 }
 
 export enum POST_COMPRESSION_ACTION {
-  NONE = 0,
-  CLOSE_APP = 1,
-  SHUTDOWN = 2,
-  SLEEP = 3,
-  OPEN_OUTPUT_FOLDER = 4,
+  NONE = 'none',
+  CLOSE_APP = 'close_app',
+  SHUTDOWN = 'shutdown',
+  SLEEP = 'sleep',
+  OPEN_OUTPUT_FOLDER = 'open_output_folder',
 }

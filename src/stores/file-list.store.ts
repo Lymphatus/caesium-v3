@@ -66,7 +66,7 @@ const useFileListStore = create<FileListStore>()(
         new Promise<void>((resolve) => {
           console.log('compress invoked', ids);
           resolve();
-        }).then(() => {
+        }).finally(() => {
           execPostCompressionAction(useSettingsStore.getState().postCompressionAction);
         });
       },
