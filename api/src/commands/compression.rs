@@ -26,26 +26,6 @@ pub async fn compress(app: tauri::AppHandle, options: OptionsPayload, threads: u
         state.file_list.replace(result.clone().cimage);
         app.emit("fileList:updateCImage", result).unwrap(); //TODO
     });
-
-    // if preview {
-    //     let state = app.state::<Mutex<AppData>>();
-    //     let state = state.lock().unwrap(); //TODO
-    //
-    //     let images: Vec<CImage> = ids
-    //         .iter()
-    //         .map(|id| state.file_list.get(id.as_str()).cloned().unwrap())
-    //         .collect();
-    //
-    //     drop(state);
-    //
-    //     images.par_iter().for_each(|cimage| {
-    //         let result = preview_cimage(&app, cimage, &options);
-    //         let state = app.state::<Mutex<AppData>>();
-    //         let mut state = state.lock().unwrap(); //TODO
-    //         state.file_list.replace(result.clone().cimage);
-    //         app.emit("fileList:updateCImage", result).unwrap(); //TODO
-    //     });
-    // }
 }
 
 #[tauri::command]
