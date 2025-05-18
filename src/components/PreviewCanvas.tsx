@@ -1,12 +1,17 @@
 import { RefObject, useEffect, useRef } from 'react';
 import { convertFileSrc } from '@tauri-apps/api/core';
-import { ImageLoaderRequest, ImageLoaderResponse } from '@/types.ts';
+import { CImage, ImageLoaderRequest, ImageLoaderResponse, RESIZE_MODE } from '@/types.ts';
 import usePreviewStore from '@/stores/preview.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
+import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 
-const worker = new Worker(new URL('@/workers/image-loader.ts', import.meta.url));
-
-const setImageToCanvas = (canvas: HTMLCanvasElement | null, image: ImageBitmap) => {
+const setImageToCanvas = (
+  canvas: HTMLCanvasElement | null,
+  image: ImageBitmap,
+  originalImage: CImage | null,
+  resizeMode: RESIZE_MODE,
+  type: 'original' | 'compressed',
+) => {
   if (!canvas) {
     console.error('Canvas is not defined');
     return;
@@ -16,10 +21,18 @@ const setImageToCanvas = (canvas: HTMLCanvasElement | null, image: ImageBitmap) 
     return;
   }
 
-  canvas.width = image.width;
-  canvas.height = image.height;
-  context.drawImage(image, 0, 0);
+  // TODO ignoring the DIMENSIONS resize mode for now, because it's not working properly
+  if (type === 'compressed' && originalImage && resizeMode !== RESIZE_MODE.DIMENSIONS) {
+    canvas.width = originalImage.width < image.width ? image.width : originalImage.width;
+    canvas.height = originalImage.height < image.height ? image.height : originalImage.height;
+  } else {
+    canvas.width = image.width;
+    canvas.height = image.height;
+  }
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
 };
+
+const worker = new Worker(new URL('@/workers/image-loader.ts', import.meta.url));
 
 function PreviewCanvas() {
   const canvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
@@ -35,8 +48,13 @@ function PreviewCanvas() {
     const listener = (e: MessageEvent<ImageLoaderResponse>) => {
       const data = e.data;
       const canvas = data.type === 'compressed' ? compressedCanvasRef.current : canvasRef.current;
-      setImageToCanvas(canvas, data.imageBitmap);
-
+      setImageToCanvas(
+        canvas,
+        data.imageBitmap,
+        usePreviewStore.getState().currentPreviewedCImage,
+        useResizeOptionsStore.getState().resizeMode,
+        data.type,
+      );
       setIsLoading(false); // TODO if we are loading original and preview, this is out of sync
     };
     worker.addEventListener('message', listener);
