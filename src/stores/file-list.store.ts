@@ -72,6 +72,7 @@ const useFileListStore = create<FileListStore>()(
             output_options: useOutputOptionsStore.getState().getOutputOptions(),
           },
           threads: useSettingsStore.getState().threadsCount,
+          baseFolder: get().baseFolder,
         }).catch((e) => {
           console.error(e);
           // for (const id of ids) {

@@ -6,7 +6,7 @@ use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 
 #[tauri::command]
-pub async fn compress(app: tauri::AppHandle, options: OptionsPayload, threads: usize) {
+pub async fn compress(app: tauri::AppHandle, options: OptionsPayload, threads: usize, base_folder: String) {
     rayon::ThreadPoolBuilder::new().num_threads(max(threads, 1));
 
     //TODO avoid cloning everything if performance will suffer
@@ -20,7 +20,7 @@ pub async fn compress(app: tauri::AppHandle, options: OptionsPayload, threads: u
     // Parallel operation just on the snapshot
     images.par_iter().for_each(|cimage| {
         println!("Compressing {:?}", cimage);
-        let result = compress_cimage(&app, cimage, &options);
+        let result = compress_cimage(&app, cimage, &options, &base_folder);
         let state = app.state::<Mutex<AppData>>();
         let mut state = state.lock().unwrap(); //TODO
         state.file_list.replace(result.clone().cimage);

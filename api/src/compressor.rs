@@ -1,11 +1,18 @@
 use crate::scan_files::get_real_resolution;
 use crate::{CImage, ImageStatus};
 use caesium::parameters::{CSParameters, ChromaSubsampling, TiffCompression, TiffDeflateLevel};
-use caesium::{compress, compress_to_size};
+use caesium::{
+    compress, compress_in_memory, compress_to_size, compress_to_size_in_memory, convert_in_memory,
+    SupportedFileTypes,
+};
 use serde_json::to_string;
 use sha2::{Digest, Sha256};
-use std::fs;
+use std::ffi::OsString;
+use std::fs::{canonicalize, File, FileTimes, Metadata};
+use std::io::{Read, Write};
+use std::os::windows::fs::FileTimesExt;
 use std::path::{Path, PathBuf};
+use std::{fs, io};
 use tauri::path::BaseDirectory;
 use tauri::Manager;
 
@@ -104,29 +111,103 @@ enum ResizeMode {
     Percentage,
 }
 
+const MAX_FILE_SIZE: u64 = 500 * 1024 * 1024;
 
 pub fn compress_cimage(
     _app: &tauri::AppHandle,
     cimage: &CImage,
     options: &OptionsPayload,
+    base_folder: &str,
 ) -> CompressionResult {
-    let output_path = PathBuf::from(&options.output_options.output_folder).join(&cimage.name).display().to_string(); //.join(&cimage.name, options.output_options.output_folder.to_string()).unwrap(); //TODO
-    let parameters = parse_compression_options(options, cimage);
-    println!("Compressing in {:?}", output_path);
-    compress(
-        cimage.path.clone(),
-        output_path,
-        &parameters,
-    ).unwrap();
+    let original_file_size = cimage.size;
+
+    if original_file_size > MAX_FILE_SIZE {
+        return CompressionResult {
+            status: CompressionStatus::Error,
+            cimage: CImage {
+                status: ImageStatus::Error,
+                info: format!("File exceeds max size of {MAX_FILE_SIZE}").to_string(),
+                ..cimage.clone()
+            },
+        };
+    }
+
+    let output_full_path = match setup_output_path(cimage.path.as_ref(), options, base_folder) {
+        Some(path) => path,
+        None => {
+            return CompressionResult {
+                status: CompressionStatus::Error,
+                cimage: CImage {
+                    status: ImageStatus::Error,
+                    info: "Error computing output path".to_string(),
+                    ..cimage.clone()
+                },
+            }
+        }
+    };
+
+    let compressed_image = match perform_image_compression(cimage, options) {
+        Some(image) => image,
+        None => {
+            return CompressionResult {
+                status: CompressionStatus::Error,
+                cimage: CImage {
+                    status: ImageStatus::Error,
+                    info: "Error while compressing".to_string(),
+                    ..cimage.clone()
+                },
+            }
+        }
+    };
+
+    let mut new_width = cimage.width;
+    let mut new_height = cimage.height;
+    if options.resize_options.resize_enabled {
+        (new_width, new_height) = get_real_resolution(&output_full_path, cimage.mime_type.as_str());
+    }
+
+    let output_file_size = compressed_image.len() as u64;
+    let output_file_exists = output_full_path.exists();
+    if output_file_exists && options.output_options.skip_if_output_is_bigger {
+        let existing_file_metadata = output_full_path.metadata().unwrap(); //TODO
+        if existing_file_metadata.len() < output_file_size {
+            return CompressionResult {
+                status: CompressionStatus::Warning,
+                cimage: CImage {
+                    status: ImageStatus::Warning,
+                    info: "Compressed file is bigger, skipping".to_string(),
+                    ..cimage.clone()
+                },
+            };
+        }
+    }
+
+    //TODO move if user selected that option
+
+    let mut output_file = File::create(&output_full_path).unwrap(); //TODO
+
+    output_file.write_all(&compressed_image).unwrap(); //TODO
+
+    if options.output_options.keep_file_dates_enabled {
+        let input_metadata = PathBuf::from(cimage.path.clone()).metadata().unwrap(); //TODO
+
+        preserve_file_times(&output_file, &input_metadata, options).unwrap(); //TODO
+    }
 
     CompressionResult {
         status: CompressionStatus::Success,
         cimage: CImage {
+            compressed_width: new_width,
+            compressed_height: new_height,
+            compressed_size: output_file_size,
+            compressed_file_path: output_full_path.display().to_string(),
+            info: String::new(),
             status: ImageStatus::Success,
             ..cimage.clone()
         },
     }
 }
+
 // TODO I don't like using the payload here
 pub fn preview_cimage(
     app: &tauri::AppHandle,
@@ -137,7 +218,7 @@ pub fn preview_cimage(
     let mut parameters = parse_compression_options(options, cimage);
     let output_path = app.path().resolve(filename, BaseDirectory::Temp).unwrap(); //TODO
 
-    println!("Preview in: {:?}", output_path);
+    println!("Preview in: {output_path:?}");
 
     let result = if options.compression_options.compression_mode == 1 {
         let output_size =
@@ -247,13 +328,7 @@ fn parse_compression_options(options: &OptionsPayload, cimage: &CImage) -> CSPar
     // -- JPEG --
     parameters.jpeg.quality = options.compression_options.jpeg.quality;
     parameters.jpeg.chroma_subsampling =
-        match options.compression_options.jpeg.chroma_subsampling.as_str() {
-            "4:4:4" => ChromaSubsampling::CS444,
-            "4:2:2" => ChromaSubsampling::CS422,
-            "4:2:0" => ChromaSubsampling::CS420,
-            "4:1:1" => ChromaSubsampling::CS411,
-            _ => ChromaSubsampling::Auto,
-        };
+        parse_jpeg_chroma_subsampling(options.compression_options.jpeg.chroma_subsampling.as_str());
 
     // -- PNG --
     parameters.png.quality = options.compression_options.png.quality;
@@ -281,7 +356,7 @@ fn parse_compression_options(options: &OptionsPayload, cimage: &CImage) -> CSPar
 
 fn options_payload_to_sha256(id: &String, options: &OptionsPayload) -> String {
     // Serialize the struct to a JSON string
-    let json_string = to_string(options).unwrap();
+    let json_string = to_string(options).unwrap(); //TODO
 
     // Compute the SHA256 hash
     let mut hasher = Sha256::new();
@@ -291,5 +366,149 @@ fn options_payload_to_sha256(id: &String, options: &OptionsPayload) -> String {
     let result = hasher.finalize();
 
     // Convert the hash to a hexadecimal string
-    format!("{:x}", result)
+    format!("{result:x}")
+}
+
+fn perform_image_compression(cimage: &CImage, options: &OptionsPayload) -> Option<Vec<u8>> {
+    let mut compression_parameters = parse_compression_options(options, cimage);
+
+    let mut file = File::open(cimage.path.clone()).unwrap(); //TODO
+    let mut input_file_buffer = Vec::new();
+    file.read_to_end(&mut input_file_buffer).unwrap(); //TODO
+
+    let compression_result_data = if options.compression_options.compression_mode == 1 {
+        //SIZE
+        compress_to_size_in_memory(
+            input_file_buffer,
+            &mut compression_parameters,
+            options.compression_options.max_size_value * options.compression_options.max_size_unit,
+            true,
+        )
+    } else if options.compression_options.compression_mode == 1
+        && options.output_options.output_format != "original"
+    {
+        convert_in_memory(
+            input_file_buffer,
+            &compression_parameters,
+            map_supported_formats(&options.output_options.output_format),
+        )
+    } else {
+        compress_in_memory(input_file_buffer, &compression_parameters)
+    };
+
+    compression_result_data.ok()
+}
+fn setup_output_path(input_file: &Path, options: &OptionsPayload, base_folder: &str) -> Option<PathBuf> {
+    let output_directory = determine_output_directory(input_file, options)?;
+    let (output_directory, filename) = compute_output_full_path(
+        &output_directory,
+        input_file,
+        &PathBuf::from(base_folder),
+        options.output_options.keep_folder_structure,
+        &options.output_options.suffix,
+        &options.output_options.output_format,
+    )?;
+
+    if !output_directory.exists() && fs::create_dir_all(&output_directory).is_err() {
+        return None; // TODO track errors here
+    }
+
+    Some(output_directory.join(filename))
+}
+
+fn determine_output_directory(input_file: &Path, options: &OptionsPayload) -> Option<PathBuf> {
+    if options.output_options.same_folder_as_input {
+        input_file.parent().map(|p| p.to_path_buf())
+    } else {
+        let folder = options.output_options.output_folder.clone();
+        Some(PathBuf::from(folder))
+    }
+}
+
+fn compute_output_full_path(
+    output_directory: &Path,
+    input_file_path: &Path,
+    base_directory: &PathBuf,
+    keep_structure: bool,
+    suffix: &str,
+    format: &str,
+) -> Option<(PathBuf, OsString)> {
+    let extension = if format == "original" {
+        input_file_path
+            .extension()
+            .unwrap_or_default()
+            .to_os_string()
+    } else {
+        OsString::from(format)
+    };
+
+    let base_name = input_file_path
+        .file_stem()
+        .unwrap_or_default()
+        .to_os_string();
+    let mut output_file_name = base_name;
+    output_file_name.push(suffix);
+    if !extension.is_empty() {
+        output_file_name.push(".");
+        output_file_name.push(extension);
+    }
+
+    if keep_structure {
+        let parent = match canonicalize(input_file_path.parent()?) {
+            Ok(p) => p,
+            Err(_) => return None,
+        };
+
+        let output_path_prefix = match parent.strip_prefix(base_directory) {
+            Ok(p) => p,
+            Err(_) => return None,
+        };
+        let full_output_directory = output_directory.join(output_path_prefix);
+        Some((full_output_directory, output_file_name))
+    } else {
+        Some((PathBuf::from(output_directory), output_file_name))
+    }
+}
+
+fn parse_jpeg_chroma_subsampling(chroma_subsampling: &str) -> ChromaSubsampling {
+    match chroma_subsampling {
+        "4:4:4" => ChromaSubsampling::CS444,
+        "4:2:2" => ChromaSubsampling::CS422,
+        "4:2:0" => ChromaSubsampling::CS420,
+        "4:1:1" => ChromaSubsampling::CS411,
+        _ => ChromaSubsampling::Auto,
+    }
+}
+
+fn map_supported_formats(format: &str) -> SupportedFileTypes {
+    match format {
+        "jpg" => SupportedFileTypes::Jpeg,
+        "png" => SupportedFileTypes::Png,
+        "webp" => SupportedFileTypes::WebP,
+        "tiff" => SupportedFileTypes::Tiff,
+        _ => SupportedFileTypes::Unkn,
+    }
+}
+
+fn preserve_file_times(
+    output_file: &File,
+    original_file_metadata: &Metadata,
+    options: &OptionsPayload,
+) -> io::Result<()> {
+    let file_times = FileTimes::new();
+
+    if options.output_options.keep_creation_date {
+        file_times.set_created(original_file_metadata.created()?);
+    }
+
+    if options.output_options.keep_last_modified_date {
+        file_times.set_modified(original_file_metadata.modified()?);
+    }
+
+    if options.output_options.keep_last_access_date {
+        file_times.set_accessed(original_file_metadata.accessed()?);
+    }
+
+    output_file.set_times(file_times)?;
+    Ok(())
 }
