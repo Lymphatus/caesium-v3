@@ -5,6 +5,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import { load } from '@tauri-apps/plugin-store';
 import { invoke } from '@tauri-apps/api/core';
 import { path } from '@tauri-apps/api';
+import { platform } from '@tauri-apps/plugin-os';
 
 interface JpegOptions {
   quality: number;
@@ -95,8 +96,13 @@ const defaultValues = {
   keepMetadata: true,
 };
 
-const exeDir = await invoke<string>('get_executable_dir');
-const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
+let configPath = 'settings.json';
+if (platform() === 'windows') {
+  const exeDir = await invoke<string>('get_executable_dir');
+  configPath = await path.join(exeDir, 'settings.json');
+}
+
+const settings = await load(configPath, { autoSave: true });
 const preferences = (await settings.get('compression_options.compression')) || {};
 
 // Create store with default values first

@@ -4,7 +4,6 @@ use crate::commands::{
 };
 use crate::commands::post_compression_actions::exec_post_compression_action;
 use crate::commands::compression::{preview, compress};
-use crate::config::set_app_id;
 use indexmap::IndexSet;
 use serde_repr::*;
 use std::borrow::Borrow;
@@ -16,7 +15,6 @@ use tauri::Manager;
 
 mod commands;
 mod compressor;
-mod config;
 mod scan_files;
 
 #[derive(Default)]
@@ -88,7 +86,6 @@ pub fn run() {
                 window.close_devtools();
             }
             app.manage(Mutex::new(initialize_store()));
-            set_app_id(app)?;
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())

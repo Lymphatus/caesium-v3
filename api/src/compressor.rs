@@ -10,7 +10,6 @@ use sha2::{Digest, Sha256};
 use std::ffi::OsString;
 use std::fs::{canonicalize, File, FileTimes, Metadata};
 use std::io::{Read, Write};
-use std::os::windows::fs::FileTimesExt;
 use std::path::{Path, PathBuf};
 use std::{fs, io};
 use tauri::path::BaseDirectory;
@@ -498,6 +497,7 @@ fn preserve_file_times(
     let file_times = FileTimes::new();
 
     if options.output_options.keep_creation_date {
+        #[cfg(target_os = "windows")]
         file_times.set_created(original_file_metadata.created()?);
     }
 

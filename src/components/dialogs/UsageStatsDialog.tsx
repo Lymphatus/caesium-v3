@@ -3,13 +3,11 @@ import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
-import { app, path } from '@tauri-apps/api';
-import { invoke } from '@tauri-apps/api/core';
-import { load } from '@tauri-apps/plugin-store';
-import { AppPreferences } from '@/types.ts';
+import { app } from '@tauri-apps/api';
 import { arch, platform, version } from '@tauri-apps/plugin-os';
 import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
+import useAppStore from '@/stores/app.store.ts';
 
 type UsageStatsDialogProps = {
   isOpen: boolean;
@@ -23,9 +21,6 @@ enum CopyStatus {
 }
 
 const appVersion = await app.getVersion();
-const exeDir = await invoke<string>('get_executable_dir');
-const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: false });
-const preferences = (await settings.get('app')) as AppPreferences;
 
 const copyIcon = <Copy className="size-4" />;
 const copySuccessIcon = <Check className="text-success size-4" />;
@@ -33,11 +28,12 @@ const copyErrorIcon = <X className="text-danger size-4" />;
 
 function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
   const { t } = useTranslation();
+  const { uuid } = useAppStore();
   const [copyStatus, setCopyStatus] = useState(CopyStatus.PENDING);
 
   const usageStats = {
     system: {
-      uuid: preferences.uuid,
+      uuid: uuid,
       appVersion,
       cpuArchitecture: arch(),
       productType: platform(),

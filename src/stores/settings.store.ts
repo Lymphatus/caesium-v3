@@ -4,6 +4,7 @@ import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION, THEME } from '@/types.ts
 import { subscribeWithSelector } from 'zustand/middleware';
 import { app, path } from '@tauri-apps/api';
 import { invoke } from '@tauri-apps/api/core';
+import { platform } from '@tauri-apps/plugin-os';
 
 interface SettingsOptionsStore {
   theme: THEME;
@@ -32,8 +33,13 @@ interface SettingsOptionsStore {
   setThreadsPriority: (threadsPriority: number) => void;
 }
 
-const exeDir = await invoke<string>('get_executable_dir');
-const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
+let configPath = 'settings.json';
+if (platform() === 'windows') {
+  const exeDir = await invoke<string>('get_executable_dir');
+  configPath = await path.join(exeDir, 'settings.json');
+}
+
+const settings = await load(configPath, { autoSave: true });
 const preferences = (await settings.get('settings')) || {};
 const maxThreads = (await invoke<number>('get_max_threads')) || 1;
 

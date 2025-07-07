@@ -5,6 +5,7 @@ import { SIDE_PANEL_TAB } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { invoke } from '@tauri-apps/api/core';
 import { path } from '@tauri-apps/api';
+import { platform } from '@tauri-apps/plugin-os';
 
 interface SplitPanels {
   main: number[];
@@ -41,8 +42,13 @@ interface UIOptions {
   getAppMenuSelectedItems: () => string[];
 }
 
-const exeDir = await invoke<string>('get_executable_dir');
-const settings = await load(await path.join(exeDir, 'settings.json'), { autoSave: true });
+let configPath = 'settings.json';
+if (platform() === 'windows') {
+  const exeDir = await invoke<string>('get_executable_dir');
+  configPath = await path.join(exeDir, 'settings.json');
+}
+
+const settings = await load(configPath, { autoSave: true });
 const preferences = (await settings.get('ui')) || {};
 
 const defaultOptions = {
