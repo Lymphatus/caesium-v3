@@ -44,13 +44,14 @@ pub struct CImage {
 }
 
 #[derive(Serialize_repr, Deserialize_repr, Clone, Debug, Default)]
-#[repr(u8)]
+#[repr(i8)]
 pub enum ImageStatus {
     #[default]
     New = 0,
     Success = 1,
     Warning = 2,
     Error = 3,
+    Compressing = -1
 }
 
 // Equality and hashing only based on `id`

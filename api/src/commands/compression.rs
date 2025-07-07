@@ -1,5 +1,5 @@
-use crate::compressor::{compress_cimage, preview_cimage, OptionsPayload};
-use crate::{AppData, CImage};
+use crate::compressor::{compress_cimage, preview_cimage, CompressionResult, CompressionStatus, OptionsPayload};
+use crate::{AppData, CImage, ImageStatus};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::cmp::max;
 use std::sync::Mutex;
@@ -20,6 +20,14 @@ pub async fn compress(app: tauri::AppHandle, options: OptionsPayload, threads: u
     // Parallel operation just on the snapshot
     images.par_iter().for_each(|cimage| {
         println!("Compressing {:?}", cimage);
+        let r = CompressionResult {
+            status: CompressionStatus::Warning,
+            cimage: CImage {
+                status: ImageStatus::Compressing,
+                ..cimage.clone()
+            }
+        };
+        app.emit("fileList:updateCImage", r).unwrap(); //TODO
         let result = compress_cimage(&app, cimage, &options, &base_folder);
         let state = app.state::<Mutex<AppData>>();
         let mut state = state.lock().unwrap(); //TODO

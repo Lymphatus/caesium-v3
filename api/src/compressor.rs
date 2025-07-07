@@ -88,12 +88,12 @@ pub struct OptionsPayload {
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 pub struct CompressionResult {
-    status: CompressionStatus,
+    pub status: CompressionStatus,
     pub cimage: CImage,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
-enum CompressionStatus {
+pub enum CompressionStatus {
     Success,
     Warning,
     Error,
