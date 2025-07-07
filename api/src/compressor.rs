@@ -8,9 +8,10 @@ use caesium::{
 use serde_json::to_string;
 use sha2::{Digest, Sha256};
 use std::ffi::OsString;
-use std::fs::{canonicalize, File, FileTimes, Metadata};
+use std::fs::{File, FileTimes, Metadata};
 use std::io::{Read, Write};
-use std::path::{Path, PathBuf};
+use std::os::windows::fs::FileTimesExt;
+use std::path::{absolute, Path, PathBuf};
 use std::{fs, io};
 use tauri::path::BaseDirectory;
 use tauri::Manager;
@@ -397,7 +398,11 @@ fn perform_image_compression(cimage: &CImage, options: &OptionsPayload) -> Optio
 
     compression_result_data.ok()
 }
-fn setup_output_path(input_file: &Path, options: &OptionsPayload, base_folder: &str) -> Option<PathBuf> {
+fn setup_output_path(
+    input_file: &Path,
+    options: &OptionsPayload,
+    base_folder: &str,
+) -> Option<PathBuf> {
     let output_directory = determine_output_directory(input_file, options)?;
     let (output_directory, filename) = compute_output_full_path(
         &output_directory,
@@ -453,7 +458,7 @@ fn compute_output_full_path(
     }
 
     if keep_structure {
-        let parent = match canonicalize(input_file_path.parent()?) {
+        let parent = match absolute(input_file_path.parent()?) {
             Ok(p) => p,
             Err(_) => return None,
         };
@@ -496,9 +501,11 @@ fn preserve_file_times(
 ) -> io::Result<()> {
     let file_times = FileTimes::new();
 
-    if options.output_options.keep_creation_date {
-        #[cfg(target_os = "windows")]
-        file_times.set_created(original_file_metadata.created()?);
+    #[cfg(target_os = "windows")]
+    {
+        if options.output_options.keep_creation_date {
+            file_times.set_created(original_file_metadata.created()?);
+        }
     }
 
     if options.output_options.keep_last_modified_date {

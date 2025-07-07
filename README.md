@@ -2,7 +2,7 @@
 
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Lymphatus)
 
-v3.0.0-beta.0
+v3.0.0-alpha.0
 
 Try it online at [caesium.app](https://caesium.app)
 
@@ -92,6 +92,6 @@ WIP
 
 ## 📜 License
 
-[GPL-3.0-or-later](LICENSE)
+[MIT](LICENSE.md)
 
 
