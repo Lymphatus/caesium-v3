@@ -4,6 +4,8 @@ import useUIStore from '@/stores/ui.store';
 import appLogo from '@/assets/images/app-icon.png';
 import { app } from '@tauri-apps/api';
 import useAppStore from '@/stores/app.store.ts';
+import { check } from '@tauri-apps/plugin-updater';
+import { relaunch } from '@tauri-apps/plugin-process';
 
 const appVersion = await app.getVersion();
 
@@ -11,6 +13,36 @@ function AboutDialog() {
   const { aboutDialogOpen, setAboutDialogOpen } = useUIStore();
   const { uuid } = useAppStore();
   const { t } = useTranslation();
+
+  const checkForUpdates = async () => {
+    console.log('checking for updates');
+    const update = await check();
+    console.log(update);
+    if (update) {
+      console.log(`found update ${update.version} from ${update.date} with notes ${update.body}`);
+      let downloaded = 0;
+      let contentLength = 0;
+      // alternatively, we could also call update.download() and update.install() separately
+      await update.downloadAndInstall((event) => {
+        switch (event.event) {
+          case 'Started':
+            contentLength = event.data.contentLength || 0;
+            console.log(`started downloading ${event.data.contentLength} bytes`);
+            break;
+          case 'Progress':
+            downloaded += event.data.chunkLength;
+            console.log(`downloaded ${downloaded} from ${contentLength}`);
+            break;
+          case 'Finished':
+            console.log('download finished');
+            break;
+        }
+      });
+
+      console.log('update installed');
+      await relaunch();
+    }
+  };
 
   return (
     <Modal
@@ -37,7 +69,7 @@ function AboutDialog() {
               disableRipple
               color="primary"
               size="sm"
-              onPress={() => console.log('Check for updates')}
+              onPress={checkForUpdates}
               // variant="flat"
             >
               {t('check_for_updates')}

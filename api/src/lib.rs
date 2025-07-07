@@ -1,9 +1,9 @@
-use crate::commands::{
-    change_page, clear_list, get_executable_dir, open_import_files_dialog,
-    open_import_folder_dialog, remove_items_from_list, get_max_threads
-};
+use crate::commands::compression::{compress, preview};
 use crate::commands::post_compression_actions::exec_post_compression_action;
-use crate::commands::compression::{preview, compress};
+use crate::commands::{
+    change_page, clear_list, get_executable_dir, get_max_threads, open_import_files_dialog,
+    open_import_folder_dialog, remove_items_from_list,
+};
 use indexmap::IndexSet;
 use serde_repr::*;
 use std::borrow::Borrow;
@@ -51,7 +51,7 @@ pub enum ImageStatus {
     Success = 1,
     Warning = 2,
     Error = 3,
-    Compressing = -1
+    Compressing = -1,
 }
 
 // Equality and hashing only based on `id`
@@ -77,6 +77,8 @@ impl Borrow<str> for CImage {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_store::Builder::new().build())
         .setup(|app| {

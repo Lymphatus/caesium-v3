@@ -21,13 +21,34 @@
       "csp": null,
       "assetProtocol": {
         "enable": true,
-        "scope": ["*/**"]
+        "scope": [
+          "*/**"
+        ]
       }
     }
   },
   "bundle": {
     "active": true,
     "targets": "all",
-    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE0RUZEOTkxNkE5OTE5NDAKUldSQUdabHFrZG52cENUSFNKQks0T3NIZlNqdUZmUlhFVnFjamtub1B0RFBqdW9qWUM1SjFpTncK",
+      "endpoints": [
+        "https://saerasoft.com/repository/com.saerasoft.caesium/v3/latest.json",
+        "https://github.com/Lymphatus/caesium-image-compressor/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

@@ -1,4 +1,6 @@
-use crate::compressor::{compress_cimage, preview_cimage, CompressionResult, CompressionStatus, OptionsPayload};
+use crate::compressor::{
+    compress_cimage, preview_cimage, CompressionResult, CompressionStatus, OptionsPayload,
+};
 use crate::{AppData, CImage, ImageStatus};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::cmp::max;
@@ -6,7 +8,12 @@ use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 
 #[tauri::command]
-pub async fn compress(app: tauri::AppHandle, options: OptionsPayload, threads: usize, base_folder: String) {
+pub async fn compress(
+    app: tauri::AppHandle,
+    options: OptionsPayload,
+    threads: usize,
+    base_folder: String,
+) {
     rayon::ThreadPoolBuilder::new().num_threads(max(threads, 1));
 
     //TODO avoid cloning everything if performance will suffer
@@ -25,7 +32,7 @@ pub async fn compress(app: tauri::AppHandle, options: OptionsPayload, threads: u
             cimage: CImage {
                 status: ImageStatus::Compressing,
                 ..cimage.clone()
-            }
+            },
         };
         app.emit("fileList:updateCImage", r).unwrap(); //TODO
         let result = compress_cimage(&app, cimage, &options, &base_folder);

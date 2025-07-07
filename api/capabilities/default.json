@@ -17,6 +17,7 @@
     "core:app:allow-set-app-theme",
     "core:window:allow-close",
     "core:window:allow-destroy",
-    "os:default"
+    "os:default",
+    "updater:default"
   ]
 }
