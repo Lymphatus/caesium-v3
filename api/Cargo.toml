@@ -1,6 +1,6 @@
 [package]
 name = "caesium-image-compressor"
-version = "3.0.0"
+version = "3.0.0-alpha.0"
 description = "Caesium Image compressor"
 authors = ["Matteo Paonessa"]
 edition = "2021"

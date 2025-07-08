@@ -10,6 +10,7 @@ use sha2::{Digest, Sha256};
 use std::ffi::OsString;
 use std::fs::{File, FileTimes, Metadata};
 use std::io::{Read, Write};
+#[cfg(any(windows, doc))]
 use std::os::windows::fs::FileTimesExt;
 use std::path::{absolute, Path, PathBuf};
 use std::{fs, io};
