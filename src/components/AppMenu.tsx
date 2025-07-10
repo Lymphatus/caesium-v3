@@ -1,7 +1,7 @@
 import { DropdownItem, DropdownMenu } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
-import { Heart, Import, Info } from 'lucide-react';
+import { Heart, Import, Info, RefreshCcw } from 'lucide-react';
 
 function AppMenu() {
   const { t } = useTranslation();
@@ -14,6 +14,7 @@ function AppMenu() {
     setShowLabelsInToolbar,
     getAppMenuSelectedItems,
     setAboutDialogOpen,
+    setCheckForUpdatesDialogOpen,
   } = useUIStore();
 
   return (
@@ -57,6 +58,16 @@ function AppMenu() {
         target="_blank"
       >
         {t('actions.donate')}
+      </DropdownItem>
+      <DropdownItem
+        key="checkForUpdates"
+        hideSelectedIcon
+        startContent={<RefreshCcw className="size-4" />}
+        onPress={() => {
+          setCheckForUpdatesDialogOpen(true);
+        }}
+      >
+        {t('actions.check_for_updates')}
       </DropdownItem>
       <DropdownItem
         key="about"

@@ -25,6 +25,7 @@ interface UIOptions {
   showLabelsInToolbar: boolean;
   aboutDialogOpen: boolean;
   promptExitDialogOpen: boolean;
+  checkForUpdatesDialogOpen: boolean;
 
   setSplitPanels: (options: Partial<SplitPanels>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
@@ -38,6 +39,7 @@ interface UIOptions {
   setShowLabelsInToolbar: (show: boolean) => void;
   setAboutDialogOpen: (open: boolean) => void;
   setPromptExitDialogOpen: (open: boolean) => void;
+  setCheckForUpdatesDialogOpen: (open: boolean) => void;
 
   getAppMenuSelectedItems: () => string[];
 }
@@ -64,6 +66,7 @@ const defaultOptions = {
   showLabelsInToolbar: false,
   aboutDialogOpen: false,
   promptExitDialogOpen: false,
+  checkForUpdatesDialogOpen: false,
 };
 
 const useUIStore = create<UIOptions>()(
@@ -131,6 +134,12 @@ const useUIStore = create<UIOptions>()(
       setPromptExitDialogOpen: (open: boolean) => {
         set((state) => {
           state.promptExitDialogOpen = open;
+        });
+      },
+
+      setCheckForUpdatesDialogOpen: (open: boolean) => {
+        set((state) => {
+          state.checkForUpdatesDialogOpen = open;
         });
       },
 

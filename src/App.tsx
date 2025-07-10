@@ -16,6 +16,7 @@ import useSettingsStore from '@/stores/settings.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
 import AskDialog from '@/components/dialogs/AskDialog.tsx';
 import { useTranslation } from 'react-i18next';
+import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.tsx';
 
 function App() {
   const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress, updateFile, currentPage } =
@@ -104,6 +105,7 @@ function App() {
       <ImportDialog></ImportDialog>
       <SettingsDialog></SettingsDialog>
       <AboutDialog></AboutDialog>
+      <CheckForUpdatesDialog></CheckForUpdatesDialog>
       <AskDialog
         buttons={
           <>
