@@ -17,6 +17,8 @@ interface FileListStore {
   importProgress: number;
   isListLoading: boolean;
   selectedItems: CImage[];
+  isCompressing: boolean;
+  compressionProgress: number;
 
   totalPages: () => number;
 
@@ -29,6 +31,8 @@ interface FileListStore {
   setImportProgress: (progress: number) => void;
   setIsListLoading: (isListLoading: boolean) => void;
   setSelectedItems: (items: CImage[]) => void;
+  setIsCompressing: (isCompressing: boolean) => void;
+  setCompressionProgress: (progress: number) => void;
   updateFile: (id: string, updatedData: Partial<CImage>) => void;
 
   invokeCompress: (ids?: string[]) => void;
@@ -45,6 +49,8 @@ const useFileListStore = create<FileListStore>()(
       importProgress: 0,
       isListLoading: false,
       selectedItems: [],
+      isCompressing: false,
+      compressionProgress: 0,
 
       totalPages: () => Math.ceil(get().totalFiles / 50),
 
@@ -64,7 +70,10 @@ const useFileListStore = create<FileListStore>()(
       setImportProgress: (progress: number) => set({ importProgress: progress }),
       setIsListLoading: (isListLoading: boolean) => set({ isListLoading }),
       setSelectedItems: (items: CImage[]) => set({ selectedItems: items }),
+      setIsCompressing: (isCompressing: boolean) => set({ isCompressing }),
+      setCompressionProgress: (progress: number) => set({ compressionProgress: progress }),
       invokeCompress: () => {
+        set({ isCompressing: true });
         invoke('compress', {
           options: {
             compression_options: useCompressionOptionsStore.getState().getCompressionOptions(),
@@ -73,15 +82,17 @@ const useFileListStore = create<FileListStore>()(
           },
           threads: useSettingsStore.getState().threadsCount,
           baseFolder: get().baseFolder,
-        }).catch((e) => {
-          console.error(e);
-          // for (const id of ids) {
-          //   useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.ERROR, info: e.toString() }); //TODO maybe we don't need to set all of them as errors
-          // }
-        });
-        // .finally(() => {
-        // });
-        // execPostCompressionAction(useSettingsStore.getState().postCompressionAction);
+        })
+          .catch((e) => {
+            console.error(e);
+            // for (const id of ids) {
+            //   useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.ERROR, info: e.toString() }); //TODO maybe we don't need to set all of them as errors
+            // }
+          })
+          .finally(() => {
+            set({ isCompressing: false, compressionProgress: 0 });
+            // execPostCompressionAction(useSettingsStore.getState().postCompressionAction);
+          });
       },
       updateFile: (id: string, updatedData: Partial<CImage>) =>
         set((state) => {

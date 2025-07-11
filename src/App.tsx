@@ -19,8 +19,16 @@ import { useTranslation } from 'react-i18next';
 import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.tsx';
 
 function App() {
-  const { setFileList, setBaseFolder, setIsImporting, setTotalFiles, setImportProgress, updateFile, currentPage } =
-    useFileListStore();
+  const {
+    setFileList,
+    setBaseFolder,
+    setIsImporting,
+    setTotalFiles,
+    setImportProgress,
+    updateFile,
+    setCompressionProgress,
+    currentPage,
+  } = useFileListStore();
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
   const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
@@ -71,6 +79,10 @@ function App() {
       }
     });
 
+    const updateCompressionProgressListener = listen<number>('fileList:compressionProgress', async (event) => {
+      setCompressionProgress(event.payload);
+    });
+
     const closeRequestedListener = getCurrentWindow().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {
       if (useSettingsStore.getState().promptBeforeExit && !useSettingsStore.getState().skipMessagesAndDialogs) {
         setPromptExitDialogOpen(true);
@@ -90,6 +102,7 @@ function App() {
         importProgressListener,
         updateCImageListener,
         closeRequestedListener,
+        updateCompressionProgressListener,
       ]).then((cleanupFns) => {
         cleanupFns.forEach((cleanupFn) => cleanupFn());
       });

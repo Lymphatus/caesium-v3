@@ -4,6 +4,7 @@ use crate::compressor::{
 use crate::{AppData, CImage, ImageStatus};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::cmp::max;
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 
@@ -14,32 +15,49 @@ pub async fn compress(
     threads: usize,
     base_folder: String,
 ) {
-    rayon::ThreadPoolBuilder::new().num_threads(max(threads, 1));
+    let thread_pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(max(threads, 1))
+        .build()
+        .unwrap(); //TODO
 
-    //TODO avoid cloning everything if performance will suffer
-    let state = app.state::<Mutex<AppData>>();
-    let state = state.lock().unwrap();
-    // // SNAPSHOT what's needed to work on
-    let images: Vec<CImage> = state.file_list.iter().cloned().collect();
-    //
-    drop(state); // Unlock immediately
-
-    // Parallel operation just on the snapshot
-    images.par_iter().for_each(|cimage| {
-        println!("Compressing {:?}", cimage);
-        let r = CompressionResult {
-            status: CompressionStatus::Warning,
-            cimage: CImage {
-                status: ImageStatus::Compressing,
-                ..cimage.clone()
-            },
-        };
-        app.emit("fileList:updateCImage", r).unwrap(); //TODO
-        let result = compress_cimage(&app, cimage, &options, &base_folder);
+    thread_pool.install(|| {
+        //TODO avoid cloning everything if performance will suffer
         let state = app.state::<Mutex<AppData>>();
-        let mut state = state.lock().unwrap(); //TODO
-        state.file_list.replace(result.clone().cimage);
-        app.emit("fileList:updateCImage", result).unwrap(); //TODO
+        let state = state.lock().unwrap();
+        // // SNAPSHOT what's needed to work on
+        let images: Vec<CImage> = state.file_list.iter().cloned().collect();
+        //
+        drop(state); // Unlock immediately
+
+        let progress = AtomicUsize::new(0);
+        app.emit(
+            "fileList:compressionProgress",
+            progress.load(Ordering::Relaxed),
+        )
+        .unwrap(); //TODO
+
+        images.par_iter().for_each(|cimage| {
+            println!("Compressing {:?}", cimage);
+            let r = CompressionResult {
+                status: CompressionStatus::Warning,
+                cimage: CImage {
+                    status: ImageStatus::Compressing,
+                    ..cimage.clone()
+                },
+            };
+            app.emit("fileList:updateCImage", r).unwrap(); //TODO
+            let result = compress_cimage(&app, cimage, &options, &base_folder);
+            let state = app.state::<Mutex<AppData>>();
+            let mut state = state.lock().unwrap(); //TODO
+            state.file_list.replace(result.clone().cimage);
+            app.emit("fileList:updateCImage", result).unwrap(); //TODO
+            progress.fetch_add(1, Ordering::Relaxed);
+            app.emit(
+                "fileList:compressionProgress",
+                progress.load(Ordering::Relaxed),
+            )
+            .unwrap(); //TODO
+        });
     });
 }
 
