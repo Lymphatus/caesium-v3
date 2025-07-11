@@ -27,7 +27,7 @@ interface TiffOptions {
   deflateLevel: TIFF_DEFLATE_LEVEL;
 }
 
-interface CompressionOptions {
+export interface CompressionOptions {
   jpeg: {
     quality: number;
     chroma_subsampling: CHROMA_SUBSAMPLING;

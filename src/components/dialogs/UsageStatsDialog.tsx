@@ -2,12 +2,13 @@ import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
-import useOutputOptionsStore from '@/stores/output-options.store.ts';
+import useOutputOptionsStore, { OutputOptions } from '@/stores/output-options.store.ts';
 import { app } from '@tauri-apps/api';
 import { arch, platform, version } from '@tauri-apps/plugin-os';
 import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
 import useAppStore from '@/stores/app.store.ts';
+import { UsageStats } from '@/types.ts';
 
 type UsageStatsDialogProps = {
   isOpen: boolean;
@@ -31,7 +32,10 @@ function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
   const { uuid } = useAppStore();
   const [copyStatus, setCopyStatus] = useState(CopyStatus.PENDING);
 
-  const usageStats = {
+  const outputOptions = { ...useOutputOptionsStore.getState().getOutputOptions() } as Partial<OutputOptions>;
+  delete outputOptions.output_folder;
+
+  const usageStats: UsageStats = {
     system: {
       uuid: uuid,
       appVersion,
@@ -42,7 +46,7 @@ function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
     compression: {
       compressionOptions: useCompressionOptionsStore.getState().getCompressionOptions(),
       resizeOptions: useResizeOptionsStore.getState().getResizeOptions(),
-      outputOptions: useOutputOptionsStore.getState().getOutputOptions(),
+      outputOptions: outputOptions as Omit<OutputOptions, 'output_folder'>,
     },
   };
 

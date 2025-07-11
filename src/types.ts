@@ -1,3 +1,7 @@
+import { CompressionOptions } from '@/stores/compression-options.store.ts';
+import { ResizeOptions } from '@/stores/resize-options.store.ts';
+import { OutputOptions } from '@/stores/output-options.store.ts';
+
 export type CImage = {
   id: string;
   name: string;
@@ -117,3 +121,18 @@ export enum POST_COMPRESSION_ACTION {
   SLEEP = 'sleep',
   OPEN_OUTPUT_FOLDER = 'open_output_folder',
 }
+
+export type UsageStats = {
+  system: {
+    uuid: string;
+    appVersion: string;
+    cpuArchitecture: string;
+    productType: string;
+    productVersion: string;
+  };
+  compression: {
+    compressionOptions: CompressionOptions;
+    resizeOptions: ResizeOptions;
+    outputOptions: Omit<OutputOptions, 'output_folder'>;
+  };
+};

@@ -27,7 +27,7 @@ interface ResizeOptionsStore {
   getResizeOptions: () => ResizeOptions;
 }
 
-interface ResizeOptions {
+export interface ResizeOptions {
   resize_enabled: boolean;
   resize_mode: RESIZE_MODE;
   keep_aspect_ratio: boolean;

@@ -29,7 +29,7 @@ interface OutputOptionsStore {
   getOutputOptions: () => OutputOptions;
 }
 
-interface OutputOptions {
+export interface OutputOptions {
   output_folder: string;
   same_folder_as_input: boolean;
   keep_folder_structure: boolean;
