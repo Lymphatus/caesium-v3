@@ -37,7 +37,6 @@ pub async fn compress(
         .unwrap(); //TODO
 
         images.par_iter().for_each(|cimage| {
-            println!("Compressing {:?}", cimage);
             let r = CompressionResult {
                 status: CompressionStatus::Warning,
                 cimage: CImage {

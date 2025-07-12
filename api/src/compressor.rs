@@ -8,7 +8,7 @@ use caesium::{
 use serde_json::to_string;
 use sha2::{Digest, Sha256};
 use std::ffi::OsString;
-use std::fs::{File, FileTimes, Metadata};
+use std::fs::{copy, File, FileTimes, Metadata};
 use std::io::{Read, Write};
 #[cfg(any(windows, doc))]
 use std::os::windows::fs::FileTimesExt;
@@ -169,21 +169,25 @@ pub fn compress_cimage(
 
     let output_file_size = compressed_image.len() as u64;
     let output_file_exists = output_full_path.exists();
-    if output_file_exists && options.output_options.skip_if_output_is_bigger {
-        let existing_file_metadata = output_full_path.metadata().unwrap(); //TODO
-        if existing_file_metadata.len() < output_file_size {
-            return CompressionResult {
-                status: CompressionStatus::Warning,
-                cimage: CImage {
-                    status: ImageStatus::Warning,
-                    info: "Compressed file is bigger, skipping".to_string(),
-                    ..cimage.clone()
-                },
-            };
-        }
-    }
 
-    //TODO move if user selected that option
+    if original_file_size < output_file_size && options.output_options.skip_if_output_is_bigger {
+        if PathBuf::from(&cimage.path) != output_full_path {
+            copy(&cimage.path, &output_full_path).unwrap();
+        }
+
+        return CompressionResult {
+            status: CompressionStatus::Warning,
+            cimage: CImage {
+                status: ImageStatus::Warning,
+                info: "Compressed file is bigger, skipping".to_string(),
+                compressed_width: cimage.width,
+                compressed_height: cimage.height,
+                compressed_size: cimage.size,
+                compressed_file_path: output_full_path.display().to_string(),
+                ..cimage.clone()
+            },
+        };
+    }
 
     let mut output_file = File::create(&output_full_path).unwrap(); //TODO
 
@@ -193,6 +197,12 @@ pub fn compress_cimage(
         let input_metadata = PathBuf::from(cimage.path.clone()).metadata().unwrap(); //TODO
 
         preserve_file_times(&output_file, &input_metadata, options).unwrap(); //TODO
+    }
+
+    if options.output_options.move_original_file_enabled
+        && options.output_options.move_original_file_mode == "trash"
+    {
+        trash::delete(&cimage.path).unwrap();
     }
 
     CompressionResult {
@@ -219,8 +229,6 @@ pub fn preview_cimage(
     let mut parameters = parse_compression_options(options, cimage);
     let output_path = app.path().resolve(filename, BaseDirectory::Temp).unwrap(); //TODO
 
-    println!("Preview in: {output_path:?}");
-
     let result = if options.compression_options.compression_mode == 1 {
         let output_size =
             options.compression_options.max_size_value * options.compression_options.max_size_unit;
@@ -240,7 +248,6 @@ pub fn preview_cimage(
         )
         .is_ok()
     };
-    println!("Compression finished");
 
     if !result {
         return CompressionResult {
@@ -500,21 +507,24 @@ fn preserve_file_times(
     original_file_metadata: &Metadata,
     options: &OptionsPayload,
 ) -> io::Result<()> {
-    let file_times = FileTimes::new();
+    let mut file_times = FileTimes::new();
 
     #[cfg(target_os = "windows")]
     {
         if options.output_options.keep_creation_date {
-            file_times.set_created(original_file_metadata.created()?);
+            let created_time = original_file_metadata.created()?;
+            file_times = file_times.set_created(created_time);
         }
     }
 
     if options.output_options.keep_last_modified_date {
-        file_times.set_modified(original_file_metadata.modified()?);
+        let modified_time = original_file_metadata.modified()?;
+        file_times = file_times.set_modified(modified_time);
     }
 
     if options.output_options.keep_last_access_date {
-        file_times.set_accessed(original_file_metadata.accessed()?);
+        let accessed_time = original_file_metadata.accessed()?;
+        file_times = file_times.set_accessed(accessed_time);
     }
 
     output_file.set_times(file_times)?;

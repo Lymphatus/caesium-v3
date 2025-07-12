@@ -34,12 +34,12 @@ indexmap = "2.7"
 tauri-plugin-store = "2"
 libcaesium = "0.17"
 serde_repr = "0.1"
-uuid = { version = "1.16.0", features = ["v4"] }
 rayon = "1.10"
 tauri-plugin-os = "2"
 system_shutdown = "4.0.0"
 open = "5.3.0"
 tauri-plugin-process = "2"
+trash = "5.2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"

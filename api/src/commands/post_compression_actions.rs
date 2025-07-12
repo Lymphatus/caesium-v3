@@ -45,7 +45,6 @@ fn exec_sleep() {
 }
 
 fn exec_open_output_folder(output_folder: Option<String>) {
-    println!("Opening output folder...");
     if let Some(folder) = output_folder {
         open::that_detached(folder).unwrap()
     }

@@ -42,7 +42,7 @@ function StatusIcon({ cImage }: { cImage: CImage }) {
 }
 
 function SavedLabel({ cImage }: { cImage: CImage }) {
-  if (cImage.compressed_size === 0) {
+  if (cImage.compressed_size === 0 || cImage.size === cImage.compressed_size) {
     return <span className="text-default-400">&nbsp;</span>;
   }
   const saved = getSavedPercentage(cImage.size, cImage.compressed_size);
@@ -139,7 +139,7 @@ function FileListTable() {
                 >
                   {prettyBytes(cImage.size)}
                 </span>
-                {cImage.compressed_size !== 0 && (
+                {cImage.compressed_size !== 0 && cImage.size !== cImage.compressed_size && (
                   <span className="text-nowrap">{prettyBytes(cImage.compressed_size)}</span>
                 )}
               </div>
