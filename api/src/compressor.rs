@@ -147,19 +147,41 @@ pub fn compress_cimage(
         }
     };
 
-    let compressed_image = match perform_image_compression(cimage, options) {
-        Some(image) => image,
-        None => {
+    let mut compression_parameters = parse_compression_options(options, cimage);
+
+    if options.resize_options.do_not_enlarge {
+        if compression_parameters.width > cimage.width as u32
+            || compression_parameters.height > cimage.height as u32
+        {
             return CompressionResult {
-                status: CompressionStatus::Error,
+                status: CompressionStatus::Warning,
                 cimage: CImage {
-                    status: ImageStatus::Error,
-                    info: "Error while compressing".to_string(),
+                    status: ImageStatus::Warning,
+                    info: "Cannot resize over original dimensions, skipping".to_string(),
+                    compressed_width: cimage.width,
+                    compressed_height: cimage.height,
+                    compressed_size: cimage.size,
+                    compressed_file_path: output_full_path.display().to_string(),
                     ..cimage.clone()
                 },
-            }
+            };
         }
-    };
+    }
+
+    let compressed_image =
+        match perform_image_compression(cimage, options, &mut compression_parameters) {
+            Some(image) => image,
+            None => {
+                return CompressionResult {
+                    status: CompressionStatus::Error,
+                    cimage: CImage {
+                        status: ImageStatus::Error,
+                        info: "Error while compressing".to_string(),
+                        ..cimage.clone()
+                    },
+                }
+            }
+        };
 
     let mut new_width = cimage.width;
     let mut new_height = cimage.height;
@@ -228,6 +250,19 @@ pub fn preview_cimage(
     let filename = options_payload_to_sha256(&cimage.id, options);
     let mut parameters = parse_compression_options(options, cimage);
     let output_path = app.path().resolve(filename, BaseDirectory::Temp).unwrap(); //TODO
+
+    if options.resize_options.do_not_enlarge {
+        if parameters.width > cimage.width as u32 || parameters.height > cimage.height as u32 {
+            return CompressionResult {
+                status: CompressionStatus::Warning,
+                cimage: CImage {
+                    status: ImageStatus::Warning,
+                    info: "Cannot resize over original dimensions, skipping".to_string(),
+                    ..cimage.clone()
+                },
+            };
+        }
+    }
 
     let result = if options.compression_options.compression_mode == 1 {
         let output_size =
@@ -377,9 +412,11 @@ fn options_payload_to_sha256(id: &String, options: &OptionsPayload) -> String {
     format!("{result:x}")
 }
 
-fn perform_image_compression(cimage: &CImage, options: &OptionsPayload) -> Option<Vec<u8>> {
-    let mut compression_parameters = parse_compression_options(options, cimage);
-
+fn perform_image_compression(
+    cimage: &CImage,
+    options: &OptionsPayload,
+    compression_parameters: &mut CSParameters,
+) -> Option<Vec<u8>> {
     let mut file = File::open(cimage.path.clone()).unwrap(); //TODO
     let mut input_file_buffer = Vec::new();
     file.read_to_end(&mut input_file_buffer).unwrap(); //TODO
@@ -388,7 +425,7 @@ fn perform_image_compression(cimage: &CImage, options: &OptionsPayload) -> Optio
         //SIZE
         compress_to_size_in_memory(
             input_file_buffer,
-            &mut compression_parameters,
+            compression_parameters,
             options.compression_options.max_size_value * options.compression_options.max_size_unit,
             true,
         )
@@ -401,7 +438,7 @@ fn perform_image_compression(cimage: &CImage, options: &OptionsPayload) -> Optio
             map_supported_formats(&options.output_options.output_format),
         )
     } else {
-        compress_in_memory(input_file_buffer, &compression_parameters)
+        compress_in_memory(input_file_buffer, compression_parameters)
     };
 
     compression_result_data.ok()

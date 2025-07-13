@@ -6,9 +6,9 @@ import {
   Circle,
   CircleAlert,
   CircleCheck,
-  CircleDashed,
   CircleX,
   Delete,
+  LoaderCircle,
   Search,
 } from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
@@ -36,20 +36,20 @@ function StatusIcon({ cImage }: { cImage: CImage }) {
   } else if (cImage.status === IMAGE_STATUS.WARNING) {
     return <CircleAlert className="text-warning size-4" />;
   } else if (cImage.status === IMAGE_STATUS.COMPRESSING) {
-    return <CircleDashed className="text-primary size-4 animate-spin" />;
+    return <LoaderCircle className="text-primary size-4 animate-spin" />;
   }
   return <Circle className="text-primary size-4"></Circle>;
 }
 
 function SavedLabel({ cImage }: { cImage: CImage }) {
   if (cImage.compressed_size === 0 || cImage.size === cImage.compressed_size) {
-    return <span className="text-default-400">&nbsp;</span>;
+    return <span className="text-default-400 text-nowrap">&nbsp;</span>;
   }
   const saved = getSavedPercentage(cImage.size, cImage.compressed_size);
   const textColor = saved < 0 ? 'text-danger' : 'text-success';
   const icon = saved < 0 ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />;
   return (
-    <span className={textColor + ' flex items-center gap-0.5'}>
+    <span className={textColor + ' flex items-center gap-0.5 text-nowrap'}>
       {icon}
       <span>{cImage.compressed_size !== 0 ? saved * -1 : 0}%</span>
     </span>
@@ -125,8 +125,10 @@ function FileListTable() {
               </div>
             </TableCell>
             <TableCell>
-              <small className="text-default-400">{getSubpart(baseFolder, cImage.path, cImage.name)}</small>
-              <span>{cImage.name}</span>
+              <span className="text-nowrap">
+                <small className="text-default-400">{getSubpart(baseFolder, cImage.path, cImage.name)}</small>
+                <span>{cImage.name}</span>
+              </span>
             </TableCell>
             <TableCell>
               <div className="flex flex-nowrap items-center gap-1">
@@ -166,7 +168,7 @@ function FileListTable() {
               <SavedLabel cImage={cImage} />
             </TableCell>
             <TableCell>
-              <span>{cImage.info}</span>
+              <span className="text-nowrap">{cImage.info}</span>
             </TableCell>
             <TableCell>
               <div className="flex items-center justify-between gap-1">
