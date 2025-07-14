@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { error } from '@tauri-apps/plugin-log';
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -18,8 +19,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, info: React.ErrorInfo): void {
-    console.error(error, info.componentStack, React.captureOwnerStack());
+  componentDidCatch(e: Error, info: React.ErrorInfo): void {
+    void error([e, info.componentStack, React.captureOwnerStack()].join('\n'));
   }
 
   render(): React.ReactNode {

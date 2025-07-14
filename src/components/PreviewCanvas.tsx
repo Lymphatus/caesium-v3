@@ -4,6 +4,7 @@ import { CImage, ImageLoaderRequest, ImageLoaderResponse, RESIZE_MODE } from '@/
 import usePreviewStore from '@/stores/preview.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
+import { error } from '@tauri-apps/plugin-log';
 
 const setImageToCanvas = (
   canvas: HTMLCanvasElement | null,
@@ -13,7 +14,7 @@ const setImageToCanvas = (
   type: 'original' | 'compressed',
 ) => {
   if (!canvas) {
-    console.error('Canvas is not defined');
+    error('Canvas is not defined');
     return;
   }
   const context = canvas.getContext('2d');

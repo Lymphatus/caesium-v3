@@ -154,8 +154,7 @@ const useUIStore = create<UIOptions>()(
   ),
 );
 
-useUIStore.subscribe((state) => {
-  // Extract only the data part without the functions
+useUIStore.subscribe(async (state) => {
   const dataToSave = {
     splitPanels: state.splitPanels,
     jpegAccordionOpen: state.jpegAccordionOpen,
@@ -168,11 +167,7 @@ useUIStore.subscribe((state) => {
     showLabelsInToolbar: state.showLabelsInToolbar,
   };
 
-  // Save to Tauri store
-  settings
-    .set('ui', dataToSave)
-    .then(() => {})
-    .catch(console.error);
+  await settings.set('ui', dataToSave);
 });
 
 export default useUIStore;

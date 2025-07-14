@@ -170,7 +170,6 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
   ),
 );
 
-// Set up explicit subscription for saving state changes
 useCompressionOptionsStore.subscribe(
   (state) => ({
     jpegOptions: state.jpegOptions,
@@ -182,11 +181,8 @@ useCompressionOptionsStore.subscribe(
     maxSize: state.maxSize,
     maxSizeUnit: state.maxSizeUnit,
   }),
-  (data) => {
-    settings
-      .set('compression_options.compression', data)
-      .then(() => {})
-      .catch((error) => console.error('Error saving settings:', error));
+  async (data) => {
+    await settings.set('compression_options.compression', data);
   },
 );
 
