@@ -95,8 +95,7 @@ const useOutputOptionsStore = create<OutputOptionsStore>()((set, get) => ({
   }),
 }));
 
-useOutputOptionsStore.subscribe((state) => {
-  // Extract only the data part without the functions
+useOutputOptionsStore.subscribe(async (state) => {
   const dataToSave = {
     outputFolder: state.outputFolder,
     sameFolderAsInput: state.sameFolderAsInput,
@@ -109,11 +108,7 @@ useOutputOptionsStore.subscribe((state) => {
     suffix: state.suffix,
   };
 
-  // Save to Tauri store
-  settings
-    .set('compression_options.output', dataToSave)
-    .then(() => {})
-    .catch(console.error);
+  await settings.set('compression_options.output', dataToSave);
 });
 
 export default useOutputOptionsStore;

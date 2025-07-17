@@ -76,8 +76,7 @@ const useSettingsStore = create<SettingsOptionsStore>()(
   })),
 );
 
-useSettingsStore.subscribe((state) => {
-  // Extract only the data part without the functions
+useSettingsStore.subscribe(async (state) => {
   const dataToSave = {
     theme: state.theme,
     language: state.language,
@@ -92,11 +91,7 @@ useSettingsStore.subscribe((state) => {
     threadsPriority: state.threadsPriority,
   };
 
-  // Save to Tauri store
-  settings
-    .set('settings', dataToSave)
-    .then(() => console.log('Saved to Tauri store'))
-    .catch(console.error);
+  await settings.set('settings', dataToSave);
 });
 
 useSettingsStore.subscribe(

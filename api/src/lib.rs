@@ -77,6 +77,13 @@ impl Borrow<str> for CImage {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .level(log::LevelFilter::Info)
+                .max_file_size(10_000_000)
+                .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepAll)
+                .build(),
+        )
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_os::init())
@@ -111,6 +118,7 @@ pub fn run() {
 }
 
 fn initialize_store() -> AppData {
+    log::warn!("Initialized store with default values");
     AppData {
         file_list: IndexSet::default(),
         base_path: PathBuf::default(),

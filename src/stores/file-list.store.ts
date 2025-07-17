@@ -7,6 +7,7 @@ import useSettingsStore from '@/stores/settings.store.ts';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
+import { error } from '@tauri-apps/plugin-log';
 
 interface FileListStore {
   fileList: CImage[];
@@ -83,8 +84,8 @@ const useFileListStore = create<FileListStore>()(
           threads: useSettingsStore.getState().threadsCount,
           baseFolder: get().baseFolder,
         })
-          .catch((e) => {
-            console.error(e);
+          .catch((e: Error) => {
+            void error(e.message);
             // for (const id of ids) {
             //   useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.ERROR, info: e.toString() }); //TODO maybe we don't need to set all of them as errors
             // }

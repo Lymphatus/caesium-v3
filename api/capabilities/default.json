@@ -18,6 +18,7 @@
     "core:window:allow-close",
     "core:window:allow-destroy",
     "os:default",
-    "updater:default"
+    "updater:default",
+    "log:default"
   ]
 }

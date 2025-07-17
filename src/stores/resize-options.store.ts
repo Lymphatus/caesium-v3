@@ -85,8 +85,7 @@ const useResizeOptionsStore = create<ResizeOptionsStore>()((set, get) => ({
   }),
 }));
 
-useResizeOptionsStore.subscribe((state) => {
-  // Extract only the data part without the functions
+useResizeOptionsStore.subscribe(async (state) => {
   const dataToSave = {
     resizeMode: state.resizeMode,
     width: state.width,
@@ -98,11 +97,7 @@ useResizeOptionsStore.subscribe((state) => {
     doNotEnlarge: state.doNotEnlarge,
   };
 
-  // Save to Tauri store
-  settings
-    .set('compression_options.resize', dataToSave)
-    .then(() => {})
-    .catch(console.error);
+  await settings.set('compression_options.resize', dataToSave);
 });
 
 export default useResizeOptionsStore;
