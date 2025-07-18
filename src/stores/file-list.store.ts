@@ -8,6 +8,7 @@ import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { error } from '@tauri-apps/plugin-log';
+import { SortDescriptor } from '@heroui/react';
 
 interface FileListStore {
   fileList: CImage[];
@@ -20,6 +21,7 @@ interface FileListStore {
   selectedItems: CImage[];
   isCompressing: boolean;
   compressionProgress: number;
+  currentSorting: SortDescriptor;
 
   totalPages: () => number;
 
@@ -35,6 +37,7 @@ interface FileListStore {
   setIsCompressing: (isCompressing: boolean) => void;
   setCompressionProgress: (progress: number) => void;
   updateFile: (id: string, updatedData: Partial<CImage>) => void;
+  setCurrentSorting: (sorting: SortDescriptor) => void;
 
   invokeCompress: (ids?: string[]) => void;
 }
@@ -52,6 +55,7 @@ const useFileListStore = create<FileListStore>()(
       selectedItems: [],
       isCompressing: false,
       compressionProgress: 0,
+      currentSorting: { column: 'filename', direction: 'ascending' },
 
       totalPages: () => Math.ceil(get().totalFiles / 50),
 
@@ -73,6 +77,7 @@ const useFileListStore = create<FileListStore>()(
       setSelectedItems: (items: CImage[]) => set({ selectedItems: items }),
       setIsCompressing: (isCompressing: boolean) => set({ isCompressing }),
       setCompressionProgress: (progress: number) => set({ compressionProgress: progress }),
+      setCurrentSorting: (sorting: SortDescriptor) => set({ currentSorting: sorting }),
       invokeCompress: () => {
         set({ isCompressing: true });
         invoke('compress', {

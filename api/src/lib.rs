@@ -2,7 +2,7 @@ use crate::commands::compression::{compress, preview};
 use crate::commands::post_compression_actions::exec_post_compression_action;
 use crate::commands::{
     change_page, clear_list, get_executable_dir, get_max_threads, open_import_files_dialog,
-    open_import_folder_dialog, remove_items_from_list,
+    open_import_folder_dialog, remove_items_from_list, sort_list
 };
 use indexmap::IndexSet;
 use serde_repr::*;
@@ -77,13 +77,13 @@ impl Borrow<str> for CImage {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(
-            tauri_plugin_log::Builder::new()
-                .level(log::LevelFilter::Info)
-                .max_file_size(10_000_000)
-                .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepAll)
-                .build(),
-        )
+        // .plugin(
+        //     tauri_plugin_log::Builder::new()
+        //         .level(log::LevelFilter::Info)
+        //         .max_file_size(10_000_000)
+        //         .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepAll)
+        //         .build(),
+        // )
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_os::init())
@@ -111,7 +111,8 @@ pub fn run() {
             preview,
             get_executable_dir,
             get_max_threads,
-            exec_post_compression_action
+            exec_post_compression_action,
+            sort_list
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -13,6 +13,7 @@ function FileListPagination() {
         showControls
         classNames={{
           wrapper: 'shadow-none',
+          base: 'p-0 m-0',
         }}
         page={currentPage}
         showShadow={false}

@@ -1,4 +1,14 @@
-import { Button, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import {
+  Button,
+  SortDescriptor,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import {
   ArrowDown,
@@ -57,7 +67,16 @@ function SavedLabel({ cImage }: { cImage: CImage }) {
 }
 
 function FileListTable() {
-  const { fileList, isListLoading, baseFolder, setSelectedItems, selectedItems } = useFileListStore();
+  const {
+    fileList,
+    isListLoading,
+    baseFolder,
+    setSelectedItems,
+    selectedItems,
+    setCurrentSorting,
+    currentSorting,
+    setIsListLoading,
+  } = useFileListStore();
   const { setCurrentPreviewedCImage, invokePreview, currentPreviewedCImage } = usePreviewStore();
 
   const { t } = useTranslation();
@@ -84,14 +103,26 @@ function FileListTable() {
       selectedKeys={selectedItems.map((item) => item.id)}
       selectionMode="multiple"
       shadow="none"
+      sortDescriptor={currentSorting}
       onRowAction={(key) => setCurrentPreviewedCImage(fileList.find((cImage) => cImage.id === key) || null)}
       onSelectionChange={handleSelectionChange}
+      onSortChange={(sort) => {
+        setIsListLoading(true);
+        setCurrentSorting(sort);
+        invoke('sort_list', {
+          column: sort.column,
+          order: sort.direction,
+        })
+          .then(() => {})
+          .catch(() => {})
+          .finally(() => setIsListLoading(false));
+      }}
     >
       <TableHeader className="rounded-sm">
         <TableColumn key="status" align="center" width={40}>
           &nbsp;
         </TableColumn>
-        <TableColumn key="name" allowsSorting>
+        <TableColumn key="filename" allowsSorting>
           {t('file_list.filename')}
         </TableColumn>
         <TableColumn key="size" allowsSorting>

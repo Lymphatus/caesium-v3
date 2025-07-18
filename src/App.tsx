@@ -50,6 +50,7 @@ function App() {
     const getListListener = listen<{ files: CImage[]; base_folder: string; total_files: number }>(
       'fileList:getList',
       (event) => {
+        console.log(event);
         const { files, base_folder, total_files } = event.payload;
         setFileList(files);
         setBaseFolder(base_folder);

@@ -6,10 +6,8 @@ function ListPanel() {
     <div className="size-full">
       <div className="bg-content1 flex size-full flex-col gap-1 rounded">
         <FileListTable></FileListTable>
-        <div className="bg-default-50 flex items-center justify-center py-1">
-          <div>
-            <FileListPagination></FileListPagination>
-          </div>
+        <div className="bg-content2 flex min-h-[40px] items-center justify-center p-1">
+          <FileListPagination></FileListPagination>
         </div>
       </div>
     </div>
