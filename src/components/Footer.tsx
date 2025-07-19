@@ -35,6 +35,7 @@ function Footer() {
           <Button
             disableRipple
             isIconOnly
+            className="max-h-[30px]"
             size="sm"
             title={i18next.t('cancel')}
             variant="light"

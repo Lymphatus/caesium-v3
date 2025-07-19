@@ -10,6 +10,9 @@ Try it online at [caesium.app](https://caesium.app)
 > This is a development version and very much subject to change. Many features are missing. Please use with care and be
 > sure to back up your pictures before using it.
 
+
+<img width="1431" height="954" alt="Image" src="https://github.com/user-attachments/assets/1b4ac0a4-2fc4-41c7-ab51-6e04a4ba9eae" />
+
 ## 🚀 About
 
 **Caesium Image Compressor** is a free, open-source, modern tool for compressing and optimizing images. Caesium helps

@@ -1,14 +1,4 @@
-import {
-  Button,
-  SortDescriptor,
-  Spinner,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@heroui/react';
+import { Button, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import {
   ArrowDown,
