@@ -38,7 +38,7 @@ function CompressionOptions() {
     setTiffAccordionOpen,
   } = useUIStore();
 
-  const { lossless, setLossless, keepMetadata, setKeepMetadata, maxSize, setMaxSize, maxSizeUnit, setMaxSizeUnit } =
+  const { keepMetadata, setKeepMetadata, maxSize, setMaxSize, maxSizeUnit, setMaxSizeUnit } =
     useCompressionOptionsStore();
 
   const handleChange = (value: SharedSelection) => {
@@ -127,12 +127,6 @@ function CompressionOptions() {
                 </AccordionItem>
               </Accordion>
 
-              <div className="flex w-full items-center justify-between">
-                <div className="flex flex-col">
-                  <span>{t('compression_options.lossless')}</span>
-                </div>
-                <Switch isSelected={lossless} size="sm" onValueChange={setLossless}></Switch>
-              </div>
               <div className="flex w-full items-center justify-between">
                 <div className="flex flex-col">
                   <span>{t('compression_options.keep_metadata')}</span>

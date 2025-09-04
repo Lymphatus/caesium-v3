@@ -22,15 +22,18 @@ struct JPEGOptions {
     quality: u32,
     chroma_subsampling: String, //TODO Create type
     progressive: bool,
+    optimize: bool,
 }
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 struct PNGOptions {
     quality: u32,
     optimization_level: u32,
+    optimize: bool,
 }
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 struct WebPOptions {
     quality: u32,
+    lossless: bool,
 }
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 struct TIFFOptions {
@@ -46,7 +49,6 @@ struct CompressionOptions {
     tiff: TIFFOptions,
     compression_mode: u32, //TODO Create type
     keep_metadata: bool,
-    lossless: bool,
     max_size_value: usize,
     max_size_unit: usize,
 }
@@ -102,7 +104,7 @@ pub struct CompressionSummary {
     pub total_errors: usize,
     pub original_size: usize,
     pub compressed_size: usize,
-    pub total_time: u64
+    pub total_time: u64,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
@@ -340,8 +342,11 @@ pub fn preview_cimage(
 fn parse_compression_options(options: &OptionsPayload, cimage: &CImage) -> CSParameters {
     let mut parameters = CSParameters::new();
 
+    parameters.jpeg.optimize = options.compression_options.jpeg.optimize;
+    parameters.png.optimize = options.compression_options.png.optimize;
+    parameters.webp.lossless = options.compression_options.webp.lossless;
+
     parameters.keep_metadata = options.compression_options.keep_metadata;
-    parameters.optimize = options.compression_options.lossless;
 
     // TODO use an enum or a match
     if options.resize_options.resize_enabled {

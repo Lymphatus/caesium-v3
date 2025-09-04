@@ -1,11 +1,11 @@
-import { NumberInput, Slider } from '@heroui/react';
+import { NumberInput, Slider, Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 
 function WebpOptions() {
   const { t } = useTranslation();
 
-  const { webpOptions, setWebpOptions, lossless } = useCompressionOptionsStore();
+  const { webpOptions, setWebpOptions } = useCompressionOptionsStore();
 
   const handleChange = (value: number | number[]) => {
     if (Array.isArray(value)) {
@@ -21,7 +21,7 @@ function WebpOptions() {
         classNames={{
           label: 'text-sm',
         }}
-        isDisabled={lossless}
+        isDisabled={webpOptions.lossless}
         label={t('quality')}
         maxValue={100}
         minValue={0}
@@ -46,6 +46,16 @@ function WebpOptions() {
         value={webpOptions.quality}
         onChange={handleChange}
       />
+      <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col">
+          <span>{t('compression_options.lossless')}</span>
+        </div>
+        <Switch
+          isSelected={webpOptions.lossless}
+          size="sm"
+          onValueChange={(value) => setWebpOptions({ lossless: value })}
+        ></Switch>
+      </div>
     </div>
   );
 }

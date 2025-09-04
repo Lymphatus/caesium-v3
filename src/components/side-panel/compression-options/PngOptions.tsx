@@ -1,11 +1,11 @@
-import { NumberInput, Slider } from '@heroui/react';
+import { NumberInput, Slider, Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 
 function PngOptions() {
   const { t } = useTranslation();
 
-  const { pngOptions, setPngOptions, lossless } = useCompressionOptionsStore();
+  const { pngOptions, setPngOptions } = useCompressionOptionsStore();
 
   const handleChange = (type: 'quality' | 'optimizationLevel', value: number | number[]) => {
     if (Array.isArray(value)) {
@@ -25,7 +25,7 @@ function PngOptions() {
         classNames={{
           label: 'text-sm',
         }}
-        isDisabled={lossless}
+        isDisabled={pngOptions.optimize}
         label={t('quality')}
         maxValue={100}
         minValue={0}
@@ -55,7 +55,7 @@ function PngOptions() {
         classNames={{
           label: 'text-sm',
         }}
-        isDisabled={!lossless}
+        isDisabled={!pngOptions.optimize}
         label={t('compression_options.optimization_level')}
         maxValue={6}
         minValue={1}
@@ -80,6 +80,16 @@ function PngOptions() {
         value={pngOptions.optimizationLevel}
         onChange={(v) => handleChange('optimizationLevel', v)}
       />
+      <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col">
+          <span>{t('compression_options.lossless')}</span>
+        </div>
+        <Switch
+          isSelected={pngOptions.optimize}
+          size="sm"
+          onValueChange={(value) => setPngOptions({ optimize: value })}
+        ></Switch>
+      </div>
     </div>
   );
 }

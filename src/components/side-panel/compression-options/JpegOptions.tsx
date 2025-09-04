@@ -6,7 +6,7 @@ import { CHROMA_SUBSAMPLING } from '@/types.ts';
 function JpegOptions() {
   const { t } = useTranslation();
 
-  const { jpegOptions, setJpegOptions, lossless } = useCompressionOptionsStore();
+  const { jpegOptions, setJpegOptions } = useCompressionOptionsStore();
 
   const chromaSubsamplings = [
     { key: CHROMA_SUBSAMPLING.AUTO, label: t('chroma_subsampling_auto') },
@@ -29,7 +29,7 @@ function JpegOptions() {
         classNames={{
           label: 'text-sm',
         }}
-        isDisabled={lossless}
+        isDisabled={jpegOptions.optimize}
         label={t('quality')}
         maxValue={100}
         minValue={0}
@@ -82,6 +82,16 @@ function JpegOptions() {
           isSelected={jpegOptions.progressive}
           size="sm"
           onValueChange={(value) => setJpegOptions({ progressive: value })}
+        ></Switch>
+      </div>
+      <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col">
+          <span>{t('compression_options.lossless')}</span>
+        </div>
+        <Switch
+          isSelected={jpegOptions.optimize}
+          size="sm"
+          onValueChange={(value) => setJpegOptions({ optimize: value })}
         ></Switch>
       </div>
     </div>

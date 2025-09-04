@@ -11,15 +11,18 @@ interface JpegOptions {
   quality: number;
   chromaSubsampling: CHROMA_SUBSAMPLING;
   progressive: boolean;
+  optimize: boolean;
 }
 
 interface PngOptions {
   quality: number;
   optimizationLevel: number;
+  optimize: boolean;
 }
 
 interface WebpOptions {
   quality: number;
+  lossless: boolean;
 }
 
 interface TiffOptions {
@@ -46,7 +49,6 @@ export interface CompressionOptions {
   };
   compression_mode: COMPRESSION_MODE;
   keep_metadata: boolean;
-  lossless: boolean;
   max_size_value: number;
   max_size_unit: number;
 }
@@ -56,7 +58,6 @@ interface CompressionOptionsStore {
   pngOptions: PngOptions;
   webpOptions: WebpOptions;
   tiffOptions: TiffOptions;
-  lossless: boolean;
   keepMetadata: boolean;
   maxSize: number;
   maxSizeUnit: number;
@@ -65,7 +66,6 @@ interface CompressionOptionsStore {
   setPngOptions: (options: Partial<PngOptions>) => void;
   setWebpOptions: (options: Partial<WebpOptions>) => void;
   setTiffOptions: (options: Partial<TiffOptions>) => void;
-  setLossless: (lossless: boolean) => void;
   setKeepMetadata: (keepMetadata: boolean) => void;
   setMaxSize: (maxSize: number) => void;
   setMaxSizeUnit: (maxSizeUnit: number) => void;
@@ -78,13 +78,16 @@ const defaultValues = {
     quality: 80,
     chromaSubsampling: CHROMA_SUBSAMPLING.AUTO,
     progressive: true,
+    optimize: true,
   },
   pngOptions: {
     quality: 80,
     optimizationLevel: 3,
+    optimize: true,
   },
   webpOptions: {
     quality: 80,
+    lossless: false,
   },
   tiffOptions: {
     method: TIFF_COMPRESSION_METHOD.DEFLATE,
@@ -127,10 +130,6 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
         set((state) => {
           Object.assign(state.tiffOptions, options);
         }),
-      setLossless: (lossless: boolean) =>
-        set((state) => {
-          state.lossless = lossless;
-        }),
       setKeepMetadata: (keepMetadata: boolean) =>
         set((state) => {
           state.keepMetadata = keepMetadata;
@@ -148,13 +147,16 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
           quality: get().jpegOptions.quality,
           chroma_subsampling: get().jpegOptions.chromaSubsampling,
           progressive: get().jpegOptions.progressive,
+          optimize: get().jpegOptions.optimize,
         },
         png: {
           quality: get().pngOptions.quality,
           optimization_level: get().pngOptions.optimizationLevel,
+          optimize: get().pngOptions.optimize,
         },
         webp: {
           quality: get().webpOptions.quality,
+          lossless: get().webpOptions.lossless,
         },
         tiff: {
           method: get().tiffOptions.method,
@@ -162,7 +164,6 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
         },
         compression_mode: COMPRESSION_MODE.QUALITY, //TODO needs a variable
         keep_metadata: get().keepMetadata,
-        lossless: get().lossless,
         max_size_value: get().maxSize,
         max_size_unit: get().maxSizeUnit,
       }),
@@ -176,7 +177,6 @@ useCompressionOptionsStore.subscribe(
     pngOptions: state.pngOptions,
     webpOptions: state.webpOptions,
     tiffOptions: state.tiffOptions,
-    lossless: state.lossless,
     keepMetadata: state.keepMetadata,
     maxSize: state.maxSize,
     maxSizeUnit: state.maxSizeUnit,
