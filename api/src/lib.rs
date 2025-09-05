@@ -2,7 +2,7 @@ use crate::commands::compression::{compress, preview};
 use crate::commands::post_compression_actions::exec_post_compression_action;
 use crate::commands::{
     change_page, clear_list, get_executable_dir, get_max_threads, open_import_files_dialog,
-    open_import_folder_dialog, remove_items_from_list, sort_list
+    open_import_folder_dialog, remove_items_from_list, sort_list,
 };
 use indexmap::IndexSet;
 use serde_repr::*;
@@ -15,6 +15,7 @@ use tauri::Manager;
 
 mod commands;
 mod compressor;
+mod errors;
 mod scan_files;
 
 #[derive(Default)]

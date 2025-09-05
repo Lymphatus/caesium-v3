@@ -1,11 +1,12 @@
 pub(crate) mod compression;
 pub(crate) mod post_compression_actions;
 
+use crate::errors::CommandError;
 use crate::scan_files::{compute_base_path, process_files, FileList};
 use crate::{AppData, CImage};
-use std::cmp::min;
+use std::cmp::{min, Ordering};
 use std::env;
-use std::num::NonZero;
+use std::io::ErrorKind;
 use std::ops::Div;
 use std::path::{absolute, PathBuf};
 use std::sync::{Mutex, MutexGuard};
@@ -71,10 +72,10 @@ pub fn open_import_files_dialog(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
-pub fn clear_list(app: tauri::AppHandle) {
+pub fn clear_list(app: tauri::AppHandle) -> Result<(), CommandError> {
     let state = app.state::<Mutex<AppData>>();
-    let mut state = state.lock().unwrap(); //TODO
-    state.file_list.clear();
+    let mut state = state.lock()?;
+    state.file_list.truncate(0);
     state.base_path = PathBuf::default();
     state.current_page = 1;
 
@@ -85,14 +86,18 @@ pub fn clear_list(app: tauri::AppHandle) {
             total_files: 0,
             base_folder: "".to_string(),
         },
-    )
-    .unwrap(); //TODO
+    )?;
+
+    Ok(())
 }
 
 #[tauri::command]
-pub fn remove_items_from_list(app: tauri::AppHandle, keys: Vec<String>) {
+pub fn remove_items_from_list(
+    app: tauri::AppHandle,
+    keys: Vec<String>,
+) -> Result<(), CommandError> {
     let state = app.state::<Mutex<AppData>>();
-    let mut state = state.lock().unwrap(); //TODO
+    let mut state = state.lock()?; //TODO
 
     for k in &keys {
         state.file_list.shift_remove(k.as_str());
@@ -100,7 +105,15 @@ pub fn remove_items_from_list(app: tauri::AppHandle, keys: Vec<String>) {
 
     let mut base_path = PathBuf::default();
     for c in state.file_list.iter() {
-        base_path = compute_base_path(c.path.as_ref(), &base_path).unwrap();
+        base_path = match compute_base_path(c.path.as_ref(), &base_path) {
+            Some(p) => p,
+            None => {
+                return Err(CommandError::from(std::io::Error::new(
+                    ErrorKind::Other,
+                    format!("Could not compute base path for file {0}", c.path),
+                )))
+            }
+        };
     }
     state.base_path = base_path;
     let page = state.current_page;
@@ -113,18 +126,18 @@ pub fn remove_items_from_list(app: tauri::AppHandle, keys: Vec<String>) {
             total_files: state.file_list.len(),
             base_folder: absolute(&state.base_path)
                 .unwrap_or_default()
-                .to_str()
-                .unwrap() //TODO
+                .display()
                 .to_string(),
         },
-    )
-    .unwrap(); //TODO
+    )?;
+
+    Ok(())
 }
 
 #[tauri::command]
-pub fn change_page(app: tauri::AppHandle, page: usize) {
+pub fn change_page(app: tauri::AppHandle, page: usize) -> Result<(), CommandError> {
     let state = app.state::<Mutex<AppData>>();
-    let mut state = state.lock().unwrap(); //TODO
+    let mut state = state.lock()?; //TODO
 
     let paged_list = get_paged_list(&mut state, page);
 
@@ -135,35 +148,35 @@ pub fn change_page(app: tauri::AppHandle, page: usize) {
             total_files: state.file_list.len(),
             base_folder: absolute(&state.base_path)
                 .unwrap_or_default()
-                .to_str()
-                .unwrap() //TODO
+                .display()
                 .to_string(),
         },
-    )
-    .unwrap(); //TODO
+    )?;
+
+    Ok(())
 }
 
 #[tauri::command]
-pub fn sort_list(app: tauri::AppHandle, column: String, order: String) {
-    println!("sort_list: {} {}", column, order);
+pub fn sort_list(app: tauri::AppHandle, column: String, order: String) -> Result<(), CommandError> {
     let state = app.state::<Mutex<AppData>>();
-    let mut state = state.lock().unwrap(); //TODO
+    let mut state = state.lock()?;
+
+    let file_list_column = FileListColumn::from_str(&column)
+        .ok_or_else(|| CommandError::Generic(Box::from(format!("Unknown column: {column}"))))?;
+    let order = SortOrder::from_str(order.as_str())
+        .ok_or_else(|| CommandError::Generic(Box::from(format!("Unknown ordering: {order}"))))?;
 
     state.file_list.par_sort_by(|a, b| {
-        let order = SortOrder::from_str(order.as_str()).unwrap(); //TODO
-        
-        // The issue is here - this logic is backwards
-        let comparison = match FileListColumn::from_str(&column).unwrap() {
+        //TODO
+        let comparison = match file_list_column {
             FileListColumn::Filename => a.name.cmp(&b.name),
             FileListColumn::Size => a.size.cmp(&b.size),
-            FileListColumn::Resolution => {
-                (a.width * a.height).cmp(&(b.width * b.height))
-            }
+            FileListColumn::Resolution => (a.width * a.height).cmp(&(b.width * b.height)),
             FileListColumn::Saved => get_saved_size(a.size, a.compressed_size)
                 .partial_cmp(&(get_saved_size(b.size, b.compressed_size)))
-                .unwrap(), //TODO
+                .unwrap_or(Ordering::Equal), // TODO Don't know if this is the best way to handle this
         };
-        
+
         // Apply the order after getting the comparison
         match order {
             SortOrder::Ascending => comparison,
@@ -181,12 +194,12 @@ pub fn sort_list(app: tauri::AppHandle, column: String, order: String) {
             total_files: state.file_list.len(),
             base_folder: absolute(&state.base_path)
                 .unwrap_or_default()
-                .to_str()
-                .unwrap() //TODO
+                .display()
                 .to_string(),
         },
-    )
-    .unwrap(); //TODO
+    )?;
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -198,17 +211,17 @@ pub fn get_executable_dir() -> Option<String> {
 
 #[tauri::command]
 pub fn get_max_threads() -> usize {
-    std::thread::available_parallelism()
-        .unwrap_or(NonZero::new(1).unwrap())
-        .get()
+    match std::thread::available_parallelism().ok() {
+        None => 1,
+        Some(v) => v.into(),
+    }
 }
 
-//TODO can underflow?
 fn get_saved_size(old_size: u64, new_size: u64) -> f64 {
     if old_size == 0 {
         return 0.0;
     }
-    (old_size.checked_sub(new_size).unwrap() as f64).div(old_size as f64)
+    (old_size.saturating_sub(new_size) as f64).div(old_size as f64)
 }
 
 fn get_paged_list(state: &mut MutexGuard<AppData>, page: usize) -> Vec<CImage> {

@@ -1,3 +1,4 @@
+use crate::errors::CommandError;
 use system_shutdown::{shutdown, sleep};
 
 #[derive(Clone, Debug)]
@@ -13,7 +14,7 @@ pub fn exec_post_compression_action(
     _app: tauri::AppHandle,
     post_compression_action: String,
     payload: Option<String>,
-) {
+) -> Result<(), CommandError> {
     let action = match post_compression_action.as_str() {
         "close_app" => PostCompressionAction::CloseApp,
         "shutdown" => PostCompressionAction::Shutdown,
@@ -25,9 +26,11 @@ pub fn exec_post_compression_action(
     match action {
         PostCompressionAction::Shutdown => exec_shutdown(),
         PostCompressionAction::Sleep => exec_sleep(),
-        PostCompressionAction::OpenOutputFolder => exec_open_output_folder(payload),
+        PostCompressionAction::OpenOutputFolder => exec_open_output_folder(payload)?,
         _ => (), // Others are handled by either frontend or ignored
-    }
+    };
+
+    Ok(())
 }
 
 fn exec_shutdown() {
@@ -44,8 +47,9 @@ fn exec_sleep() {
     }
 }
 
-fn exec_open_output_folder(output_folder: Option<String>) {
+fn exec_open_output_folder(output_folder: Option<String>) -> Result<(), CommandError> {
     if let Some(folder) = output_folder {
-        open::that_detached(folder).unwrap()
+        open::that_detached(folder)?;
     }
+    Ok(())
 }

@@ -18,7 +18,7 @@ if (platform() === 'windows') {
   configPath = await path.join(exeDir, 'settings.json');
 }
 
-const settings = await load(configPath, { autoSave: true });
+const settings = await load(configPath);
 const preferences = (await settings.get('app')) || {};
 
 const defaultOptions = {

@@ -39,7 +39,7 @@ if (platform() === 'windows') {
   configPath = await path.join(exeDir, 'settings.json');
 }
 
-const settings = await load(configPath, { autoSave: true });
+const settings = await load(configPath);
 const preferences = (await settings.get('settings')) || {};
 const maxThreads = (await invoke<number>('get_max_threads')) || 1;
 

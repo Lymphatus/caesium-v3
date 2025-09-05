@@ -1,13 +1,16 @@
-use crate::compressor::{compress_cimage, preview_cimage, CompressionResult, CompressionStatus, CompressionSummary, OptionsPayload};
+use crate::compressor::{
+    compress_cimage, preview_cimage, CompressionResult, CompressionStatus, CompressionSummary,
+    OptionsPayload,
+};
+use crate::errors::CommandError;
 use crate::{AppData, CImage, ImageStatus};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use std::cmp::max;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::Mutex;
-use tauri::{Emitter, Manager};
-use std::time::Instant;
 use std::sync::Arc;
-use std::sync::atomic::AtomicU64;
+use std::sync::Mutex;
+use std::time::Instant;
+use tauri::{Emitter, Manager};
 
 #[tauri::command]
 pub async fn compress(
@@ -15,7 +18,7 @@ pub async fn compress(
     options: OptionsPayload,
     threads: usize,
     base_folder: String,
-) {
+) -> Result<(), CommandError> {
     let start_time = Instant::now();
     let total_images = Arc::new(AtomicUsize::new(0));
     let total_success = Arc::new(AtomicUsize::new(0));
@@ -26,8 +29,9 @@ pub async fn compress(
 
     let thread_pool = rayon::ThreadPoolBuilder::new()
         .num_threads(max(threads, 1))
-        .build()
-        .unwrap(); //TODO
+        .build()?;
+
+    app.emit("fileList:compressionProgress", 0)?;
 
     thread_pool.install(|| {
         //TODO avoid cloning everything if performance will suffer
@@ -41,11 +45,6 @@ pub async fn compress(
         total_images.store(images.len(), Ordering::Relaxed);
 
         let progress = AtomicUsize::new(0);
-        app.emit(
-            "fileList:compressionProgress",
-            progress.load(Ordering::Relaxed),
-        )
-        .unwrap(); //TODO
 
         images.par_iter().for_each(|cimage| {
             original_size.fetch_add(cimage.size as usize, Ordering::Relaxed);
@@ -58,7 +57,7 @@ pub async fn compress(
             };
             app.emit("fileList:updateCImage", r).unwrap(); //TODO
             let result = compress_cimage(&app, cimage, &options, &base_folder);
-            
+
             // Count results
             match result.status {
                 CompressionStatus::Success => total_success.fetch_add(1, Ordering::Relaxed),
@@ -67,7 +66,7 @@ pub async fn compress(
             };
 
             compressed_size.fetch_add(result.cimage.compressed_size as usize, Ordering::Relaxed);
-            
+
             let state = app.state::<Mutex<AppData>>();
             let mut state = state.lock().unwrap(); //TODO
             state.file_list.replace(result.clone().cimage);
@@ -92,7 +91,9 @@ pub async fn compress(
         total_time: elapsed_time.as_millis() as u64,
     };
 
-    app.emit("fileList:compressionFinished", summary).unwrap();
+    app.emit("fileList:compressionFinished", summary)?;
+
+    Ok(())
 }
 
 #[tauri::command]
