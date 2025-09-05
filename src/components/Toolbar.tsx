@@ -3,15 +3,33 @@ import useFileListStore from '@/stores/file-list.store.ts';
 import { invoke } from '@tauri-apps/api/core';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
-import { Button, Divider, Dropdown, DropdownTrigger } from '@heroui/react';
+import { addToast, Button, Divider, Dropdown, DropdownTrigger } from '@heroui/react';
 import AppMenu from '@/components/AppMenu.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
+import { FileListPayload } from '@/types.ts';
 
 function Toolbar() {
-  const { openPickerDialogs, fileList, selectedItems, invokeCompress } = useFileListStore();
+  const { openPickerDialogs, fileList, selectedItems, invokeCompress, updateList, setIsListLoading } =
+    useFileListStore();
   const { setSettingsDialogOpen, showLabelsInToolbar } = useUIStore();
   const { invokePreview } = usePreviewStore();
   const { t } = useTranslation();
+
+  const onClearPressed = async () =>
+    invoke<FileListPayload>('clear_list').then((payload: FileListPayload) => updateList(payload));
+  const onRemoveItemFromListPressed = async () => {
+    setIsListLoading(true);
+    invoke<FileListPayload>('remove_items_from_list', { keys: selectedItems.map((c) => c.id) })
+      .then((payload) => updateList(payload))
+      .catch((e: string) =>
+        addToast({
+          title: 'Error',
+          description: `An error occurred: ${e}`,
+          color: 'danger',
+        }),
+      )
+      .finally(() => setIsListLoading(false));
+  };
 
   return (
     <div className="bg-content1 flex h-[40px] w-full items-center justify-between px-2">
@@ -49,7 +67,7 @@ function Toolbar() {
           size="sm"
           title={t('actions.remove')}
           variant="light"
-          onPress={async () => await invoke('remove_items_from_list', { keys: selectedItems.map((c) => c.id) })}
+          onPress={onRemoveItemFromListPressed}
         >
           <Delete className="size-5"></Delete>
           {showLabelsInToolbar && <span>{t('actions.remove')}</span>}
@@ -62,7 +80,7 @@ function Toolbar() {
           size="sm"
           title={t('actions.clear')}
           variant="light"
-          onPress={async () => await invoke('clear_list')}
+          onPress={onClearPressed}
         >
           <Trash2 className="size-5"></Trash2>
           {showLabelsInToolbar && <span>{t('actions.clear')}</span>}

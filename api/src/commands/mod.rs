@@ -6,7 +6,6 @@ use crate::scan_files::{compute_base_path, process_files, FileList};
 use crate::{AppData, CImage};
 use std::cmp::{min, Ordering};
 use std::env;
-use std::io::ErrorKind;
 use std::ops::Div;
 use std::path::{absolute, PathBuf};
 use std::sync::{Mutex, MutexGuard};
@@ -72,30 +71,25 @@ pub fn open_import_files_dialog(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
-pub fn clear_list(app: tauri::AppHandle) -> Result<(), CommandError> {
+pub fn clear_list(app: tauri::AppHandle) -> Result<FileList, CommandError> {
     let state = app.state::<Mutex<AppData>>();
     let mut state = state.lock()?;
     state.file_list.truncate(0);
     state.base_path = PathBuf::default();
     state.current_page = 1;
 
-    app.emit(
-        "fileList:getList",
-        FileList {
-            files: vec![],
-            total_files: 0,
-            base_folder: "".to_string(),
-        },
-    )?;
-
-    Ok(())
+    Ok(FileList {
+        files: vec![],
+        total_files: 0,
+        base_folder: "".to_string(),
+    })
 }
 
 #[tauri::command]
 pub fn remove_items_from_list(
     app: tauri::AppHandle,
     keys: Vec<String>,
-) -> Result<(), CommandError> {
+) -> Result<FileList, CommandError> {
     let state = app.state::<Mutex<AppData>>();
     let mut state = state.lock()?; //TODO
 
@@ -108,10 +102,10 @@ pub fn remove_items_from_list(
         base_path = match compute_base_path(c.path.as_ref(), &base_path) {
             Some(p) => p,
             None => {
-                return Err(CommandError::from(std::io::Error::new(
-                    ErrorKind::Other,
-                    format!("Could not compute base path for file {0}", c.path),
-                )))
+                return Err(CommandError::from(std::io::Error::other(format!(
+                    "Could not compute base path for file {0}",
+                    c.path
+                ))))
             }
         };
     }
@@ -119,45 +113,39 @@ pub fn remove_items_from_list(
     let page = state.current_page;
     let paged_list = get_paged_list(&mut state, page);
 
-    app.emit(
-        "fileList:getList",
-        FileList {
-            files: paged_list,
-            total_files: state.file_list.len(),
-            base_folder: absolute(&state.base_path)
-                .unwrap_or_default()
-                .display()
-                .to_string(),
-        },
-    )?;
-
-    Ok(())
+    Ok(FileList {
+        files: paged_list,
+        total_files: state.file_list.len(),
+        base_folder: absolute(&state.base_path)
+            .unwrap_or_default()
+            .display()
+            .to_string(),
+    })
 }
 
 #[tauri::command]
-pub fn change_page(app: tauri::AppHandle, page: usize) -> Result<(), CommandError> {
+pub fn change_page(app: tauri::AppHandle, page: usize) -> Result<FileList, CommandError> {
     let state = app.state::<Mutex<AppData>>();
-    let mut state = state.lock()?; //TODO
+    let mut state = state.lock()?;
 
     let paged_list = get_paged_list(&mut state, page);
 
-    app.emit(
-        "fileList:getList",
-        FileList {
-            files: paged_list,
-            total_files: state.file_list.len(),
-            base_folder: absolute(&state.base_path)
-                .unwrap_or_default()
-                .display()
-                .to_string(),
-        },
-    )?;
-
-    Ok(())
+    Ok(FileList {
+        files: paged_list,
+        total_files: state.file_list.len(),
+        base_folder: absolute(&state.base_path)
+            .unwrap_or_default()
+            .display()
+            .to_string(),
+    })
 }
 
 #[tauri::command]
-pub fn sort_list(app: tauri::AppHandle, column: String, order: String) -> Result<(), CommandError> {
+pub fn sort_list(
+    app: tauri::AppHandle,
+    column: String,
+    order: String,
+) -> Result<FileList, CommandError> {
     let state = app.state::<Mutex<AppData>>();
     let mut state = state.lock()?;
 
@@ -167,7 +155,6 @@ pub fn sort_list(app: tauri::AppHandle, column: String, order: String) -> Result
         .ok_or_else(|| CommandError::Generic(Box::from(format!("Unknown ordering: {order}"))))?;
 
     state.file_list.par_sort_by(|a, b| {
-        //TODO
         let comparison = match file_list_column {
             FileListColumn::Filename => a.name.cmp(&b.name),
             FileListColumn::Size => a.size.cmp(&b.size),
@@ -187,19 +174,14 @@ pub fn sort_list(app: tauri::AppHandle, column: String, order: String) -> Result
     let page = state.current_page;
     let paged_list = get_paged_list(&mut state, page);
 
-    app.emit(
-        "fileList:getList",
-        FileList {
-            files: paged_list,
-            total_files: state.file_list.len(),
-            base_folder: absolute(&state.base_path)
-                .unwrap_or_default()
-                .display()
-                .to_string(),
-        },
-    )?;
-
-    Ok(())
+    Ok(FileList {
+        files: paged_list,
+        total_files: state.file_list.len(),
+        base_folder: absolute(&state.base_path)
+            .unwrap_or_default()
+            .display()
+            .to_string(),
+    })
 }
 
 #[tauri::command]

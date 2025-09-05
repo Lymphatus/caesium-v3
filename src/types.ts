@@ -146,3 +146,5 @@ export type CompressionFinished = {
   compressed_size: number;
   total_time: number;
 };
+
+export type FileListPayload = { files: CImage[]; base_folder: string; total_files: number };

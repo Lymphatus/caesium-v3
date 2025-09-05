@@ -8,7 +8,7 @@ pub enum CommandError {
     Poisoned,
     #[error(transparent)]
     ThreadPool(#[from] rayon::ThreadPoolBuildError),
-    #[error("Generic error: {0}")]
+    #[error("{0}")]
     Generic(#[from] Box<dyn std::error::Error + Send + Sync>),
 }
 

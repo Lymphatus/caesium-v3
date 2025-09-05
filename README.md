@@ -7,7 +7,8 @@ v3.0.0-alpha.0
 Try it online at [caesium.app](https://caesium.app)
 
 > [!WARNING]
-> This is a very early development version and very much subject to change. Many features are missing or straight up don't work. Please use with care and be
+> This is a very early development version and very much subject to change. Many features are missing or straight up
+> don't work. Please use with care and be
 > sure to back up your pictures before using it.
 
 
@@ -42,8 +43,6 @@ Caesium v3 is a complete rewrite using [Tauri](https://tauri.app/) and a React-b
 - **macOS**: 10.15+ (Apple Silicon & Intel)
 - **Linux**: 64 bit, tested on Ubuntu 24.04
 
-> _Older systems? Use [v1.x - Legacy Releases](https://www.fosshub.com/Caesium-Image-Compressor-old.html)_
-
 ## Installation
 
 Go to the [releases page](https://github.com/Lymphatus/caesium-image-compressor/releases) for downloads.
@@ -64,8 +63,8 @@ _The main branch may contain development or unstable features—prefer tagged re
 
 ```sh
 # 1. Clone the repo
-git clone [https://github.com/Lymphatus/caesium-image-compressor.git)
-cd caesium-image-compressor
+git clone [https://github.com/Lymphatus/caesium-v3.git)
+cd caesium-v3
 # 2. Install JS dependencies
 npm install
 # 3. Build & run the app (development mode)
@@ -82,7 +81,7 @@ WIP
 
 ## Need Help? Feature Requests? Bugs?
 
-- Open an [issue](https://github.com/Lymphatus/caesium-image-compressor/issues) - be sure to specify it's version 3
+- Open an [issue](https://github.com/Lymphatus/caesium-v3/issues) - be sure to specify it's version 3
 - Or join the [discussion thread for v3](https://github.com/Lymphatus/caesium-image-compressor/issues/334)
 
 ## Special Thanks

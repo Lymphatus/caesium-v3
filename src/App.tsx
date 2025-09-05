@@ -5,7 +5,7 @@ import ImportDialog from '@/components/dialogs/ImportDialog.tsx';
 import CenterContainer from '@/components/CenterContainer.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { listen, TauriEvent } from '@tauri-apps/api/event';
-import { CImage, CompressionFinished } from '@/types.ts';
+import { CImage, CompressionFinished, FileListPayload } from '@/types.ts';
 import { addToast, Button } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
@@ -20,16 +20,8 @@ import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.ts
 import prettyBytes from 'pretty-bytes';
 
 function App() {
-  const {
-    setFileList,
-    setBaseFolder,
-    setIsImporting,
-    setTotalFiles,
-    setImportProgress,
-    updateFile,
-    setCompressionProgress,
-    currentPage,
-  } = useFileListStore();
+  const { setIsImporting, setImportProgress, updateFile, setCompressionProgress, currentPage, updateList } =
+    useFileListStore();
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
   const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
@@ -49,16 +41,9 @@ function App() {
       },
     );
 
-    const getListListener = listen<{ files: CImage[]; base_folder: string; total_files: number }>(
-      'fileList:getList',
-      (event) => {
-        const { files, base_folder, total_files } = event.payload;
-        setFileList(files);
-        setBaseFolder(base_folder);
-        setTotalFiles(total_files);
-        setIsImporting(false);
-      },
-    );
+    const getListListener = listen<FileListPayload>('fileList:getList', (event) => {
+      updateList(event.payload);
+    });
 
     const importStartedListener = listen('fileImporter:importStarted', () => {
       setImportProgress(0);
@@ -116,7 +101,7 @@ function App() {
       }
     });
 
-    invoke('change_page', { page: currentPage }).then();
+    invoke<FileListPayload>('change_page', { page: currentPage }).then((payload) => updateList(payload));
 
     return () => {
       Promise.all([

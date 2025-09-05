@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { CImage } from '@/types.ts';
+import { CImage, FileListPayload } from '@/types.ts';
 import { invoke } from '@tauri-apps/api/core';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -8,7 +8,7 @@ import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { error } from '@tauri-apps/plugin-log';
-import { SortDescriptor } from '@heroui/react';
+import { addToast, SortDescriptor } from '@heroui/react';
 import { execPostCompressionAction } from '@/utils/post-compression-actions.ts';
 
 interface FileListStore {
@@ -41,6 +41,7 @@ interface FileListStore {
   setCurrentSorting: (sorting: SortDescriptor) => void;
 
   invokeCompress: (ids?: string[]) => void;
+  updateList: (payload: FileListPayload) => void;
 }
 
 const useFileListStore = create<FileListStore>()(
@@ -79,6 +80,12 @@ const useFileListStore = create<FileListStore>()(
       setIsCompressing: (isCompressing: boolean) => set({ isCompressing }),
       setCompressionProgress: (progress: number) => set({ compressionProgress: progress }),
       setCurrentSorting: (sorting: SortDescriptor) => set({ currentSorting: sorting }),
+      updateList: (payload: FileListPayload) => {
+        const { files, base_folder, total_files } = payload;
+        useFileListStore.getState().setFileList(files);
+        useFileListStore.getState().setBaseFolder(base_folder);
+        useFileListStore.getState().setTotalFiles(total_files);
+      },
       invokeCompress: () => {
         set({ isCompressing: true });
         invoke('compress', {
@@ -117,8 +124,16 @@ useFileListStore.subscribe(
   (state) => state.currentPage,
   async (currentPage: number) => {
     useFileListStore.getState().setIsListLoading(true);
-    await invoke('change_page', { page: currentPage });
-    useFileListStore.getState().setIsListLoading(false);
+    invoke<FileListPayload>('change_page', { page: currentPage })
+      .then((payload) => useFileListStore.getState().updateList(payload))
+      .catch((e: string) => {
+        addToast({
+          title: 'Error',
+          description: `An error occurred: ${e}`,
+          color: 'danger',
+        });
+      })
+      .finally(() => useFileListStore.getState().setIsListLoading(false));
   },
 );
 

@@ -1,4 +1,14 @@
-import { Button, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import {
+  addToast,
+  Button,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import {
   ArrowDown,
@@ -17,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { sep } from '@tauri-apps/api/path';
 import { Selection } from '@react-types/shared';
 import { invoke } from '@tauri-apps/api/core';
-import { CImage, IMAGE_STATUS } from '@/types.ts';
+import { CImage, FileListPayload, IMAGE_STATUS } from '@/types.ts';
 import { getSavedPercentage } from '@/utils/utils.ts';
 
 function getSubpart(baseFolder: string | null, fullPath: string, filename: string) {
@@ -68,7 +78,7 @@ function FileListTable() {
     setIsListLoading,
   } = useFileListStore();
   const { setCurrentPreviewedCImage, invokePreview, currentPreviewedCImage } = usePreviewStore();
-
+  const { updateList } = useFileListStore();
   const { t } = useTranslation();
 
   const handleSelectionChange = function (keys: Selection) {
@@ -99,12 +109,18 @@ function FileListTable() {
       onSortChange={(sort) => {
         setIsListLoading(true);
         setCurrentSorting(sort);
-        invoke('sort_list', {
+        invoke<FileListPayload>('sort_list', {
           column: sort.column,
           order: sort.direction,
         })
-          .then(() => {})
-          .catch(() => {})
+          .then((payload) => updateList(payload))
+          .catch((e: string) => {
+            addToast({
+              title: 'Error',
+              description: `An error occurred: ${e}`,
+              color: 'danger',
+            });
+          })
           .finally(() => setIsListLoading(false));
       }}
     >
@@ -213,7 +229,17 @@ function FileListTable() {
                   title={t('actions.remove')}
                   variant="light"
                   onPress={async () => {
-                    await invoke('remove_items_from_list', { keys: [cImage.id] });
+                    setIsListLoading(true);
+                    invoke<FileListPayload>('remove_items_from_list', { keys: [cImage.id] })
+                      .then((payload) => updateList(payload))
+                      .catch((e: string) =>
+                        addToast({
+                          title: 'Error',
+                          description: `An error occurred: ${e}`,
+                          color: 'danger',
+                        }),
+                      )
+                      .finally(() => setIsListLoading(false));
                   }}
                 >
                   <Delete className="size-4"></Delete>
