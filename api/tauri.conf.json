@@ -15,7 +15,9 @@
       {
         "title": "Caesium Image Compressor",
         "width": 1200,
-        "height": 900
+        "height": 900,
+        "minWidth": 1000,
+        "minHeight": 800
       }
     ],
     "security": {

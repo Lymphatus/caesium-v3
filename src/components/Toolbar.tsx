@@ -7,6 +7,7 @@ import { addToast, Button, Divider, Dropdown, DropdownTrigger } from '@heroui/re
 import AppMenu from '@/components/AppMenu.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { FileListPayload } from '@/types.ts';
+import FileListFilter from '@/components/file-list/FileListFilter.tsx';
 
 function Toolbar() {
   const { openPickerDialogs, fileList, selectedItems, invokeCompress, updateList, setIsListLoading } =
@@ -115,6 +116,7 @@ function Toolbar() {
         </Button>
       </div>
       <div className="flex h-full items-center gap-1">
+        <FileListFilter></FileListFilter>
         <Button
           disableRipple
           isIconOnly={!showLabelsInToolbar}

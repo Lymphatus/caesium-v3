@@ -2,7 +2,6 @@ use crate::{AppData, CImage, ImageStatus};
 use file_format::FileFormat;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
-use std::cmp::min;
 use std::sync::Mutex;
 use std::{
     fs::File,
@@ -78,9 +77,8 @@ pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>, recursiv
                 "fileImporter:importProgress",
                 FileImportProgress { progress, total },
             )
-            .unwrap_or_default();
+            .unwrap();
         }
-        //TODO What is default doing here?
 
         let cimage = match map_file(f) {
             Some(c) => c,
@@ -90,22 +88,7 @@ pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>, recursiv
         state.file_list.insert(cimage);
     }
 
-    let mut full_list = vec![];
-
-    if !state.file_list.is_empty() {
-        state
-            .file_list
-            .sort_by(|a, b| a.path.partial_cmp(&b.path).unwrap()); //TODO
-
-        let offset = (state.current_page - 1) * 50;
-        full_list = state
-            .file_list
-            .get_range(offset..min(state.file_list.len(), 50)) //TODO check out of range
-            .unwrap() //TODO
-            .iter()
-            .cloned()
-            .collect();
-    }
+    state.file_list.sort_list();
 
     app.emit(
         "fileImporter:importFinished",
@@ -118,7 +101,7 @@ pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>, recursiv
     app.emit(
         "fileList:getList",
         FileList {
-            files: full_list,
+            files: state.file_list.paged_list.clone(),
             total_files: state.file_list.len(),
             base_folder: absolute(&state.base_path)
                 .unwrap_or_default()

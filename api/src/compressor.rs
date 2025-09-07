@@ -211,7 +211,7 @@ pub fn compress_cimage(
     }
 
     let output_file_size = compressed_image.len() as u64;
-    let output_file_exists = output_full_path.exists();
+    let _output_file_exists = output_full_path.exists();
 
     if original_file_size < output_file_size && options.output_options.skip_if_output_is_bigger {
         if PathBuf::from(&cimage.path) != output_full_path {

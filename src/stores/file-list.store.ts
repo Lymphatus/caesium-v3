@@ -42,6 +42,7 @@ interface FileListStore {
 
   invokeCompress: (ids?: string[]) => void;
   updateList: (payload: FileListPayload) => void;
+  filterList: (query: string) => void;
 }
 
 const useFileListStore = create<FileListStore>()(
@@ -80,11 +81,28 @@ const useFileListStore = create<FileListStore>()(
       setIsCompressing: (isCompressing: boolean) => set({ isCompressing }),
       setCompressionProgress: (progress: number) => set({ compressionProgress: progress }),
       setCurrentSorting: (sorting: SortDescriptor) => set({ currentSorting: sorting }),
+      filterList: async (query: string) => {
+        set({ isListLoading: true });
+        invoke<FileListPayload>('filter_list', { query })
+          .then((payload) => {
+            useFileListStore.getState().updateList(payload);
+            useFileListStore.getState().setCurrentPage(1);
+          })
+          .catch((e: string) => {
+            addToast({
+              title: 'Error',
+              description: `An error occurred: ${e}`,
+              color: 'danger',
+            });
+          })
+          .finally(() => set({ isListLoading: false }));
+      },
       updateList: (payload: FileListPayload) => {
         const { files, base_folder, total_files } = payload;
         useFileListStore.getState().setFileList(files);
         useFileListStore.getState().setBaseFolder(base_folder);
         useFileListStore.getState().setTotalFiles(total_files);
+        useFileListStore.getState().setCurrentPage(Math.min(get().currentPage, Math.ceil(total_files / 50)));
       },
       invokeCompress: () => {
         set({ isCompressing: true });

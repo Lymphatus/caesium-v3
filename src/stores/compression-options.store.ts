@@ -35,13 +35,16 @@ export interface CompressionOptions {
     quality: number;
     chroma_subsampling: CHROMA_SUBSAMPLING;
     progressive: boolean;
+    optimize: boolean;
   };
   png: {
     quality: number;
     optimization_level: number;
+    optimize: boolean;
   };
   webp: {
     quality: number;
+    lossless: boolean;
   };
   tiff: {
     method: TIFF_COMPRESSION_METHOD;
@@ -51,6 +54,32 @@ export interface CompressionOptions {
   keep_metadata: boolean;
   max_size_value: number;
   max_size_unit: number;
+}
+
+export interface StoredCompressionOptions {
+  jpegOptions: {
+    quality: number;
+    chromaSubsampling: CHROMA_SUBSAMPLING;
+    progressive: boolean;
+    optimize: boolean;
+  };
+  pngOptions: {
+    quality: number;
+    optimizationLevel: number;
+    optimize: boolean;
+  };
+  webpOptions: {
+    quality: number;
+    lossless: boolean;
+  };
+  tiffOptions: {
+    method: TIFF_COMPRESSION_METHOD;
+    deflateLevel: TIFF_DEFLATE_LEVEL;
+  };
+  maxSize: number;
+  maxSizeUnit: number;
+  lossless: boolean;
+  keepMetadata: boolean;
 }
 
 interface CompressionOptionsStore {
@@ -73,17 +102,17 @@ interface CompressionOptionsStore {
   getCompressionOptions: () => CompressionOptions;
 }
 
-const defaultValues = {
+const defaultValues: StoredCompressionOptions = {
   jpegOptions: {
     quality: 80,
     chromaSubsampling: CHROMA_SUBSAMPLING.AUTO,
     progressive: true,
-    optimize: true,
+    optimize: false,
   },
   pngOptions: {
     quality: 80,
     optimizationLevel: 3,
-    optimize: true,
+    optimize: false,
   },
   webpOptions: {
     quality: 80,
@@ -106,14 +135,18 @@ if (platform() === 'windows') {
 }
 
 const settings = await load(configPath);
-const preferences = (await settings.get('compression_options.compression')) || {};
+const preferences: StoredCompressionOptions =
+  ((await settings.get('compression_options.compression')) as StoredCompressionOptions) || defaultValues;
 
 // Create store with default values first
 const useCompressionOptionsStore = create<CompressionOptionsStore>()(
   subscribeWithSelector(
     immer((set, get) => ({
       ...defaultValues,
-      ...preferences,
+      jpegOptions: { ...defaultValues.jpegOptions, ...preferences.jpegOptions },
+      pngOptions: { ...defaultValues.pngOptions, ...preferences.pngOptions },
+      webpOptions: { ...defaultValues.webpOptions, ...preferences.webpOptions },
+      tiffOptions: { ...defaultValues.tiffOptions, ...preferences.tiffOptions },
       setJpegOptions: (options: Partial<JpegOptions>) =>
         set((state) => {
           Object.assign(state.jpegOptions, options);

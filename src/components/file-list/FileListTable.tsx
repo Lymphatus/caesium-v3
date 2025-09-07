@@ -93,9 +93,10 @@ function FileListTable() {
       removeWrapper
       aria-label="File list"
       checkboxesProps={{ disableAnimation: true, size: 'sm', className: 'p-0 pb-1' }}
+      className="rounded-t-sm"
       classNames={{
         base: 'h-full justify-between overflow-auto',
-        th: 'h-8 first:rounded-b-none first:rounded-t-sm last:rounded-b-none last:rounded-t-sm [&:first-child]:w-[32px]',
+        th: 'h-8 first:rounded-b-none first:rounded-t-none last:rounded-b-none last:rounded-t-none [&:first-child]:w-[32px]',
         td: 'text-nowrap',
       }}
       layout="auto"

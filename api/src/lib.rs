@@ -1,29 +1,24 @@
+use crate::app_data::AppData;
 use crate::commands::compression::{compress, preview};
+use crate::commands::list::{
+    change_page, clear_list, filter_list, remove_items_from_list, sort_list,
+};
 use crate::commands::post_compression_actions::exec_post_compression_action;
 use crate::commands::{
-    change_page, clear_list, get_executable_dir, get_max_threads, open_import_files_dialog,
-    open_import_folder_dialog, remove_items_from_list, sort_list,
+    get_executable_dir, get_max_threads, open_import_files_dialog, open_import_folder_dialog,
 };
-use indexmap::IndexSet;
 use serde_repr::*;
 use std::borrow::Borrow;
 use std::env;
 use std::hash::{Hash, Hasher};
-use std::path::PathBuf;
 use std::sync::Mutex;
 use tauri::Manager;
 
+mod app_data;
 mod commands;
 mod compressor;
 mod errors;
 mod scan_files;
-
-#[derive(Default)]
-pub struct AppData {
-    file_list: IndexSet<CImage>,
-    base_path: PathBuf,
-    current_page: usize,
-}
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default)]
 pub struct CImage {
@@ -96,7 +91,7 @@ pub fn run() {
                 window.open_devtools();
                 window.close_devtools();
             }
-            app.manage(Mutex::new(initialize_store()));
+            app.manage(Mutex::new(AppData::new()));
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
@@ -113,17 +108,9 @@ pub fn run() {
             get_executable_dir,
             get_max_threads,
             exec_post_compression_action,
-            sort_list
+            sort_list,
+            filter_list
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-}
-
-fn initialize_store() -> AppData {
-    log::warn!("Initialized store with default values");
-    AppData {
-        file_list: IndexSet::default(),
-        base_path: PathBuf::default(),
-        current_page: 1,
-    }
 }
