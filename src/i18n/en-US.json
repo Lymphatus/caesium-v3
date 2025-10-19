@@ -34,7 +34,8 @@
   "install": "Install",
   "cancel": "Cancel",
   "changelog": "Changelog",
-  "errors":  {
+  "drop_files_here": "Drop files here",
+  "errors": {
     "generic": "An error has occurred",
     "generic_retry": "An error has occurred, retry later"
   },

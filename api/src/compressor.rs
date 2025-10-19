@@ -483,6 +483,7 @@ fn setup_output_path(
         options.output_options.keep_folder_structure,
         &options.output_options.suffix,
         &options.output_options.output_format,
+        options.output_options.same_folder_as_input,
     )?;
 
     if !output_directory.exists() && fs::create_dir_all(&output_directory).is_err() {
@@ -508,6 +509,7 @@ fn compute_output_full_path(
     keep_structure: bool,
     suffix: &str,
     format: &str,
+    same_folder_as_input: bool,
 ) -> Option<(PathBuf, OsString)> {
     let extension = if format == "original" {
         input_file_path
@@ -534,6 +536,10 @@ fn compute_output_full_path(
             Ok(p) => p,
             Err(_) => return None,
         };
+
+        if same_folder_as_input {
+            return Some((parent.clone(), output_file_name));
+        }
 
         let output_path_prefix = match parent.strip_prefix(base_directory) {
             Ok(p) => p,

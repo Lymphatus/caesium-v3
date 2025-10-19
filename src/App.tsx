@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Toolbar from '@/components/Toolbar.tsx';
 import Footer from '@/components/Footer.tsx';
 import ImportDialog from '@/components/dialogs/ImportDialog.tsx';
@@ -18,6 +18,7 @@ import AskDialog from '@/components/dialogs/AskDialog.tsx';
 import { useTranslation } from 'react-i18next';
 import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.tsx';
 import prettyBytes from 'pretty-bytes';
+import DragDropOverlay from '@/components/DragDropOverlay.tsx';
 
 function App() {
   const { setIsImporting, setImportProgress, updateFile, setCompressionProgress, currentPage, updateList } =
@@ -25,10 +26,35 @@ function App() {
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
   const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
-  const { skipMessagesAndDialogs } = useSettingsStore();
+  const { skipMessagesAndDialogs, importSubfolderOnInput } = useSettingsStore();
   const { t } = useTranslation();
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
+    const dragDropListener = listen<{ paths: string[]; position: { x: number; y: number } }>(
+      'tauri://drag-drop',
+      (event) => {
+        const filePaths = event.payload.paths;
+        setIsDragging(false);
+
+        console.log(filePaths);
+
+        void invoke('add_from_drop', { filesOrFolders: filePaths, recursive: importSubfolderOnInput });
+      },
+    );
+
+    const dragOverListener = listen('tauri://drag-over', () => {
+      setIsDragging(true);
+    });
+
+    const dragCancelListener = listen('tauri://drag-cancelled', () => {
+      setIsDragging(false);
+    });
+
+    const dragLeaveListener = listen('tauri://drag-leave', () => {
+      setIsDragging(false);
+    });
+
     const importFinishedListener = listen<{ original_list_length: number; new_list_length: number }>(
       'fileImporter:importFinished',
       (event) => {
@@ -113,6 +139,10 @@ function App() {
         closeRequestedListener,
         updateCompressionProgressListener,
         compressionFinishedListener,
+        dragDropListener,
+        dragOverListener,
+        dragCancelListener,
+        dragLeaveListener,
       ]).then((cleanupFns) => {
         cleanupFns.forEach((cleanupFn) => cleanupFn());
       });
@@ -125,6 +155,7 @@ function App() {
       <CenterContainer></CenterContainer>
       <Footer></Footer>
 
+      <DragDropOverlay isDragging={isDragging}></DragDropOverlay>
       <ImportDialog></ImportDialog>
       <SettingsDialog></SettingsDialog>
       <AboutDialog></AboutDialog>

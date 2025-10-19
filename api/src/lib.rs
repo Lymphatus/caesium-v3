@@ -1,7 +1,7 @@
 use crate::app_data::AppData;
 use crate::commands::compression::{compress, preview};
 use crate::commands::list::{
-    change_page, clear_list, filter_list, remove_items_from_list, sort_list,
+    add_from_drop, change_page, clear_list, filter_list, remove_items_from_list, sort_list,
 };
 use crate::commands::post_compression_actions::exec_post_compression_action;
 use crate::commands::{
@@ -109,7 +109,8 @@ pub fn run() {
             get_max_threads,
             exec_post_compression_action,
             sort_list,
-            filter_list
+            filter_list,
+            add_from_drop
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
