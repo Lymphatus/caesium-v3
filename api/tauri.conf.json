@@ -37,6 +37,7 @@
       "rpm",
       "appimage",
       "nsis",
+      "app",
       "dmg"
     ],
     "icon": [
