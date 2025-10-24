@@ -37,8 +37,6 @@ function App() {
         const filePaths = event.payload.paths;
         setIsDragging(false);
 
-        console.log(filePaths);
-
         void invoke('add_from_drop', { filesOrFolders: filePaths, recursive: importSubfolderOnInput });
       },
     );

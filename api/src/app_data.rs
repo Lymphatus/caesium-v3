@@ -144,6 +144,10 @@ impl AppDataFileList {
         self.list.len()
     }
 
+    pub fn full_len(&self) -> usize {
+        self.list.len()
+    }
+
     pub fn iter(&self) -> impl Iterator<Item = &CImage> {
         self.list.iter()
     }

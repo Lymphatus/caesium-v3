@@ -30,7 +30,7 @@ pub fn remove_items_from_list(
     let state = app.state::<Mutex<AppData>>();
     let mut state = state.lock()?;
 
-    if keys.len() == state.file_list.len() {
+    if keys.len() == state.file_list.full_len() {
         return remove_all_items_from_list(&mut state);
     }
 

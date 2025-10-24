@@ -1,14 +1,4 @@
-import {
-  addToast,
-  Button,
-  Spinner,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@heroui/react';
+import { addToast, Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import {
   ArrowDown,
@@ -86,171 +76,171 @@ function FileListTable() {
     setSelectedItems(selectedItems);
   };
 
+  const listLoader = (
+    <div className="bg-background/70 absolute z-10 flex size-full items-center justify-center">
+      <LoaderCircle className="text-primary size-10 animate-spin" />
+    </div>
+  );
   return (
-    <Table
-      fullWidth
-      isHeaderSticky
-      removeWrapper
-      aria-label="File list"
-      checkboxesProps={{ disableAnimation: true, size: 'sm', className: 'p-0 pb-1' }}
-      className="rounded-t-sm"
-      classNames={{
-        base: 'h-full justify-between overflow-auto',
-        th: 'h-8 first:rounded-b-none first:rounded-t-none last:rounded-b-none last:rounded-t-none [&:first-child]:w-[32px]',
-        td: 'text-nowrap',
-      }}
-      layout="auto"
-      radius="sm"
-      selectedKeys={selectedItems.map((item) => item.id)}
-      selectionMode="multiple"
-      shadow="none"
-      sortDescriptor={currentSorting}
-      onRowAction={(key) => setCurrentPreviewedCImage(fileList.find((cImage) => cImage.id === key) || null)}
-      onSelectionChange={handleSelectionChange}
-      onSortChange={(sort) => {
-        setIsListLoading(true);
-        setCurrentSorting(sort);
-        invoke<FileListPayload>('sort_list', {
-          column: sort.column,
-          order: sort.direction,
-        })
-          .then((payload) => updateList(payload))
-          .catch((e: string) => {
-            addToast({
-              title: 'Error',
-              description: `An error occurred: ${e}`,
-              color: 'danger',
-            });
+    <div className="relative block overflow-auto">
+      {isListLoading && listLoader}
+      <Table
+        fullWidth
+        isHeaderSticky
+        removeWrapper
+        aria-label="File list"
+        checkboxesProps={{ disableAnimation: true, size: 'sm', className: 'p-0 pb-1' }}
+        className="rounded-t-sm"
+        classNames={{
+          base: 'h-full justify-between overflow-auto',
+          th: 'h-8 first:rounded-b-none first:rounded-t-none last:rounded-b-none last:rounded-t-none [&:first-child]:w-[32px]',
+          td: 'text-nowrap',
+        }}
+        layout="auto"
+        radius="sm"
+        selectedKeys={selectedItems.map((item) => item.id)}
+        selectionMode="multiple"
+        shadow="none"
+        sortDescriptor={currentSorting}
+        onRowAction={(key) => setCurrentPreviewedCImage(fileList.find((cImage) => cImage.id === key) || null)}
+        onSelectionChange={handleSelectionChange}
+        onSortChange={(sort) => {
+          setIsListLoading(true);
+          setCurrentSorting(sort);
+          invoke<FileListPayload>('sort_list', {
+            column: sort.column,
+            order: sort.direction,
           })
-          .finally(() => setIsListLoading(false));
-      }}
-    >
-      <TableHeader className="rounded-sm">
-        <TableColumn key="status" align="center" width={40}>
-          &nbsp;
-        </TableColumn>
-        <TableColumn key="filename" allowsSorting>
-          {t('file_list.filename')}
-        </TableColumn>
-        <TableColumn key="size" allowsSorting>
-          {t('file_list.size')}
-        </TableColumn>
-        <TableColumn key="resolution" allowsSorting>
-          {t('file_list.resolution')}
-        </TableColumn>
-        <TableColumn key="saved" allowsSorting>
-          {t('file_list.saved')}
-        </TableColumn>
-        <TableColumn key="info">{t('file_list.additional_info')}</TableColumn>
-        <TableColumn key="actions" width={40}>
-          {t('file_list.actions')}
-        </TableColumn>
-      </TableHeader>
-      <TableBody
-        isLoading={isListLoading}
-        // items={fileList}
-        loadingContent={
-          <div className="bg-background/50 z-10 flex size-full items-center justify-center">
-            <Spinner />
-          </div>
-        }
+            .then((payload) => updateList(payload))
+            .catch((e: string) => {
+              addToast({
+                title: 'Error',
+                description: `An error occurred: ${e}`,
+                color: 'danger',
+              });
+            })
+            .finally(() => setIsListLoading(false));
+        }}
       >
-        {fileList.map((cImage) => (
-          <TableRow key={cImage.id} className={cImage.id === currentPreviewedCImage?.id ? 'bg-default-100' : ''}>
-            <TableCell>
-              <div className="flex items-center justify-center">
-                <StatusIcon cImage={cImage}></StatusIcon>
-              </div>
-            </TableCell>
-            <TableCell>
-              <span className="text-nowrap">
-                <small className="text-default-400">{getSubpart(baseFolder, cImage.path, cImage.name)}</small>
-                <span>{cImage.name}</span>
-              </span>
-            </TableCell>
-            <TableCell>
-              <div className="flex flex-nowrap items-center gap-1">
-                <span
-                  className={
-                    cImage.compressed_size && cImage.compressed_size !== cImage.size
-                      ? 'text-default-400 text-nowrap line-through'
-                      : 'text-nowrap'
-                  }
-                >
-                  {prettyBytes(cImage.size)}
+        <TableHeader className="rounded-sm">
+          <TableColumn key="status" align="center" width={40}>
+            &nbsp;
+          </TableColumn>
+          <TableColumn key="filename" allowsSorting>
+            {t('file_list.filename')}
+          </TableColumn>
+          <TableColumn key="size" allowsSorting>
+            {t('file_list.size')}
+          </TableColumn>
+          <TableColumn key="resolution" allowsSorting>
+            {t('file_list.resolution')}
+          </TableColumn>
+          <TableColumn key="saved" allowsSorting>
+            {t('file_list.saved')}
+          </TableColumn>
+          <TableColumn key="info">{t('file_list.additional_info')}</TableColumn>
+          <TableColumn key="actions" width={40}>
+            {t('file_list.actions')}
+          </TableColumn>
+        </TableHeader>
+        <TableBody>
+          {fileList.map((cImage) => (
+            <TableRow key={cImage.id} className={cImage.id === currentPreviewedCImage?.id ? 'bg-default-100' : ''}>
+              <TableCell>
+                <div className="flex items-center justify-center">
+                  <StatusIcon cImage={cImage}></StatusIcon>
+                </div>
+              </TableCell>
+              <TableCell>
+                <span className="text-nowrap">
+                  <small className="text-default-400">{getSubpart(baseFolder, cImage.path, cImage.name)}</small>
+                  <span>{cImage.name}</span>
                 </span>
-                {cImage.compressed_size !== 0 && cImage.size !== cImage.compressed_size && (
-                  <span className="text-nowrap">{prettyBytes(cImage.compressed_size)}</span>
-                )}
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className="flex size-full flex-nowrap items-center gap-1">
-                <span
-                  className={
-                    cImage.compressed_width !== 0 &&
-                    cImage.compressed_height !== 0 &&
-                    (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height)
-                      ? 'text-default-400 text-nowrap line-through'
-                      : 'text-nowrap'
-                  }
-                >{`${cImage.width}x${cImage.height}`}</span>
-                {cImage.compressed_width !== 0 &&
-                  cImage.compressed_height !== 0 &&
-                  (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height) && (
-                    <span className="text-nowrap">{`${cImage.compressed_width}x${cImage.compressed_height}`}</span>
+              </TableCell>
+              <TableCell>
+                <div className="flex flex-nowrap items-center gap-1">
+                  <span
+                    className={
+                      cImage.compressed_size && cImage.compressed_size !== cImage.size
+                        ? 'text-default-400 text-nowrap line-through'
+                        : 'text-nowrap'
+                    }
+                  >
+                    {prettyBytes(cImage.size)}
+                  </span>
+                  {cImage.compressed_size !== 0 && cImage.size !== cImage.compressed_size && (
+                    <span className="text-nowrap">{prettyBytes(cImage.compressed_size)}</span>
                   )}
-              </div>
-            </TableCell>
-            <TableCell>
-              <SavedLabel cImage={cImage} />
-            </TableCell>
-            <TableCell>
-              <span className="text-nowrap">{cImage.info}</span>
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center justify-between gap-1">
-                <Button
-                  disableRipple
-                  isIconOnly
-                  isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING}
-                  size="sm"
-                  title={t('actions.preview')}
-                  variant="light"
-                  onPress={() => invokePreview([cImage.id])}
-                >
-                  <Search className="size-4"></Search>
-                </Button>
-                <Button
-                  disableRipple
-                  isIconOnly
-                  color="danger"
-                  isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING}
-                  size="sm"
-                  title={t('actions.remove')}
-                  variant="light"
-                  onPress={async () => {
-                    setIsListLoading(true);
-                    invoke<FileListPayload>('remove_items_from_list', { keys: [cImage.id] })
-                      .then((payload) => updateList(payload))
-                      .catch((e: string) =>
-                        addToast({
-                          title: 'Error',
-                          description: `An error occurred: ${e}`,
-                          color: 'danger',
-                        }),
-                      )
-                      .finally(() => setIsListLoading(false));
-                  }}
-                >
-                  <Delete className="size-4"></Delete>
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex size-full flex-nowrap items-center gap-1">
+                  <span
+                    className={
+                      cImage.compressed_width !== 0 &&
+                      cImage.compressed_height !== 0 &&
+                      (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height)
+                        ? 'text-default-400 text-nowrap line-through'
+                        : 'text-nowrap'
+                    }
+                  >{`${cImage.width}x${cImage.height}`}</span>
+                  {cImage.compressed_width !== 0 &&
+                    cImage.compressed_height !== 0 &&
+                    (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height) && (
+                      <span className="text-nowrap">{`${cImage.compressed_width}x${cImage.compressed_height}`}</span>
+                    )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <SavedLabel cImage={cImage} />
+              </TableCell>
+              <TableCell>
+                <span className="text-nowrap">{cImage.info}</span>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center justify-between gap-1">
+                  <Button
+                    disableRipple
+                    isIconOnly
+                    isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING}
+                    size="sm"
+                    title={t('actions.preview')}
+                    variant="light"
+                    onPress={() => invokePreview([cImage.id])}
+                  >
+                    <Search className="size-4"></Search>
+                  </Button>
+                  <Button
+                    disableRipple
+                    isIconOnly
+                    color="danger"
+                    isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING}
+                    size="sm"
+                    title={t('actions.remove')}
+                    variant="light"
+                    onPress={async () => {
+                      setIsListLoading(true);
+                      invoke<FileListPayload>('remove_items_from_list', { keys: [cImage.id] })
+                        .then((payload) => updateList(payload))
+                        .catch((e: string) =>
+                          addToast({
+                            title: 'Error',
+                            description: `An error occurred: ${e}`,
+                            color: 'danger',
+                          }),
+                        )
+                        .finally(() => setIsListLoading(false));
+                    }}
+                  >
+                    <Delete className="size-4"></Delete>
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
 
