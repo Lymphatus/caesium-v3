@@ -1,0 +1,99 @@
+name: Enhancement
+description: Suggest an improvement to an existing feature in Caesium v3
+title: "[Enhancement]: "
+labels: ["enhancement", "v3"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an enhancement! Please describe how we can improve an existing feature.
+
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: Feature Area
+      description: Which existing feature would you like to enhance?
+      options:
+        - Image Compression
+        - Batch Processing
+        - User Interface
+        - Settings/Configuration
+        - File Management
+        - Performance
+        - Export/Import
+        - Metadata Handling
+        - Image Resizing
+        - Preview/Comparison
+        - Translations/Localization
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Behavior
+      description: Describe how the feature currently works.
+      placeholder: Currently, the feature...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-enhancement
+    attributes:
+      label: Proposed Enhancement
+      description: Describe how you would like to improve this feature.
+      placeholder: I suggest that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefits
+    attributes:
+      label: Benefits
+      description: What are the benefits of this enhancement? Who would it help?
+      placeholder: This would improve...
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation-ideas
+    attributes:
+      label: Implementation Ideas
+      description: Do you have any ideas on how this could be implemented?
+      placeholder: This could be implemented by...
+    validations:
+      required: false
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples/Screenshots
+      description: |
+        If applicable, add screenshots or examples to help illustrate the enhancement.
+        You can drag and drop images here.
+      placeholder: Paste or drag examples here
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the enhancement.
+      placeholder: Any additional information...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this enhancement hasn't been suggested before
+          required: true
+        - label: This enhancement would benefit multiple users, not just my specific use case
+          required: false
+        - label: I have provided clear details about the proposed enhancement
+          required: true

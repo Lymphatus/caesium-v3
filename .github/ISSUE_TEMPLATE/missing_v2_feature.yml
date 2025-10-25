@@ -1,0 +1,136 @@
+name: Missing v2 Feature
+description: Report a feature from Caesium v2 that is missing or not working in v3
+title: "[v2 Feature]: "
+labels: ["v2-feature", "v3"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a missing v2 feature! This template helps track features that existed in Caesium v2 but are missing or not working in v3.
+        
+        **Note:** This is specifically for features that worked in v2. For completely new feature ideas, please use the Feature Request template instead.
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: v2 Feature Description
+      description: Describe the feature as it worked in Caesium v2
+      placeholder: In v2, I could...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: Feature Area
+      description: Which area of the application does this feature relate to?
+      options:
+        - Image Compression Settings
+        - Batch Processing
+        - User Interface/Layout
+        - File Management/Organization
+        - Performance/Speed
+        - Export/Import Settings
+        - Metadata Handling (EXIF)
+        - Image Resizing
+        - Preview/Comparison
+        - Settings/Preferences
+        - File Formats
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: status-in-v3
+    attributes:
+      label: Status in v3
+      description: What is the current status of this feature in v3?
+      options:
+        - Completely missing
+        - Partially implemented
+        - Not working/broken
+        - Works differently than v2
+        - Unknown/Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: v2-behavior
+    attributes:
+      label: How it Worked in v2
+      description: Describe in detail how this feature worked in Caesium v2
+      placeholder: |
+        1. In v2, I would...
+        2. Then it would...
+        3. The result was...
+    validations:
+      required: true
+
+  - type: textarea
+    id: v3-behavior
+    attributes:
+      label: Current Behavior in v3
+      description: Describe what happens when you try to use this feature in v3
+      placeholder: In v3, when I try to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Why This Feature is Important
+      description: Explain why this feature is important for your workflow
+      placeholder: I need this feature because...
+    validations:
+      required: false
+
+  - type: input
+    id: v2-version
+    attributes:
+      label: Last Working v2 Version
+      description: Which version of Caesium v2 had this feature? (if known)
+      placeholder: "e.g., 2.7.0, 2.5.2"
+    validations:
+      required: false
+
+  - type: input
+    id: v3-version
+    attributes:
+      label: Current v3 Version
+      description: What version of Caesium v3 are you using?
+      placeholder: "3.0.0-alpha.0"
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Comparisons
+      description: |
+        If possible, add screenshots showing the feature in v2 and/or what's missing in v3.
+        You can drag and drop images here.
+      placeholder: Paste or drag screenshots here
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about this missing feature.
+      placeholder: Any additional information...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this hasn't been reported before
+          required: true
+        - label: I have confirmed this feature existed in Caesium v2
+          required: true
+        - label: This is about a missing v2 feature, not a completely new feature request
+          required: true
