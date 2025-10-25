@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 v3 Discussion Thread
+    url: https://github.com/Lymphatus/caesium-image-compressor/issues/334
+    about: Join the conversation about Caesium v3 development and features
+  - name: 📖 Documentation
+    url: https://github.com/Lymphatus/caesium-v3/blob/main/README.md
+    about: Read the documentation and build instructions
+  - name: 💖 Sponsor
+    url: https://github.com/sponsors/Lymphatus
+    about: Support the development of Caesium Image Compressor
