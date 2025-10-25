@@ -1,7 +1,7 @@
 [package]
 name = "caesium-image-compressor"
 version = "3.0.0-alpha.0"
-description = "Caesium Image compressor"
+description = "Caesium is an image compression software that helps you store, send and share digital pictures"
 authors = ["Matteo Paonessa"]
 edition = "2021"
 
