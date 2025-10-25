@@ -60,9 +60,10 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
         with:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: 'Caesium Image Compressor v__VERSION__'
+          releaseName: 'v__VERSION__'
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: true
           includeUpdaterJson: true
+          assetNamePattern: 'caesium-image-compressor_v[version]_[platform]-[arch][setup].[ext]'
           args: ${{ matrix.args }}

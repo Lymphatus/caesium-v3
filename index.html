@@ -9,26 +9,26 @@
 
 <body>
 <div id="root" class="size-full"></div>
-<!--<script type="module">-->
-<!--  import { debug, error, info, trace, warn } from '@tauri-apps/plugin-log';-->
+<script type="module">
+  import { debug, error, info, trace, warn } from '@tauri-apps/plugin-log';
 
-<!--  function forwardConsole(-->
-<!--    fnName,-->
-<!--    logger,-->
-<!--  ) {-->
-<!--    const original = console[fnName];-->
-<!--    console[fnName] = (...message) => {-->
-<!--      original(message);-->
-<!--      void logger(message.join('\n'));-->
-<!--    };-->
-<!--  }-->
+  function forwardConsole(
+    fnName,
+    logger,
+  ) {
+    const original = console[fnName];
+    console[fnName] = (...message) => {
+      original(message);
+      void logger(message.join('\n'));
+    };
+  }
 
-<!--  forwardConsole('log', trace);-->
-<!--  forwardConsole('debug', debug);-->
-<!--  forwardConsole('info', info);-->
-<!--  forwardConsole('warn', warn);-->
-<!--  forwardConsole('error', error);-->
-<!--</script>-->
+  forwardConsole('log', trace);
+  forwardConsole('debug', debug);
+  forwardConsole('info', info);
+  forwardConsole('warn', warn);
+  forwardConsole('error', error);
+</script>
 <script type="module" src="/src/main.tsx"></script>
 <script>
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {

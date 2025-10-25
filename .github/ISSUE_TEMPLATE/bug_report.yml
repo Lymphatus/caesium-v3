@@ -79,6 +79,7 @@ body:
       description: |
         If applicable, add screenshots or log files to help explain your problem.
         You can drag and drop images here.
+        To find your logs, go to the "About" page, click "Open Logs Folder" and look for "caesium-image-compressor.log".
       placeholder: Paste or drag screenshots/logs here
     validations:
       required: false

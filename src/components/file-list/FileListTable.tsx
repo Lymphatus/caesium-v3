@@ -82,7 +82,7 @@ function FileListTable() {
     </div>
   );
   return (
-    <div className="relative block overflow-auto">
+    <div className="relative block size-full overflow-auto">
       {isListLoading && listLoader}
       <Table
         fullWidth

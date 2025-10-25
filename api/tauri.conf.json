@@ -47,6 +47,11 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "windows": {
+      "nsis": {
+        "displayLanguageSelector": true
+      }
+    },
     "createUpdaterArtifacts": true
   },
   "plugins": {

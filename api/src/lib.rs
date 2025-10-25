@@ -13,6 +13,7 @@ use std::env;
 use std::hash::{Hash, Hasher};
 use std::sync::Mutex;
 use tauri::Manager;
+use tauri_plugin_log::{Target, TargetKind};
 
 mod app_data;
 mod commands;
@@ -73,13 +74,21 @@ impl Borrow<str> for CImage {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        // .plugin(
-        //     tauri_plugin_log::Builder::new()
-        //         .level(log::LevelFilter::Info)
-        //         .max_file_size(10_000_000)
-        //         .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepAll)
-        //         .build(),
-        // )
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .level(log::LevelFilter::Info)
+                .clear_targets()
+                .targets([
+                    Target::new(TargetKind::Webview),
+                    Target::new(TargetKind::LogDir {
+                        file_name: Some("caesium-image-compressor".into()),
+                    }),
+                    Target::new(TargetKind::Stdout),
+                ])
+                .max_file_size(10_000_000)
+                .rotation_strategy(tauri_plugin_log::RotationStrategy::KeepAll)
+                .build(),
+        )
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_os::init())

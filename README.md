@@ -2,15 +2,12 @@
 
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/Lymphatus)
 
-v3.0.0-alpha.0
-
-Try it online at [caesium.app](https://caesium.app)
-
 > [!WARNING]
 > This is a very early development version and very much subject to change. Many features are missing or straight up
 > don't work. Please use with care and be
 > sure to back up your pictures before using it.
 
+Try it online at [caesium.app](https://caesium.app)
 
 <img width="1431" height="954" alt="Image" src="https://github.com/user-attachments/assets/1b4ac0a4-2fc4-41c7-ab51-6e04a4ba9eae" />
 
@@ -20,7 +17,7 @@ Try it online at [caesium.app](https://caesium.app)
 you store, send, and share digital pictures by dramatically reducing their file size while preserving visual quality.
 The application supports JPG, PNG, WebP and TIFF formats, as well as batch processing, resizing, and much more.
 
-Caesium v3 is a complete rewrite using [Tauri](https://tauri.app/) and a React-based interface.
+Caesium Image Compressor v3 is a complete rewrite using [Tauri](https://tauri.app/) and a React-based interface.
 
 ## Features
 
@@ -28,7 +25,7 @@ Caesium v3 is a complete rewrite using [Tauri](https://tauri.app/) and a React-b
 - Batch processing and folder drag-and-drop
 - Preview before/after compression
 - Retain or remove EXIF metadata
-- Easily resize images
+- Resize images
 - Adjustable multi-core performance
 - Modern, easy-to-use interface
 - Multilingual support
@@ -47,8 +44,8 @@ Caesium v3 is a complete rewrite using [Tauri](https://tauri.app/) and a React-b
 
 Go to the [releases page](https://github.com/Lymphatus/caesium-image-compressor/releases) for downloads.
 
-- **Windows**: Installer and portable ZIP available
-- **macOS**: Universal DMG
+- **Windows**: Installer (portable not available for now)
+- **macOS**: DMG and App — both Intel and Apple Silicon
 - **Linux**: AppImage (or build from source)
 
 _The main branch may contain development or unstable features—prefer tagged releases for production._
@@ -81,7 +78,7 @@ WIP
 
 ## Need Help? Feature Requests? Bugs?
 
-- Open an [issue](https://github.com/Lymphatus/caesium-v3/issues) - be sure to specify it's version 3
+- Open an [issue](https://github.com/Lymphatus/caesium-v3/issues)
 - Or join the [discussion thread for v3](https://github.com/Lymphatus/caesium-image-compressor/issues/334)
 
 ## Special Thanks
