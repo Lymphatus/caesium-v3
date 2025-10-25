@@ -1,7 +1,7 @@
 name: Missing v2 Feature
 description: Report a feature from Caesium v2 that is missing or not working in v3
-title: "[v2 Feature]: "
-labels: ["v2-feature", "v3"]
+title: "[Missing Feature] "
+labels: [ "missing-feature", "v3" ]
 body:
   - type: markdown
     attributes:
@@ -11,11 +11,23 @@ body:
         **Note:** This is specifically for features that worked in v2. For completely new feature ideas, please use the Feature Request template instead.
 
   - type: textarea
-    id: feature-description
+    id: v2-behavior
     attributes:
-      label: v2 Feature Description
-      description: Describe the feature as it worked in Caesium v2
-      placeholder: In v2, I could...
+      label: How it Worked in v2
+      description: Describe in detail how this feature worked in Caesium v2
+      placeholder: |
+        1. In v2, I would...
+        2. Then it would...
+        3. The result was...
+    validations:
+      required: true
+
+  - type: textarea
+    id: v3-behavior
+    attributes:
+      label: Current Behavior in v3
+      description: Describe what happens when you try to use this feature in v3
+      placeholder: In v3, when I try to...
     validations:
       required: true
 
@@ -53,36 +65,6 @@ body:
         - Unknown/Not sure
     validations:
       required: true
-
-  - type: textarea
-    id: v2-behavior
-    attributes:
-      label: How it Worked in v2
-      description: Describe in detail how this feature worked in Caesium v2
-      placeholder: |
-        1. In v2, I would...
-        2. Then it would...
-        3. The result was...
-    validations:
-      required: true
-
-  - type: textarea
-    id: v3-behavior
-    attributes:
-      label: Current Behavior in v3
-      description: Describe what happens when you try to use this feature in v3
-      placeholder: In v3, when I try to...
-    validations:
-      required: true
-
-  - type: textarea
-    id: use-case
-    attributes:
-      label: Why This Feature is Important
-      description: Explain why this feature is important for your workflow
-      placeholder: I need this feature because...
-    validations:
-      required: false
 
   - type: input
     id: v2-version

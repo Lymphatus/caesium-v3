@@ -1,34 +1,12 @@
 name: Bug Report
-description: Report a bug or issue with Caesium Image Compressor v3
-title: "[Bug]: "
-labels: ["bug", "v3"]
+description: Report a bug or issue
+title: "[Bug] "
+labels: [ "bug", "v3" ]
 body:
   - type: markdown
     attributes:
       value: |
         Thanks for taking the time to report a bug! Please fill out the information below to help us resolve the issue.
-
-  - type: textarea
-    id: description
-    attributes:
-      label: Bug Description
-      description: A clear and concise description of what the bug is.
-      placeholder: Describe the bug...
-    validations:
-      required: true
-
-  - type: textarea
-    id: steps-to-reproduce
-    attributes:
-      label: Steps to Reproduce
-      description: Steps to reproduce the behavior
-      placeholder: |
-        1. Go to '...'
-        2. Click on '...'
-        3. Scroll down to '...'
-        4. See error
-    validations:
-      required: true
 
   - type: textarea
     id: expected-behavior
@@ -45,6 +23,19 @@ body:
       label: Actual Behavior
       description: A clear and concise description of what actually happened.
       placeholder: What actually happens?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
     validations:
       required: true
 
@@ -67,7 +58,6 @@ body:
         - Windows 11
         - macOS (Intel)
         - macOS (Apple Silicon)
-        - Linux (Ubuntu)
         - Linux (Other)
         - Other
     validations:
@@ -109,8 +99,4 @@ body:
       description: Please confirm the following
       options:
         - label: I have searched existing issues to ensure this bug hasn't been reported before
-          required: true
-        - label: I am using the latest version of Caesium v3
-          required: false
-        - label: I have included all necessary information above
           required: true

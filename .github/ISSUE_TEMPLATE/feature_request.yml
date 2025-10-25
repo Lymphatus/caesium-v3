@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest a new feature for Caesium Image Compressor v3
-title: "[Feature]: "
-labels: ["enhancement", "v3"]
+title: "[Feature] "
+labels: [ "enhancement", "v3" ]
 body:
   - type: markdown
     attributes:
@@ -65,17 +65,6 @@ body:
       required: false
 
   - type: textarea
-    id: mockups
-    attributes:
-      label: Mockups/Examples
-      description: |
-        If applicable, add mockups, screenshots, or examples to help illustrate your idea.
-        You can drag and drop images here.
-      placeholder: Paste or drag mockups/examples here
-    validations:
-      required: false
-
-  - type: textarea
     id: additional-context
     attributes:
       label: Additional Context
@@ -91,8 +80,4 @@ body:
       description: Please confirm the following
       options:
         - label: I have searched existing issues to ensure this feature hasn't been requested before
-          required: true
-        - label: I have checked the v3 discussion thread for similar suggestions
-          required: false
-        - label: This feature aligns with the goals of Caesium Image Compressor
           required: true

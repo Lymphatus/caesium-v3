@@ -1,12 +1,12 @@
 name: Question/Support
-description: Ask a question or get help with Caesium Image Compressor v3
-title: "[Question]: "
-labels: ["question", "v3"]
+description: Ask a question or get help
+title: "[Question] "
+labels: [ "question", "v3" ]
 body:
   - type: markdown
     attributes:
       value: |
-        Have a question about using Caesium v3? We're here to help!
+        Have a question about using Caesium? We're here to help!
         
         **Note:** For general discussion about v3, consider using the [discussion thread](https://github.com/Lymphatus/caesium-image-compressor/issues/334).
 
@@ -65,9 +65,17 @@ body:
         - Windows 11
         - macOS (Intel)
         - macOS (Apple Silicon)
-        - Linux (Ubuntu)
         - Linux (Other)
         - Other
+    validations:
+      required: false
+
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+      description: What version of your operating system?
+      placeholder: "e.g., Windows 11 23H2, macOS 14.5, Ubuntu 24.04"
     validations:
       required: false
 
@@ -88,7 +96,5 @@ body:
       label: Pre-submission Checklist
       description: Please confirm the following
       options:
-        - label: I have checked the README and documentation
-          required: false
         - label: I have searched existing issues for similar questions
           required: true
