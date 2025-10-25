@@ -33,8 +33,6 @@
   "bundle": {
     "active": true,
     "targets": [
-      "deb",
-      "rpm",
       "appimage",
       "nsis",
       "app",
@@ -59,6 +57,7 @@
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE0RUZEOTkxNkE5OTE5NDAKUldSQUdabHFrZG52cENUSFNKQks0T3NIZlNqdUZmUlhFVnFjamtub1B0RFBqdW9qWUM1SjFpTncK",
       "endpoints": [
         "https://github.com/Lymphatus/caesium-image-compressor/releases/latest/download/latest.json",
+        "https://github.com/Lymphatus/caesium-v3/releases/latest/download/latest.json",
         "https://saerasoft.com/repository/com.saerasoft.caesium/v3/latest.json"
       ],
       "windows": {
