@@ -65,5 +65,5 @@ jobs:
           releaseDraft: true
           prerelease: true
           includeUpdaterJson: true
-          assetNamePattern: ${{ matrix.platform == 'windows-latest' && 'caesium-image-compressor_v[version]_[platform]-[arch]_setup[ext]' || 'caesium-image-compressor_v[version]_[platform]-[arch][ext]' }}
+          assetNamePattern: 'caesium-image-compressor_v[version]_[platform]-[arch][ext]'
           args: ${{ matrix.args }}
