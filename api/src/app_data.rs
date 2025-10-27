@@ -240,7 +240,9 @@ impl AppDataFileList {
     }
 
     fn is_query_hit(&self, cimage: &CImage, query: &String) -> bool {
-        cimage.path.contains(query) || cimage.name.contains(query)
+        let lowercase_query = query.to_lowercase();
+        cimage.path.to_lowercase().contains(&lowercase_query)
+            || cimage.name.to_lowercase().contains(&lowercase_query)
     }
 }
 

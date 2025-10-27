@@ -122,6 +122,9 @@ function ResizeOptions() {
                       <span className="text-default-400 text-small">px</span>
                     </div>
                   }
+                  formatOptions={{
+                    useGrouping: false,
+                  }}
                   isDisabled={resizeMode === RESIZE_MODE.HEIGHT}
                   label={t('width')}
                   labelPlacement="outside"
@@ -145,6 +148,9 @@ function ResizeOptions() {
                       <span className="text-default-400 text-small">px</span>
                     </div>
                   }
+                  formatOptions={{
+                    useGrouping: false,
+                  }}
                   isDisabled={resizeMode === RESIZE_MODE.WIDTH}
                   label={t('height')}
                   labelPlacement="outside"
@@ -172,6 +178,9 @@ function ResizeOptions() {
                       <span className="text-default-400 text-small">%</span>
                     </div>
                   }
+                  formatOptions={{
+                    useGrouping: false,
+                  }}
                   label={t('width')}
                   labelPlacement="outside"
                   maxValue={doNotEnlarge ? 100 : 999}
@@ -199,6 +208,9 @@ function ResizeOptions() {
                       <span className="text-default-400 text-small">%</span>
                     </div>
                   }
+                  formatOptions={{
+                    useGrouping: false,
+                  }}
                   label={t('height')}
                   labelPlacement="outside"
                   maxValue={doNotEnlarge ? 100 : 999}
@@ -229,6 +241,9 @@ function ResizeOptions() {
                     <span className="text-default-400 text-small">px</span>
                   </div>
                 }
+                formatOptions={{
+                  useGrouping: false,
+                }}
                 label={dimensionLabel}
                 labelPlacement="outside"
                 maxValue={99999}

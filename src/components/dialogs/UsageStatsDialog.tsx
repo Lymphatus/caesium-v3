@@ -92,6 +92,7 @@ function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
           <div className="bg-default/40 text-default-700 text-small inline-block h-fit max-h-40 w-full overflow-auto rounded-none px-2 py-1 font-mono font-normal whitespace-nowrap">
             <pre className="">{formattedUsageStats}</pre>
           </div>
+          <p className="text-sm">{t('settings.send_usage_statistics_disclaimer')}</p>
         </ModalBody>
         <ModalFooter>
           <div className="flex w-full justify-between gap-2">

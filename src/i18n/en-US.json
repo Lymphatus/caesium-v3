@@ -54,7 +54,8 @@
     "resolution": "Resolution",
     "saved": "Saved",
     "additional_info": "Info",
-    "actions": "Actions"
+    "actions": "Actions",
+    "search_help": "Search in list"
   },
   "formatting": {
     "thousands_separator": ".",
@@ -158,6 +159,7 @@
     "skip_dialogs_help": "Hides every dialogs requiring confirmation",
     "send_usage_statistics": "Send usage statistics",
     "send_usage_statistics_help": "Show my info",
+    "send_usage_statistics_disclaimer": "System stats are sent at application startup; compression stats are sent after compression. No personal data is sent and will never be shared with third parties.",
     "scan_subfolders_on_import": "Scan subfolders on import",
     "scan_subfolders_on_import_help": "Import files in subfolders while opening a folder",
     "direct_import_action": "When importing files directly",
