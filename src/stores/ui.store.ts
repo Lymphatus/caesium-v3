@@ -16,6 +16,7 @@ interface UIOptions {
   splitPanels: SplitPanels;
   jpegAccordionOpen: boolean;
   pngAccordionOpen: boolean;
+  gifAccordionOpen: boolean;
   webpAccordionOpen: boolean;
   tiffAccordionOpen: boolean;
   currentSelectedTab: SIDE_PANEL_TAB;
@@ -30,6 +31,7 @@ interface UIOptions {
   setSplitPanels: (options: Partial<SplitPanels>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
   setPngAccordionOpen: (open: boolean) => void;
+  setGifAccordionOpen: (open: boolean) => void;
   setWebpAccordionOpen: (open: boolean) => void;
   setTiffAccordionOpen: (open: boolean) => void;
   setCurrentSelectedTab: (tab: SIDE_PANEL_TAB) => void;
@@ -57,6 +59,7 @@ const defaultOptions = {
   splitPanels: { main: [70, 30], center: [60, 40] },
   jpegAccordionOpen: true,
   pngAccordionOpen: true,
+  gifAccordionOpen: true,
   webpAccordionOpen: true,
   tiffAccordionOpen: true,
   currentSelectedTab: SIDE_PANEL_TAB.COMPRESSION,
@@ -87,6 +90,11 @@ const useUIStore = create<UIOptions>()(
       setPngAccordionOpen: (open: boolean) => {
         set((state) => {
           state.pngAccordionOpen = open;
+        });
+      },
+      setGifAccordionOpen: (open: boolean) => {
+        set((state) => {
+          state.gifAccordionOpen = open;
         });
       },
       setWebpAccordionOpen: (open: boolean) => {
@@ -159,6 +167,7 @@ useUIStore.subscribe(async (state) => {
     splitPanels: state.splitPanels,
     jpegAccordionOpen: state.jpegAccordionOpen,
     pngAccordionOpen: state.pngAccordionOpen,
+    gifAccordionOpen: state.gifAccordionOpen,
     webpAccordionOpen: state.webpAccordionOpen,
     tiffAccordionOpen: state.tiffAccordionOpen,
     currentSelectedTab: state.currentSelectedTab,

@@ -9,10 +9,10 @@ import { Button, NumberInput, Slider, Spinner } from '@heroui/react';
 import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
 import { RefObject, useCallback, useEffect, useRef } from 'react';
 import prettyBytes from 'pretty-bytes';
-import PreviewCanvas from '@/components/PreviewCanvas.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
+import PreviewCanvas from '@/components/PreviewCanvas.tsx';
 
 const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 'zoomIn' | 'zoomOut'>) => {
   const setZoomLevel = (value: number | number[], state: ReactZoomPanPinchState) => {

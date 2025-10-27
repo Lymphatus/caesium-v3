@@ -43,6 +43,7 @@
     "original": "Same as input",
     "jpeg": "JPEG",
     "png": "PNG",
+    "gif": "GIF",
     "tiff": "TIFF",
     "webp": "WebP"
   },

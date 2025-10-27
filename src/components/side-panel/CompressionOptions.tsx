@@ -17,10 +17,12 @@ import WebpOptions from '@/components/side-panel/compression-options/WebpOptions
 import TiffOptions from '@/components/side-panel/compression-options/TiffOptions.tsx';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import type { Selection } from '@react-types/shared';
+import GifOptions from '@/components/side-panel/compression-options/GifOptions.tsx';
 
 enum ACCORDION_KEY {
   JPEG = 'jpeg_accordion',
   PNG = 'png_accordion',
+  GIF = 'gif_accordion',
   WEBP = 'webp_accordion',
   TIFF = 'tiff_accordion',
 }
@@ -30,10 +32,12 @@ function CompressionOptions() {
   const {
     jpegAccordionOpen,
     pngAccordionOpen,
+    gifAccordionOpen,
     webpAccordionOpen,
     tiffAccordionOpen,
     setJpegAccordionOpen,
     setPngAccordionOpen,
+    setGifAccordionOpen,
     setWebpAccordionOpen,
     setTiffAccordionOpen,
   } = useUIStore();
@@ -71,6 +75,9 @@ function CompressionOptions() {
   if (pngAccordionOpen) {
     defaultAccordionOpen.push(ACCORDION_KEY.PNG);
   }
+  if (gifAccordionOpen) {
+    defaultAccordionOpen.push(ACCORDION_KEY.GIF);
+  }
   if (webpAccordionOpen) {
     defaultAccordionOpen.push(ACCORDION_KEY.WEBP);
   }
@@ -82,6 +89,7 @@ function CompressionOptions() {
     if (keys === 'all') {
       setJpegAccordionOpen(true);
       setPngAccordionOpen(true);
+      setGifAccordionOpen(true);
       setWebpAccordionOpen(true);
       setTiffAccordionOpen(true);
 
@@ -90,6 +98,7 @@ function CompressionOptions() {
 
     setJpegAccordionOpen(keys.has(ACCORDION_KEY.JPEG));
     setPngAccordionOpen(keys.has(ACCORDION_KEY.PNG));
+    setGifAccordionOpen(keys.has(ACCORDION_KEY.GIF));
     setWebpAccordionOpen(keys.has(ACCORDION_KEY.WEBP));
     setTiffAccordionOpen(keys.has(ACCORDION_KEY.TIFF));
   };
@@ -118,6 +127,9 @@ function CompressionOptions() {
                 </AccordionItem>
                 <AccordionItem key={ACCORDION_KEY.PNG} aria-label={t('formats.png')} title={t('formats.png')}>
                   <PngOptions></PngOptions>
+                </AccordionItem>
+                <AccordionItem key={ACCORDION_KEY.GIF} aria-label={t('formats.gif')} title={t('formats.gif')}>
+                  <GifOptions></GifOptions>
                 </AccordionItem>
                 <AccordionItem key={ACCORDION_KEY.WEBP} aria-label={t('formats.webp')} title={t('formats.webp')}>
                   <WebpOptions></WebpOptions>

@@ -31,6 +31,10 @@ struct PNGOptions {
     optimize: bool,
 }
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+struct GIFOptions {
+    quality: u32,
+}
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 struct WebPOptions {
     quality: u32,
     lossless: bool,
@@ -45,6 +49,7 @@ struct TIFFOptions {
 struct CompressionOptions {
     jpeg: JPEGOptions,
     png: PNGOptions,
+    gif: GIFOptions,
     webp: WebPOptions,
     tiff: TIFFOptions,
     compression_mode: u32, //TODO Create type
@@ -405,6 +410,8 @@ fn parse_compression_options(options: &OptionsPayload, cimage: &CImage) -> CSPar
     parameters.png.optimization_level = options.compression_options.png.optimization_level as u8;
     parameters.png.force_zopfli = false;
 
+    // -- GIF --
+    parameters.gif.quality = options.compression_options.gif.quality;
     // -- WEBP --
     parameters.webp.quality = options.compression_options.webp.quality;
 

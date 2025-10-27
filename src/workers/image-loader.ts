@@ -11,9 +11,13 @@ self.onmessage = async function (event) {
   } else {
     const response = await fetch(eventData.imageUrl);
     const blob = await response.blob();
-    const imageBitmap = await createImageBitmap(blob);
-    const responseMessage: ImageLoaderResponse = { imageBitmap, type: eventData.type };
-    postMessage(responseMessage);
+    try {
+      const imageBitmap = await createImageBitmap(blob);
+      const responseMessage: ImageLoaderResponse = { imageBitmap, type: eventData.type };
+      postMessage(responseMessage);
+    } catch (error) {
+      console.error('Error creating image bitmap:', error);
+    }
   }
 };
 

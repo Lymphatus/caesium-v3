@@ -20,6 +20,10 @@ interface PngOptions {
   optimize: boolean;
 }
 
+interface GifOptions {
+  quality: number;
+}
+
 interface WebpOptions {
   quality: number;
   lossless: boolean;
@@ -41,6 +45,9 @@ export interface CompressionOptions {
     quality: number;
     optimization_level: number;
     optimize: boolean;
+  };
+  gif: {
+    quality: number;
   };
   webp: {
     quality: number;
@@ -68,6 +75,9 @@ export interface StoredCompressionOptions {
     optimizationLevel: number;
     optimize: boolean;
   };
+  gifOptions: {
+    quality: number;
+  };
   webpOptions: {
     quality: number;
     lossless: boolean;
@@ -85,6 +95,7 @@ export interface StoredCompressionOptions {
 interface CompressionOptionsStore {
   jpegOptions: JpegOptions;
   pngOptions: PngOptions;
+  gifOptions: GifOptions;
   webpOptions: WebpOptions;
   tiffOptions: TiffOptions;
   keepMetadata: boolean;
@@ -93,6 +104,7 @@ interface CompressionOptionsStore {
 
   setJpegOptions: (options: Partial<JpegOptions>) => void;
   setPngOptions: (options: Partial<PngOptions>) => void;
+  setGifOptions: (options: Partial<GifOptions>) => void;
   setWebpOptions: (options: Partial<WebpOptions>) => void;
   setTiffOptions: (options: Partial<TiffOptions>) => void;
   setKeepMetadata: (keepMetadata: boolean) => void;
@@ -113,6 +125,9 @@ const defaultValues: StoredCompressionOptions = {
     quality: 80,
     optimizationLevel: 3,
     optimize: false,
+  },
+  gifOptions: {
+    quality: 80,
   },
   webpOptions: {
     quality: 80,
@@ -145,6 +160,7 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
       ...defaultValues,
       jpegOptions: { ...defaultValues.jpegOptions, ...preferences.jpegOptions },
       pngOptions: { ...defaultValues.pngOptions, ...preferences.pngOptions },
+      gifOptions: { ...defaultValues.gifOptions, ...preferences.gifOptions },
       webpOptions: { ...defaultValues.webpOptions, ...preferences.webpOptions },
       tiffOptions: { ...defaultValues.tiffOptions, ...preferences.tiffOptions },
       setJpegOptions: (options: Partial<JpegOptions>) =>
@@ -154,6 +170,10 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
       setPngOptions: (options: Partial<PngOptions>) =>
         set((state) => {
           Object.assign(state.pngOptions, options);
+        }),
+      setGifOptions: (options: Partial<GifOptions>) =>
+        set((state) => {
+          Object.assign(state.gifOptions, options);
         }),
       setWebpOptions: (options: Partial<WebpOptions>) =>
         set((state) => {
@@ -187,6 +207,9 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
           optimization_level: get().pngOptions.optimizationLevel,
           optimize: get().pngOptions.optimize,
         },
+        gif: {
+          quality: get().gifOptions.quality,
+        },
         webp: {
           quality: get().webpOptions.quality,
           lossless: get().webpOptions.lossless,
@@ -208,6 +231,7 @@ useCompressionOptionsStore.subscribe(
   (state) => ({
     jpegOptions: state.jpegOptions,
     pngOptions: state.pngOptions,
+    gifOptions: state.gifOptions,
     webpOptions: state.webpOptions,
     tiffOptions: state.tiffOptions,
     keepMetadata: state.keepMetadata,
