@@ -21,8 +21,17 @@ import prettyBytes from 'pretty-bytes';
 import DragDropOverlay from '@/components/DragDropOverlay.tsx';
 
 function App() {
-  const { setIsImporting, setImportProgress, updateFile, setCompressionProgress, currentPage, updateList } =
-    useFileListStore();
+  const {
+    setIsImporting,
+    setImportProgress,
+    updateFile,
+    setCompressionProgress,
+    currentPage,
+    updateList,
+    finishCompression,
+    setIsCompressionPaused,
+    setIsCompressionCancelling,
+  } = useFileListStore();
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
   const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
@@ -95,6 +104,7 @@ function App() {
     });
 
     const compressionFinishedListener = listen<CompressionFinished>('fileList:compressionFinished', (event) => {
+      finishCompression();
       //TODO translations
       addToast({
         title: 'Compression finished',
@@ -125,6 +135,11 @@ function App() {
       }
     });
 
+    const compressionPausedListener = listen('fileList:compressionPaused', () => {
+      setIsCompressionPaused(true);
+      setIsCompressionCancelling(false);
+    });
+
     invoke<FileListPayload>('change_page', { page: currentPage }).then((payload) => updateList(payload));
 
     return () => {
@@ -141,6 +156,7 @@ function App() {
         dragOverListener,
         dragCancelListener,
         dragLeaveListener,
+        compressionPausedListener,
       ]).then((cleanupFns) => {
         cleanupFns.forEach((cleanupFn) => cleanupFn());
       });

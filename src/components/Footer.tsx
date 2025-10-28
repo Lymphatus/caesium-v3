@@ -1,16 +1,33 @@
 import useFileListStore from '@/stores/file-list.store.ts';
 import { Button, Progress } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import { X } from 'lucide-react';
-import { warn } from '@tauri-apps/plugin-log';
+import { Pause, Play, Square } from 'lucide-react';
 
 function Footer() {
-  const { baseFolder, totalFiles, compressionProgress, isCompressing } = useFileListStore();
+  const {
+    baseFolder,
+    totalFiles,
+    compressionProgress,
+    isCompressing,
+    isCompressionPaused,
+    isCompressionCancelling,
+    invokePauseCompression,
+    invokeCancelCompression,
+    invokeResumeCompression,
+  } = useFileListStore();
   const { t } = useTranslation();
 
+  const setProgressLabel = function () {
+    if (isCompressionCancelling) {
+      return t('compression_status.finishing_dots');
+    } else if (isCompressionPaused) {
+      return t('compression_status.paused');
+    }
+
+    return t('compression_status.compressing_dots');
+  };
   return (
-    <div className="bg-content1 flex h-[30px] w-full items-center justify-between px-4 text-sm">
+    <div className="bg-content1 flex h-[40px] w-full items-center justify-between px-4 text-sm">
       <div>
         <div>
           {totalFiles} | {baseFolder}
@@ -18,32 +35,57 @@ function Footer() {
       </div>
       {isCompressing && (
         <div className="flex items-center justify-center gap-2">
-          <span className="text-xs">
-            {t('compressing_dots')} [{compressionProgress}/{totalFiles}]
-          </span>
-          <div className="w-60">
+          <div className="max-w-[50%] min-w-60">
             <Progress
               disableAnimation
+              showValueLabel
               aria-label="compressionProgress"
-              className="w-full"
+              className="w-full gap-1"
+              isIndeterminate={isCompressionCancelling}
+              label={setProgressLabel()}
               maxValue={totalFiles}
               minValue={0}
               size="sm"
               value={compressionProgress}
             ></Progress>
           </div>
+
+          {!isCompressionPaused && (
+            <Button
+              disableRipple
+              isIconOnly
+              className="max-h-[32px] max-w-[32px] min-w-[32px]"
+              size="sm"
+              title={t('pause')}
+              variant="light"
+              onPress={invokePauseCompression}
+            >
+              <Pause className="size-4"></Pause>
+            </Button>
+          )}
+          {isCompressionPaused && (
+            <Button
+              disableRipple
+              isIconOnly
+              className="max-h-[32px] max-w-[32px] min-w-[32px]"
+              size="sm"
+              title={t('resume')}
+              variant="light"
+              onPress={invokeResumeCompression}
+            >
+              <Play className="size-4"></Play>
+            </Button>
+          )}
           <Button
             disableRipple
             isIconOnly
-            className="max-h-[30px]"
+            className="max-h-[32px]"
             size="sm"
-            title={i18next.t('cancel')}
+            title={t('stop')}
             variant="light"
-            onPress={async () => {
-              await warn('Cancel button pressed, but functionality not implemented yet.');
-            }}
+            onPress={invokeCancelCompression}
           >
-            <X className="size-3"></X>
+            <Square className="size-4"></Square>
           </Button>
         </div>
       )}

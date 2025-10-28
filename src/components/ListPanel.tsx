@@ -7,7 +7,7 @@ import useFileListStore from '@/stores/file-list.store.ts';
 
 function ListPanel() {
   const { t } = useTranslation();
-  const { invokeCompress, fileList, openPickerDialogs } = useFileListStore();
+  const { invokeCompress, fileList, openPickerDialogs, isCompressing } = useFileListStore();
 
   return (
     <div className="size-full">
@@ -18,6 +18,7 @@ function ListPanel() {
             <Button
               disableRipple
               isIconOnly
+              isDisabled={isCompressing}
               size="sm"
               startContent={<Plus className="size-4"></Plus>}
               title={t('actions.add_dots')}
@@ -32,7 +33,7 @@ function ListPanel() {
             <Button
               disableRipple
               color="primary"
-              isDisabled={fileList.length === 0}
+              isDisabled={fileList.length === 0 || isCompressing}
               size="sm"
               startContent={<Play className="size-4"></Play>}
               title={t('actions.compress')}

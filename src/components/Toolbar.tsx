@@ -10,7 +10,7 @@ import { FileListPayload } from '@/types.ts';
 import FileListFilter from '@/components/file-list/FileListFilter.tsx';
 
 function Toolbar() {
-  const { openPickerDialogs, fileList, selectedItems, invokeCompress, updateList, setIsListLoading } =
+  const { openPickerDialogs, fileList, selectedItems, invokeCompress, updateList, setIsListLoading, isCompressing } =
     useFileListStore();
   const { setSettingsDialogOpen, showLabelsInToolbar } = useUIStore();
   const { invokePreview } = usePreviewStore();
@@ -37,6 +37,7 @@ function Toolbar() {
       <div className="flex h-full items-center gap-1">
         <Button
           disableRipple
+          isDisabled={isCompressing}
           isIconOnly={!showLabelsInToolbar}
           size="sm"
           title={t('actions.add_dots')}
@@ -48,6 +49,7 @@ function Toolbar() {
         </Button>
         <Button
           disableRipple
+          isDisabled={isCompressing}
           isIconOnly={!showLabelsInToolbar}
           size="sm"
           title={t('actions.add_folder_dots')}
@@ -63,7 +65,7 @@ function Toolbar() {
         <Button
           disableRipple
           color="danger"
-          isDisabled={selectedItems.length === 0}
+          isDisabled={selectedItems.length === 0 || isCompressing}
           isIconOnly={!showLabelsInToolbar}
           size="sm"
           title={t('actions.remove')}
@@ -76,7 +78,7 @@ function Toolbar() {
         <Button
           disableRipple
           color="danger"
-          isDisabled={fileList.length === 0}
+          isDisabled={fileList.length === 0 || isCompressing}
           isIconOnly={!showLabelsInToolbar}
           size="sm"
           title={t('actions.clear')}
@@ -91,7 +93,7 @@ function Toolbar() {
         </div>
         <Button
           disableRipple
-          isDisabled={selectedItems.length === 0}
+          isDisabled={selectedItems.length === 0 || isCompressing}
           isIconOnly={!showLabelsInToolbar}
           size="sm"
           title={t('actions.preview')}
@@ -104,7 +106,7 @@ function Toolbar() {
         <Button
           disableRipple
           color="primary"
-          isDisabled={fileList.length === 0}
+          isDisabled={fileList.length === 0 || isCompressing}
           isIconOnly={!showLabelsInToolbar}
           size="sm"
           title={t('actions.compress')}

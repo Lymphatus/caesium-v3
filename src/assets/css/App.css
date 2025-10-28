@@ -11,6 +11,6 @@
     }
 
     .center-container {
-        height: calc(100% - 40px - 30px);
+        height: calc(100% - 40px - 40px);
     }
 }

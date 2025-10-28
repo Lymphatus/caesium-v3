@@ -16,7 +16,6 @@
   "compressed": "Compressed",
   "swap": "Swap",
   "compression_completed": "Compression completed",
-  "compressing_dots": "Compressing...",
   "settings_title": "Settings",
   "close": "Close",
   "ok": "Ok",
@@ -33,6 +32,9 @@
   "downloading_dots": "Downloading...",
   "install": "Install",
   "cancel": "Cancel",
+  "stop": "Stop",
+  "pause": "Pause",
+  "resume": "Resume",
   "changelog": "Changelog",
   "drop_files_here": "Drop files here",
   "errors": {
@@ -196,5 +198,10 @@
     "latest_version": "You have the latest version available!",
     "new_update_available": "New update available",
     "ready_to_install": "Update downloaded, click to install"
+  },
+  "compression_status": {
+    "compressing_dots": "Compressing...",
+    "paused": "Paused",
+    "finishing_dots": "Finishing..."
   }
 }

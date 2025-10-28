@@ -68,7 +68,7 @@ function FileListTable() {
     setIsListLoading,
   } = useFileListStore();
   const { setCurrentPreviewedCImage, invokePreview, currentPreviewedCImage } = usePreviewStore();
-  const { updateList } = useFileListStore();
+  const { updateList, isCompressing } = useFileListStore();
   const { t } = useTranslation();
 
   const handleSelectionChange = function (keys: Selection) {
@@ -202,7 +202,7 @@ function FileListTable() {
                   <Button
                     disableRipple
                     isIconOnly
-                    isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING}
+                    isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING || isCompressing}
                     size="sm"
                     title={t('actions.preview')}
                     variant="light"
@@ -214,7 +214,7 @@ function FileListTable() {
                     disableRipple
                     isIconOnly
                     color="danger"
-                    isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING}
+                    isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING || isCompressing}
                     size="sm"
                     title={t('actions.remove')}
                     variant="light"

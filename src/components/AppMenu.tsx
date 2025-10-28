@@ -15,10 +15,16 @@ function AppMenu() {
     getAppMenuSelectedItems,
     setAboutDialogOpen,
     setCheckForUpdatesDialogOpen,
+    getAppMenuDisabledItems,
   } = useUIStore();
 
   return (
-    <DropdownMenu aria-label="menu" selectedKeys={getAppMenuSelectedItems()} selectionMode="multiple">
+    <DropdownMenu
+      aria-label="menu"
+      disabledKeys={getAppMenuDisabledItems()}
+      selectedKeys={getAppMenuSelectedItems()}
+      selectionMode="multiple"
+    >
       <DropdownItem key="advancedImport" hideSelectedIcon showDivider startContent={<Import className="size-4" />}>
         {t('actions.advanced_import')}
       </DropdownItem>

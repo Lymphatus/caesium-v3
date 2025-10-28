@@ -3,6 +3,7 @@ use indexmap::IndexSet;
 use std::cmp::{min, Ordering};
 use std::ops::Div;
 use std::path::PathBuf;
+use std::sync::atomic::AtomicBool;
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum FileListColumn {
@@ -46,6 +47,14 @@ impl SortOrder {
 pub struct AppData {
     pub(crate) file_list: AppDataFileList,
     pub(crate) base_path: PathBuf,
+    pub(crate) compression_status: CompressionStatus,
+}
+
+#[derive(Default)]
+pub struct CompressionStatus {
+    pub is_compression_cancelled: AtomicBool,
+    pub is_compression_paused: AtomicBool,
+    pub is_compressing: AtomicBool,
 }
 
 #[derive(Default)]
@@ -70,6 +79,11 @@ impl AppData {
         Self {
             file_list: AppDataFileList::new(),
             base_path: PathBuf::new(),
+            compression_status: CompressionStatus {
+                is_compression_cancelled: AtomicBool::new(false),
+                is_compression_paused: AtomicBool::new(false),
+                is_compressing: AtomicBool::new(false),
+            },
         }
     }
 

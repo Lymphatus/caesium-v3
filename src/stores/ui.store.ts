@@ -6,6 +6,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import { invoke } from '@tauri-apps/api/core';
 import { path } from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
+import useFileListStore from '@/stores/file-list.store.ts';
 
 interface SplitPanels {
   main: number[];
@@ -44,6 +45,7 @@ interface UIOptions {
   setCheckForUpdatesDialogOpen: (open: boolean) => void;
 
   getAppMenuSelectedItems: () => string[];
+  getAppMenuDisabledItems: () => string[];
 }
 
 let configPath = 'settings.json';
@@ -157,6 +159,15 @@ const useUIStore = create<UIOptions>()(
         if (get().autoPreview) selectedItems.push('autoPreview');
         if (get().showLabelsInToolbar) selectedItems.push('showToolbarLabels');
         return selectedItems;
+      },
+
+      getAppMenuDisabledItems: () => {
+        const disabledItems = [];
+        if (useFileListStore.getState().isCompressing) {
+          disabledItems.push('advancedImport');
+          disabledItems.push('checkForUpdates');
+        }
+        return disabledItems;
       },
     })),
   ),

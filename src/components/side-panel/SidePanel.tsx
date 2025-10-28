@@ -7,11 +7,13 @@ import { SIDE_PANEL_TAB } from '@/types.ts';
 import useUIStore from '@/stores/ui.store.ts';
 import { Key } from 'react';
 import ResizeOptions from '@/components/side-panel/ResizeOptions.tsx';
+import useFileListStore from '@/stores/file-list.store.ts';
 
 function SidePanel() {
   const { t } = useTranslation();
 
   const { currentSelectedTab, setCurrentSelectedTab } = useUIStore();
+  const { isCompressing } = useFileListStore();
   return (
     <div className="size-full">
       <div className="bg-default-50 size-full overflow-x-auto overflow-y-hidden rounded">
@@ -22,6 +24,7 @@ function SidePanel() {
             panel: 'w-full h-[calc(100%_-_32px)] p-0',
             base: 'w-full',
           }}
+          //isDisabled={isCompressing}
           // placement="end"
           selectedKey={currentSelectedTab}
           size="sm"
@@ -30,6 +33,7 @@ function SidePanel() {
         >
           <Tab
             key={SIDE_PANEL_TAB.COMPRESSION}
+            className={isCompressing ? 'opacity-disabled pointer-events-none' : ''} //TODO should be done in an attribute
             title={
               <div className="flex items-center gap-1">
                 <SlidersHorizontal className="size-4"></SlidersHorizontal>
@@ -41,6 +45,7 @@ function SidePanel() {
           </Tab>
           <Tab
             key={SIDE_PANEL_TAB.RESIZE}
+            className={isCompressing ? 'opacity-disabled pointer-events-none' : ''} //TODO should be done in an attribute
             title={
               <div className="flex items-center gap-2">
                 <Scaling className="size-4"></Scaling>
@@ -52,6 +57,7 @@ function SidePanel() {
           </Tab>
           <Tab
             key={SIDE_PANEL_TAB.OUTPUT}
+            className={isCompressing ? 'opacity-disabled pointer-events-none' : ''} //TODO should be done in an attribute
             title={
               <div className="flex items-center gap-2">
                 <Folder className="size-4"></Folder>
