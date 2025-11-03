@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { open } from '@tauri-apps/plugin-dialog';
 import { FILE_DATE, MOVE_ORIGINAL_FILE, OUTPUT_FORMAT } from '@/types.ts';
+import { TriangleAlert } from 'lucide-react';
 
 function OutputOptions() {
   const { t } = useTranslation();
@@ -51,6 +52,12 @@ function OutputOptions() {
     { key: OUTPUT_FORMAT.TIFF, label: t('formats.tiff') },
   ];
 
+  const moveOriginalFileWarning = moveOriginalFileType === MOVE_ORIGINAL_FILE.DELETE && (
+    <div className="text-warning flex items-center gap-1 text-xs">
+      <TriangleAlert className="size-4"></TriangleAlert> {t('move_original_files_modes.delete_warning')}
+    </div>
+  );
+
   return (
     <div className="size-full overflow-auto">
       <div className="flex flex-col gap-2 p-2 text-sm">
@@ -89,6 +96,12 @@ function OutputOptions() {
             </div>
             <Switch isSelected={sameFolderAsInput} size="sm" onValueChange={setSameFolderAsInput}></Switch>
           </div>
+          {sameFolderAsInput && suffix.length === 0 && (
+            <span className="text-warning flex items-center gap-1 text-left text-xs">
+              <TriangleAlert className="size-4"></TriangleAlert>
+              {t('compression_options.output_options.same_folder_as_input_warning')}
+            </span>
+          )}
         </div>
         <Divider></Divider>
         <div className="flex w-full items-center justify-between">
@@ -118,7 +131,9 @@ function OutputOptions() {
             classNames={{
               label: 'text-md',
               trigger: 'shadow-none',
+              description: 'text-left',
             }}
+            description={moveOriginalFileWarning}
             isDisabled={!moveOriginalFile}
             label={''}
             labelPlacement="outside"

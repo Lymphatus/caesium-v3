@@ -88,6 +88,7 @@
     },
     "output_options": {
       "same_folder_as_input": "Same folder as input",
+      "same_folder_as_input_warning": "This option without a suffix will permanently overwrite the original file.",
       "keep_structure": "Keep folder structure",
       "skip_if_output_is_bigger": "Skip if output is bigger than original",
       "move_original": "Move original file to",
@@ -119,7 +120,8 @@
   },
   "move_original_files_modes": {
     "trash": "Trash",
-    "delete": "Delete"
+    "delete": "Delete permanently",
+    "delete_warning": "This operation cannot be undone"
   },
   "file_dates": {
     "creation": "Creation",

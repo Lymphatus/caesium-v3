@@ -247,10 +247,12 @@ pub fn compress_cimage(
         preserve_file_times(&output_file, &input_metadata, options).unwrap(); //TODO
     }
 
-    if options.output_options.move_original_file_enabled
-        && options.output_options.move_original_file_mode == "trash"
-    {
-        trash::delete(&cimage.path).unwrap();
+    if options.output_options.move_original_file_enabled {
+        if options.output_options.move_original_file_mode == "trash" {
+            trash::delete(&cimage.path).unwrap(); //TODO
+        } else if &options.output_options.move_original_file_mode == "delete" {
+            fs::remove_file(&cimage.path).unwrap(); //TODO
+        }
     }
 
     CompressionResult {
@@ -457,18 +459,26 @@ fn perform_image_compression(
 
     let compression_result_data = if options.compression_options.compression_mode == 1 {
         //SIZE
+        if options.output_options.output_format != "original" {
+            input_file_buffer = convert_in_memory(
+                input_file_buffer,
+                compression_parameters,
+                map_supported_formats(&options.output_options.output_format),
+            )
+            .unwrap(); // TODO
+        }
         compress_to_size_in_memory(
             input_file_buffer,
             compression_parameters,
             options.compression_options.max_size_value * options.compression_options.max_size_unit,
             true,
         )
-    } else if options.compression_options.compression_mode == 1
+    } else if options.compression_options.compression_mode == 0
         && options.output_options.output_format != "original"
     {
         convert_in_memory(
             input_file_buffer,
-            &compression_parameters,
+            compression_parameters,
             map_supported_formats(&options.output_options.output_format),
         )
     } else {

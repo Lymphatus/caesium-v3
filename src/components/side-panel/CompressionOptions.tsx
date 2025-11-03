@@ -18,6 +18,8 @@ import TiffOptions from '@/components/side-panel/compression-options/TiffOptions
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import type { Selection } from '@react-types/shared';
 import GifOptions from '@/components/side-panel/compression-options/GifOptions.tsx';
+import { Key } from 'react';
+import { COMPRESSION_MODE } from '@/types.ts';
 
 enum ACCORDION_KEY {
   JPEG = 'jpeg_accordion',
@@ -42,8 +44,16 @@ function CompressionOptions() {
     setTiffAccordionOpen,
   } = useUIStore();
 
-  const { keepMetadata, setKeepMetadata, maxSize, setMaxSize, maxSizeUnit, setMaxSizeUnit } =
-    useCompressionOptionsStore();
+  const {
+    keepMetadata,
+    setKeepMetadata,
+    maxSize,
+    setMaxSize,
+    maxSizeUnit,
+    setMaxSizeUnit,
+    setCompressionMode,
+    compressionMode,
+  } = useCompressionOptionsStore();
 
   const handleChange = (value: SharedSelection) => {
     let actualValue = 1024;
@@ -103,11 +113,25 @@ function CompressionOptions() {
     setTiffAccordionOpen(keys.has(ACCORDION_KEY.TIFF));
   };
 
+  const handleCompressionModeChange = (key: Key) => {
+    if (key === 'size') {
+      setCompressionMode(COMPRESSION_MODE.SIZE);
+      return;
+    }
+
+    setCompressionMode(COMPRESSION_MODE.QUALITY);
+  };
+
   return (
     <div className="size-full overflow-auto">
       <div className="p-2 text-sm">
-        <Tabs fullWidth size="sm">
-          <Tab title={t('quality')}>
+        <Tabs
+          fullWidth
+          selectedKey={compressionMode === COMPRESSION_MODE.SIZE ? 'size' : 'quality'}
+          size="sm"
+          onSelectionChange={handleCompressionModeChange}
+        >
+          <Tab key="quality" title={t('quality')}>
             <div className="flex flex-col gap-2">
               <Accordion
                 isCompact
@@ -147,7 +171,7 @@ function CompressionOptions() {
               </div>
             </div>
           </Tab>
-          <Tab title={t('size')}>
+          <Tab key="size" title={t('size')}>
             <NumberInput
               endContent={
                 <Select

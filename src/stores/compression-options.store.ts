@@ -90,6 +90,7 @@ export interface StoredCompressionOptions {
   maxSizeUnit: number;
   lossless: boolean;
   keepMetadata: boolean;
+  compressionMode: COMPRESSION_MODE;
 }
 
 interface CompressionOptionsStore {
@@ -101,6 +102,7 @@ interface CompressionOptionsStore {
   keepMetadata: boolean;
   maxSize: number;
   maxSizeUnit: number;
+  compressionMode: COMPRESSION_MODE;
 
   setJpegOptions: (options: Partial<JpegOptions>) => void;
   setPngOptions: (options: Partial<PngOptions>) => void;
@@ -110,6 +112,7 @@ interface CompressionOptionsStore {
   setKeepMetadata: (keepMetadata: boolean) => void;
   setMaxSize: (maxSize: number) => void;
   setMaxSizeUnit: (maxSizeUnit: number) => void;
+  setCompressionMode: (compressionMode: COMPRESSION_MODE) => void;
 
   getCompressionOptions: () => CompressionOptions;
 }
@@ -141,6 +144,7 @@ const defaultValues: StoredCompressionOptions = {
   maxSizeUnit: 1024,
   lossless: false,
   keepMetadata: true,
+  compressionMode: COMPRESSION_MODE.QUALITY,
 };
 
 let configPath = 'settings.json';
@@ -153,11 +157,11 @@ const settings = await load(configPath);
 const preferences: StoredCompressionOptions =
   ((await settings.get('compression_options.compression')) as StoredCompressionOptions) || defaultValues;
 
-// Create store with default values first
 const useCompressionOptionsStore = create<CompressionOptionsStore>()(
   subscribeWithSelector(
     immer((set, get) => ({
       ...defaultValues,
+      ...preferences,
       jpegOptions: { ...defaultValues.jpegOptions, ...preferences.jpegOptions },
       pngOptions: { ...defaultValues.pngOptions, ...preferences.pngOptions },
       gifOptions: { ...defaultValues.gifOptions, ...preferences.gifOptions },
@@ -195,6 +199,11 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
         set((state) => {
           state.maxSizeUnit = maxSizeUnit;
         }),
+      setCompressionMode: (compressionMode: COMPRESSION_MODE) => {
+        set((state) => {
+          state.compressionMode = compressionMode;
+        });
+      },
       getCompressionOptions: () => ({
         jpeg: {
           quality: get().jpegOptions.quality,
@@ -218,7 +227,7 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
           method: get().tiffOptions.method,
           deflate_level: get().tiffOptions.deflateLevel,
         },
-        compression_mode: COMPRESSION_MODE.QUALITY, //TODO needs a variable
+        compression_mode: get().compressionMode,
         keep_metadata: get().keepMetadata,
         max_size_value: get().maxSize,
         max_size_unit: get().maxSizeUnit,
@@ -237,6 +246,7 @@ useCompressionOptionsStore.subscribe(
     keepMetadata: state.keepMetadata,
     maxSize: state.maxSize,
     maxSizeUnit: state.maxSizeUnit,
+    compressionMode: state.compressionMode,
   }),
   async (data) => {
     await settings.set('compression_options.compression', data);
