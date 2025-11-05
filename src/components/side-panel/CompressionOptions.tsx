@@ -19,7 +19,7 @@ import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import type { Selection } from '@react-types/shared';
 import GifOptions from '@/components/side-panel/compression-options/GifOptions.tsx';
 import { Key } from 'react';
-import { COMPRESSION_MODE } from '@/types.ts';
+import { COMPRESSION_MODE, FILE_SIZE_UNIT } from '@/types.ts';
 
 enum ACCORDION_KEY {
   JPEG = 'jpeg_accordion',
@@ -69,13 +69,13 @@ function CompressionOptions() {
 
   const maxSizeUnits = [
     {
-      key: 1,
+      key: FILE_SIZE_UNIT.BYTE,
       label: t('size_units.byte', {
         count: 2,
       }),
     },
-    { key: 1024, label: t('size_units.kb') },
-    { key: 1024 * 1024, label: t('size_units.mb') },
+    { key: FILE_SIZE_UNIT.KILOBYTE, label: t('size_units.kb') },
+    { key: FILE_SIZE_UNIT.MEGABYTE, label: t('size_units.mb') },
   ];
 
   const defaultAccordionOpen: ACCORDION_KEY[] = [];

@@ -28,6 +28,7 @@ interface UIOptions {
   aboutDialogOpen: boolean;
   promptExitDialogOpen: boolean;
   checkForUpdatesDialogOpen: boolean;
+  advancedImportDialogOpen: boolean;
 
   setSplitPanels: (options: Partial<SplitPanels>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
@@ -43,6 +44,7 @@ interface UIOptions {
   setAboutDialogOpen: (open: boolean) => void;
   setPromptExitDialogOpen: (open: boolean) => void;
   setCheckForUpdatesDialogOpen: (open: boolean) => void;
+  setAdvancedImportDialogOpen: (open: boolean) => void;
 
   getAppMenuSelectedItems: () => string[];
   getAppMenuDisabledItems: () => string[];
@@ -72,6 +74,7 @@ const defaultOptions = {
   aboutDialogOpen: false,
   promptExitDialogOpen: false,
   checkForUpdatesDialogOpen: false,
+  advancedImportDialogOpen: false,
 };
 
 const useUIStore = create<UIOptions>()(
@@ -150,6 +153,12 @@ const useUIStore = create<UIOptions>()(
       setCheckForUpdatesDialogOpen: (open: boolean) => {
         set((state) => {
           state.checkForUpdatesDialogOpen = open;
+        });
+      },
+
+      setAdvancedImportDialogOpen: (open: boolean) => {
+        set((state) => {
+          state.advancedImportDialogOpen = open;
         });
       },
 

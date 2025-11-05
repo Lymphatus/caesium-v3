@@ -205,5 +205,14 @@
     "compressing_dots": "Compressing...",
     "paused": "Paused",
     "finishing_dots": "Finishing..."
+  },
+  "advanced_import_dialog": {
+    "title": "Advanced import",
+    "import": "Import",
+    "filename_pattern": "File name pattern (regex)",
+    "size_filter": "Filter file size",
+    "greater_than": "Greater than",
+    "equal_to": "Equal to",
+    "less_than": "Less than"
   }
 }

@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.tsx';
 import prettyBytes from 'pretty-bytes';
 import DragDropOverlay from '@/components/DragDropOverlay.tsx';
+import AdvancedImportDialog from '@/components/dialogs/AdvancedImportDialog.tsx';
 
 function App() {
   const {
@@ -174,6 +175,7 @@ function App() {
       <SettingsDialog></SettingsDialog>
       <AboutDialog></AboutDialog>
       <CheckForUpdatesDialog></CheckForUpdatesDialog>
+      <AdvancedImportDialog></AdvancedImportDialog>
       <AskDialog
         buttons={
           <>

@@ -147,4 +147,17 @@ export type CompressionFinished = {
   total_time: number;
 };
 
+export enum FILE_SIZE_FILTER_PATTERN {
+  LESS_THAN = 'less_than',
+  GREATER_THAN = 'greater_than',
+  EQUAL_TO = 'equal_to',
+}
+
+export enum FILE_SIZE_UNIT {
+  BYTE = 1,
+  KILOBYTE = 1000,
+  MEGABYTE = 1000000,
+  GIGABYTE = 1000000000,
+}
+
 export type FileListPayload = { files: CImage[]; base_folder: string; total_files: number };

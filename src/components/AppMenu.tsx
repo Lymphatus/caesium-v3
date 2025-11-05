@@ -16,6 +16,7 @@ function AppMenu() {
     setAboutDialogOpen,
     setCheckForUpdatesDialogOpen,
     getAppMenuDisabledItems,
+    setAdvancedImportDialogOpen,
   } = useUIStore();
 
   return (
@@ -25,7 +26,13 @@ function AppMenu() {
       selectedKeys={getAppMenuSelectedItems()}
       selectionMode="multiple"
     >
-      <DropdownItem key="advancedImport" hideSelectedIcon showDivider startContent={<Import className="size-4" />}>
+      <DropdownItem
+        key="advancedImport"
+        hideSelectedIcon
+        showDivider
+        startContent={<Import className="size-4" />}
+        onPress={() => setAdvancedImportDialogOpen(true)}
+      >
         {t('actions.advanced_import')}
       </DropdownItem>
       <DropdownItem
