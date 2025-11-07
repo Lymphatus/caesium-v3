@@ -213,6 +213,8 @@
     "size_filter": "Filter file size",
     "greater_than": "Greater than",
     "equal_to": "Equal to",
-    "less_than": "Less than"
+    "less_than": "Less than",
+    "type": "Type",
+    "path": "Path"
   }
 }
