@@ -218,8 +218,8 @@ impl AppDataFileList {
         self.compute_paged_list();
     }
 
-    pub fn filter_list(&mut self, query: &String) {
-        self.search_query = query.clone();
+    pub fn filter_list(&mut self, query: &str) {
+        self.search_query = query.parse().unwrap(); //TODO
         self.filtered_ids.clear();
         for c in self.list.iter() {
             if self.is_query_hit(c, query) {
@@ -253,7 +253,7 @@ impl AppDataFileList {
         }
     }
 
-    fn is_query_hit(&self, cimage: &CImage, query: &String) -> bool {
+    fn is_query_hit(&self, cimage: &CImage, query: &str) -> bool {
         let lowercase_query = query.to_lowercase();
         cimage.path.to_lowercase().contains(&lowercase_query)
             || cimage.name.to_lowercase().contains(&lowercase_query)

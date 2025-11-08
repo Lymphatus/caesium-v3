@@ -173,22 +173,21 @@ pub fn compress_cimage(
 
     let mut compression_parameters = parse_compression_options(options, cimage);
 
-    if options.resize_options.do_not_enlarge {
-        if compression_parameters.width > cimage.width as u32
-            || compression_parameters.height > cimage.height as u32
-        {
-            return CompressionResult {
-                status: CompressionStatus::Warning,
-                cimage: CImage {
-                    status: ImageStatus::Warning,
-                    info: "Cannot resize over original dimensions, skipping".to_string(),
-                    compressed_width: cimage.width,
-                    compressed_height: cimage.height,
-                    compressed_size: cimage.size,
-                    ..cimage.clone()
-                },
-            };
-        }
+    if options.resize_options.do_not_enlarge
+        && (compression_parameters.width > cimage.width as u32
+            || compression_parameters.height > cimage.height as u32)
+    {
+        return CompressionResult {
+            status: CompressionStatus::Warning,
+            cimage: CImage {
+                status: ImageStatus::Warning,
+                info: "Cannot resize over original dimensions, skipping".to_string(),
+                compressed_width: cimage.width,
+                compressed_height: cimage.height,
+                compressed_size: cimage.size,
+                ..cimage.clone()
+            },
+        };
     }
 
     let compressed_image =
@@ -279,20 +278,20 @@ pub fn preview_cimage(
     let mut parameters = parse_compression_options(options, cimage);
     let output_path = app.path().resolve(filename, BaseDirectory::Temp).unwrap(); //TODO
 
-    if options.resize_options.do_not_enlarge {
-        if parameters.width > cimage.width as u32 || parameters.height > cimage.height as u32 {
-            return CompressionResult {
-                status: CompressionStatus::Warning,
-                cimage: CImage {
-                    status: ImageStatus::Warning,
-                    info: "Cannot resize over original dimensions, skipping".to_string(),
-                    compressed_width: cimage.width,
-                    compressed_height: cimage.height,
-                    compressed_size: cimage.size,
-                    ..cimage.clone()
-                },
-            };
-        }
+    if options.resize_options.do_not_enlarge
+        && (parameters.width > cimage.width as u32 || parameters.height > cimage.height as u32)
+    {
+        return CompressionResult {
+            status: CompressionStatus::Warning,
+            cimage: CImage {
+                status: ImageStatus::Warning,
+                info: "Cannot resize over original dimensions, skipping".to_string(),
+                compressed_width: cimage.width,
+                compressed_height: cimage.height,
+                compressed_size: cimage.size,
+                ..cimage.clone()
+            },
+        };
     }
 
     let result = if options.compression_options.compression_mode == 1 {

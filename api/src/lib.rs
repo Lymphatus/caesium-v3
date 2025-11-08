@@ -3,7 +3,8 @@ use crate::commands::compression::{
     cancel_compression, compress, pause_compression, preview, resume_compression,
 };
 use crate::commands::list::{
-    add_from_drop, change_page, clear_list, filter_list, remove_items_from_list, sort_list,
+    add_from_advanced_import, add_from_drop, change_page, clear_list, filter_list,
+    remove_items_from_list, sort_list,
 };
 use crate::commands::post_compression_actions::exec_post_compression_action;
 use crate::commands::{
@@ -124,7 +125,8 @@ pub fn run() {
             add_from_drop,
             pause_compression,
             resume_compression,
-            cancel_compression
+            cancel_compression,
+            add_from_advanced_import
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

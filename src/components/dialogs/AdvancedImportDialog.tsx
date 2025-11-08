@@ -25,20 +25,18 @@ import {
 } from '@heroui/react';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
-import { Delete, FilePlus, FileText, Folder, FolderPlus, Image, ListPlus, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { Delete, FilePlus, FolderPlus, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { FILE_SIZE_FILTER_PATTERN, FILE_SIZE_UNIT } from '@/types.ts';
 import { open } from '@tauri-apps/plugin-dialog';
+import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
 
-type FileItem = {
-  path: string;
-  type: 'file' | 'folder' | 'list';
-};
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
   const { t } = useTranslation();
 
-  const [importList, setImportList] = useState<Set<FileItem>>(new Set<FileItem>());
+  const [importList, setImportList] = useState<Set<string>>(new Set<string>());
   const [scanSubfolders, setScanSubfolders] = useState(true);
   const [filenamePattern, setFilenamePattern] = useState('');
   const [sizeFilter, setSizeFilter] = useState(false);
@@ -46,6 +44,20 @@ function AdvancedImportDialog() {
   const [sizeFilterPattern, setSizeFilterPattern] = useState(FILE_SIZE_FILTER_PATTERN.LESS_THAN);
   const [sizeFilterUnit, setSizeFilterUnit] = useState(FILE_SIZE_UNIT.BYTE);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [isValidationInProgress, setIsValidationInProgress] = useState(false);
+
+  useEffect(() => {
+    const listValidationFinished = listen('advancedImport:listValidationFinished', () => {
+      setIsValidationInProgress(false);
+      setImportList(new Set<string>());
+      setSelectedItems([]);
+      setAdvancedImportDialogOpen(false);
+    });
+
+    return () => {
+      listValidationFinished.then((cleanupFn) => cleanupFn());
+    };
+  }, []);
 
   const handleSizeFilterPatternChange = (value: SharedSelection) => {
     if (value === 'all') {
@@ -63,27 +75,16 @@ function AdvancedImportDialog() {
     return setSizeFilterUnit(parseInt(value.currentKey || '1') as FILE_SIZE_UNIT);
   };
 
-  const openFileDialog = async (mode: 'file' | 'folder' | 'list') => {
-    let filters: { name: string; extensions: string[] }[] = [];
-    if (mode === 'file') {
-      filters = [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'tiff'] }];
-    } else if (mode === 'list') {
-      filters = [{ name: 'Text files', extensions: ['txt'] }];
-    }
+  const openFileDialog = async (mode: 'file' | 'folder') => {
     const options = {
       multiple: true,
       directory: mode === 'folder',
-      filters,
     };
 
     const selected = await open(options);
 
     if (Array.isArray(selected)) {
-      const fileItems: FileItem[] = selected.map((item) => ({
-        path: item,
-        type: mode,
-      }));
-      setImportList(new Set<FileItem>([...importList, ...fileItems]));
+      setImportList(new Set<string>([...importList, ...selected]));
     }
   };
 
@@ -98,22 +99,9 @@ function AdvancedImportDialog() {
     { key: FILE_SIZE_UNIT.MEGABYTE, label: t('size_units.mb') },
   ];
 
-  const getFileListItemIcon = (type: 'file' | 'folder' | 'list') => {
-    if (type === 'file') {
-      return <Image className="size-5"></Image>;
-    } else if (type === 'folder') {
-      return <Folder className="size-5"></Folder>;
-    } else if (type === 'list') {
-      return <FileText className="size-5"></FileText>;
-    }
-
-    return null;
-  };
-
   const rows = [...importList].map((item) => (
-    <TableRow key={item.path}>
-      <TableCell>{getFileListItemIcon(item.type)}</TableCell>
-      <TableCell className="w-full">{item.path}</TableCell>
+    <TableRow key={item}>
+      <TableCell className="w-full">{item}</TableCell>
     </TableRow>
   ));
 
@@ -153,14 +141,13 @@ function AdvancedImportDialog() {
                 shadow="none"
                 onSelectionChange={(v) => {
                   if (v === 'all') {
-                    setSelectedItems([...importList].map((item) => item.path));
+                    setSelectedItems([...importList]);
                     return;
                   }
                   setSelectedItems([...(v as unknown as string[])]);
                 }}
               >
                 <TableHeader>
-                  <TableColumn>{t('advanced_import_dialog.type')}</TableColumn>
                   <TableColumn width={'100%'}>{t('advanced_import_dialog.path')}</TableColumn>
                 </TableHeader>
                 <TableBody>{rows}</TableBody>
@@ -168,7 +155,7 @@ function AdvancedImportDialog() {
             </div>
 
             <div className="flex w-full justify-start gap-2">
-              <Dropdown>
+              <Dropdown isDisabled={isValidationInProgress}>
                 <DropdownTrigger>
                   <Button
                     disableRipple
@@ -182,42 +169,34 @@ function AdvancedImportDialog() {
                 <DropdownMenu aria-label="Import actions">
                   <DropdownItem
                     key="add_files"
-                    description="Add files to the import list"
+                    description={t('advanced_import_dialog.add_files_description')}
                     startContent={<FilePlus></FilePlus>}
                     onPress={() => openFileDialog('file')}
                   >
-                    Add files
+                    {t('advanced_import_dialog.add_files')}
                   </DropdownItem>
                   <DropdownItem
                     key="add_folder"
-                    description="Scan a folder and add to the import list"
+                    description={t('advanced_import_dialog.add_folders_description')}
                     startContent={<FolderPlus></FolderPlus>}
                     onPress={() => openFileDialog('folder')}
                   >
-                    Add folder
-                  </DropdownItem>
-                  <DropdownItem
-                    key="add_list"
-                    description="Parse a list from a text file"
-                    startContent={<ListPlus></ListPlus>}
-                    onPress={() => openFileDialog('list')}
-                  >
-                    Import from list file
+                    {t('advanced_import_dialog.add_folders')}
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
               <Button
                 disableRipple
                 isIconOnly
-                isDisabled={selectedItems.length === 0}
+                isDisabled={selectedItems.length === 0 || isValidationInProgress}
                 size="sm"
                 startContent={<Delete className="text-danger size-4"></Delete>}
                 title={t('actions.remove')}
                 variant="solid"
                 onPress={() => {
-                  const newList = [...importList].filter((item) => !selectedItems.includes(item.path));
+                  const newList = [...importList].filter((item) => !selectedItems.includes(item));
                   setSelectedItems([]);
-                  setImportList(new Set<FileItem>(newList));
+                  setImportList(new Set<string>(newList));
                 }}
               ></Button>
             </div>
@@ -226,7 +205,12 @@ function AdvancedImportDialog() {
               <div className="flex flex-col text-sm">
                 <span>{t('settings.scan_subfolders_on_import')}</span>
               </div>
-              <Switch isSelected={scanSubfolders} size="sm" onValueChange={setScanSubfolders}></Switch>
+              <Switch
+                isDisabled={isValidationInProgress}
+                isSelected={scanSubfolders}
+                size="sm"
+                onValueChange={setScanSubfolders}
+              ></Switch>
             </div>
 
             <div className="flex w-full flex-col items-center justify-between gap-1">
@@ -234,7 +218,12 @@ function AdvancedImportDialog() {
                 <div className="flex flex-col text-sm">
                   <span>{t('advanced_import_dialog.size_filter')}</span>
                 </div>
-                <Switch isSelected={sizeFilter} size="sm" onValueChange={setSizeFilter}></Switch>
+                <Switch
+                  isDisabled={isValidationInProgress}
+                  isSelected={sizeFilter}
+                  size="sm"
+                  onValueChange={setSizeFilter}
+                ></Switch>
               </div>
               <NumberInput
                 hideStepper
@@ -262,7 +251,7 @@ function AdvancedImportDialog() {
                     ))}
                   </Select>
                 }
-                isDisabled={!sizeFilter}
+                isDisabled={!sizeFilter || isValidationInProgress}
                 label={t('')}
                 labelPlacement="outside"
                 size="sm"
@@ -304,6 +293,7 @@ function AdvancedImportDialog() {
                 inputWrapper: 'shadow-none',
                 label: 'text-sm ml-[-1px]',
               }}
+              isDisabled={isValidationInProgress}
               label={t('advanced_import_dialog.filename_pattern')}
               labelPlacement="outside"
               placeholder=".*\.jpg|.*\.png"
@@ -317,10 +307,38 @@ function AdvancedImportDialog() {
 
         <ModalFooter>
           <div className="flex w-full justify-end gap-2">
-            <Button disableRipple color="primary" isDisabled={importList.size === 0} onPress={() => {}}>
-              {t('advanced_import_dialog.import')}
+            <Button
+              disableRipple
+              color="primary"
+              isDisabled={importList.size === 0}
+              isLoading={isValidationInProgress}
+              onPress={async () => {
+                setIsValidationInProgress(true);
+                await invoke('add_from_advanced_import', {
+                  files: [...importList],
+                  recursive: scanSubfolders,
+                  filter: {
+                    pattern: filenamePattern,
+                    size: {
+                      enabled: sizeFilter,
+                      value: sizeFilterValue,
+                      unit: sizeFilterUnit,
+                      pattern: sizeFilterPattern,
+                    },
+                  },
+                });
+              }}
+            >
+              {isValidationInProgress
+                ? t('advanced_import_dialog.validating_dots')
+                : t('advanced_import_dialog.import')}
             </Button>
-            <Button disableRipple variant="flat" onPress={() => setAdvancedImportDialogOpen(false)}>
+            <Button
+              disableRipple
+              isDisabled={isValidationInProgress}
+              variant="flat"
+              onPress={() => setAdvancedImportDialogOpen(false)}
+            >
               {t('cancel')}
             </Button>
           </div>

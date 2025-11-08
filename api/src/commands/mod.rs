@@ -19,19 +19,20 @@ pub fn open_import_folder_dialog(app: tauri::AppHandle, recursive: bool) {
 }
 #[tauri::command]
 pub fn open_import_files_dialog(app: tauri::AppHandle) {
-    app.dialog()
-        .file()
-        .add_filter(
-            "Supported Images",
-            &["jpg", "jpeg", "png", "gif", "webp", "tif", "tiff"],
-        )
-        .pick_files(move |f| {
-            let files = match f {
-                Some(a) => a,
-                None => return,
-            };
-            process_files(&app, files, false);
-        });
+    let dialog = app.dialog().file();
+
+    #[cfg(any(target_os = "windows", target_os = "macos"))]
+    dialog.add_filter(
+        "Supported Images",
+        &["jpg", "jpeg", "png", "gif", "webp", "tif", "tiff"],
+    );
+    dialog.pick_files(move |f| {
+        let files = match f {
+            Some(a) => a,
+            None => return,
+        };
+        process_files(&app, files, false);
+    });
 }
 
 #[tauri::command]

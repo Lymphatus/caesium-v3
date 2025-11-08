@@ -633,6 +633,7 @@ dependencies = [
  "log",
  "open",
  "rayon",
+ "regex",
  "serde",
  "serde_json",
  "serde_repr",

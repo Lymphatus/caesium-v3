@@ -215,6 +215,11 @@
     "equal_to": "Equal to",
     "less_than": "Less than",
     "type": "Type",
-    "path": "Path"
+    "path": "Path",
+    "validating_dots": "Validating...",
+    "add_files": "Add files",
+    "add_files_description": "Add images to the import list or parse a list from a text file",
+    "add_folders": "Add folders",
+    "add_folders_description": "Scan a folder and add to the import list"
   }
 }

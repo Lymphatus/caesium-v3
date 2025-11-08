@@ -64,31 +64,33 @@ pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>, recursiv
 
     state.base_path = base_folder;
 
-    app.emit("fileImporter:scanFinished", ()).unwrap(); //TODO
+    //app.emit("fileImporter:scanFinished", ()).unwrap(); //TODO
 
     let total = imported_files.len();
-    let mut progress = 0;
-    for (index, f) in imported_files.iter().enumerate() {
-        let new_progress = ((index + 1) as f64 / total as f64 * 100.0).floor() as usize;
+    if total > 0 {
+        let mut progress = 0;
+        for (index, f) in imported_files.iter().enumerate() {
+            let new_progress = ((index + 1) as f64 / total as f64 * 100.0).floor() as usize;
 
-        if progress != new_progress {
-            progress = new_progress;
-            app.emit(
-                "fileImporter:importProgress",
-                FileImportProgress { progress, total },
-            )
-            .unwrap();
+            if progress != new_progress {
+                progress = new_progress;
+                app.emit(
+                    "fileImporter:importProgress",
+                    FileImportProgress { progress, total },
+                )
+                .unwrap();
+            }
+
+            let cimage = match map_file(f) {
+                Some(c) => c,
+                _ => continue,
+            };
+
+            state.file_list.insert(cimage);
         }
 
-        let cimage = match map_file(f) {
-            Some(c) => c,
-            _ => continue,
-        };
-
-        state.file_list.insert(cimage);
+        state.file_list.sort_list();
     }
-
-    state.file_list.sort_list();
 
     app.emit(
         "fileImporter:importFinished",
@@ -114,7 +116,7 @@ pub fn process_files(app: &tauri::AppHandle, file_paths: Vec<FilePath>, recursiv
 }
 
 pub fn scan_files(
-    args: &Vec<FilePath>,
+    args: &[FilePath],
     initial_base_path: &PathBuf,
     recursive: bool,
 ) -> (PathBuf, Vec<PathBuf>) {
@@ -198,7 +200,7 @@ fn compute_base_folder(base_folder: &Path, new_path: &Path) -> Option<PathBuf> {
     Some(folder)
 }
 
-pub fn map_file(file: &PathBuf) -> Option<CImage> {
+pub fn map_file(file: &Path) -> Option<CImage> {
     // let id = Uuid::new_v4().to_string();
 
     let name = file.file_name()?.to_str()?.to_string();
