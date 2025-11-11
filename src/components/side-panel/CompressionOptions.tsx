@@ -181,6 +181,7 @@ function CompressionOptions() {
                   classNames={{
                     label: 'hidden',
                     trigger: 'shadow-none',
+                    popoverContent: 'bg-content2 border-2 border-content1',
                   }}
                   label={''}
                   selectedKeys={[maxSizeUnit.toString()]}

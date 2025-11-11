@@ -132,6 +132,7 @@ function OutputOptions() {
               label: 'text-md',
               trigger: 'shadow-none',
               description: 'text-left',
+              popoverContent: 'bg-content2 border-2 border-content1',
             }}
             description={moveOriginalFileWarning}
             isDisabled={!moveOriginalFile}
@@ -199,6 +200,7 @@ function OutputOptions() {
           classNames={{
             label: 'text-md',
             trigger: 'shadow-none',
+            popoverContent: 'bg-content2 border-2 border-content1',
           }}
           label={t('compression_options.output_options.output_format')}
           labelPlacement="outside"

@@ -1,30 +1,219 @@
 {
   "app_name": "Caesium Image Compressor",
-  "maxOutputSize": "Maximum output size",
-  "unit": "Unit",
+  "unit": "Unità",
+  "select_dots": "Seleziona...",
+  "importing_dots": "Importazione...",
+  "width": "Larghezza",
+  "height": "Altezza",
+  "long_edge": "Lato lungo",
+  "short_edge": "Lato corto",
+  "fit_container": "Adatta",
+  "fill_container": "Riempi",
+  "zoom_out": "Zoom out",
+  "zoom_in": "Zoom in",
+  "actual_size": "Dimensione originale",
+  "original": "Originale",
+  "compressed": "Compresso",
+  "swap": "Scambia",
+  "compression_completed": "Compressione completata",
+  "settings_title": "Impostazioni",
+  "close": "Chiudi",
+  "ok": "Ok",
+  "threads": "Threads",
+  "quality": "Qualità",
+  "size": "Dimensione",
+  "copyright_note": "© SaeraSoft e Matteo Paonessa, tutti i diritti riservati",
+  "confirm_exit_message": "Sicuri di voler uscire?",
+  "affirmative_answer": "Sì",
+  "negative_answer": "No",
+  "usage_stats": "Statistiche d'uso",
+  "copy": "Copia",
+  "update": "Aggiorna",
+  "downloading_dots": "Download...",
+  "install": "Install",
+  "cancel": "Cancella",
+  "stop": "Stop",
+  "pause": "Pausa",
+  "resume": "Riprendi",
+  "changelog": "Changelog",
+  "drop_files_here": "Trascina qui i file",
+  "errors": {
+    "generic": "Errore",
+    "generic_retry": "Errore, riprova più tardi"
+  },
+  "formats": {
+    "original": "Come originale",
+    "jpeg": "JPEG",
+    "png": "PNG",
+    "gif": "GIF",
+    "tiff": "TIFF",
+    "webp": "WebP"
+  },
   "file_list": {
-    "status": "Status",
-    "filename": "Filename",
-    "size": "Size",
-    "resolution": "Resolution",
-    "saved": "Saved",
+    "status": "Stato",
+    "filename": "Nome",
+    "size": "Dimensione",
+    "resolution": "Risoluzione",
+    "saved": "Risparmio",
     "additional_info": "Info",
-    "actions": "Actions"
+    "actions": "Azioni",
+    "search_help": "Cerca"
   },
   "formatting": {
     "thousands_separator": ".",
     "decimal_separator": ","
   },
   "size_units": {
-    "byte": "byte | bytes",
+    "byte": "byte",
     "kb": "Kb",
     "mb": "Mb",
     "gb": "Gb"
   },
-  "chroma_subsampling_auto": "Auto",
+  "compression_options": {
+    "progressive": "Progressiva",
+    "compression": "Compressione",
+    "resize": "Ridimensiona",
+    "output": "Output",
+    "max_output_size": "Dimensione massima",
+    "lossless": "Senza perdita di qualità",
+    "keep_metadata": "Mantieni metadati",
+    "output_folder": "Cartella di output",
+    "chroma_subsampling": "Chroma subsampling",
+    "optimization_level": "Livello di ottimizzazione",
+    "resize_options": {
+      "resize_enabled": "Abilita ridimensionamento",
+      "resize_mode": "Modo",
+      "keep_aspect_ratio": "Mantieni proporzioni",
+      "do_not_enlarge": "Non allargare"
+    },
+    "output_options": {
+      "same_folder_as_input": "Stessa cartella dell'originale",
+      "same_folder_as_input_warning": "Se selezionata senza un suffisso sovrascriverà in maniera permanente i file originali",
+      "keep_structure": "Mantieni struttura delle cartelle",
+      "skip_if_output_is_bigger": "Salta se il risultato è più grande dell'originale",
+      "move_original": "Sposta gli originali",
+      "keep_file_dates": "Mantieni informazioni sulle date",
+      "output_format": "Formato di destinazione",
+      "suffix": "Suffisso"
+    },
+    "tiff": {
+      "compression_method": "Metodo di compressione",
+      "deflate_level": "Livello Deflate",
+      "uncompressed": "Non compressa",
+      "lzw": "LZW",
+      "deflate": "Deflate",
+      "packbits": "Packbits",
+      "fast": "Veloce",
+      "none": "Nessuno",
+      "best": "Migliore",
+      "balanced": "Bilanciato"
+    }
+  },
+  "resize_modes": {
+    "none": "Non ridimensionare",
+    "dimensions": "Dimensioni",
+    "percentage": "Percentuale",
+    "short_edge": "Lato corto",
+    "long_edge": "Lato lungo",
+    "width": "Larghezza",
+    "height": "Altezza"
+  },
+  "move_original_files_modes": {
+    "trash": "Cestino",
+    "delete": "Cancella definitivamente",
+    "delete_warning": "Questa operazione è irreversibile"
+  },
+  "file_dates": {
+    "creation": "Creazione",
+    "last_modified": "Ultima modifica",
+    "last_access": "Ultimo accesso"
+  },
+  "chroma_subsampling_auto": "Automatico",
   "actions": {
-    "compress": "Compress",
-    "add": "Add",
-    "remove": "Remove"
+    "add_dots": "Aggiungi immagini...",
+    "add_folder_dots": "Aggiungi cartella...",
+    "advanced_import": "Importazione avanzata...",
+    "exit": "Esci",
+    "about": "Info su Caesium Image Compressor",
+    "donate": "Dona",
+    "compress": "Comprimi",
+    "add": "Aggiungi",
+    "clear": "Pulisci",
+    "select_all": "Seleziona tutto",
+    "remove": "Rimuovi",
+    "settings": "Impostazioni",
+    "preview": "Anteprima",
+    "auto_preview": "Anteprima automatica",
+    "show_previews": "Mostra anteprime",
+    "show_toolbar_labels": "Mostra etichette nella barra degli strumenti",
+    "check_for_updates": "Controlla aggiornamenti"
+  },
+  "settings": {
+    "general": "Generali",
+    "import": "Importazione",
+    "advanced": "Avanzate",
+    "theme": "Tema",
+    "theme_dark": "Scuro",
+    "theme_light": "Chiaro",
+    "theme_system": "Automatico",
+    "language": "Lingua",
+    "prompt_on_exit": "Chiedi prima di uscire",
+    "auto_check_updates": "Controlla automaticamente gli aggornamenti",
+    "skip_dialogs": "Salta conferme",
+    "skip_dialogs_help": "Non mostra finestre di dialogo che richiedono conferme",
+    "send_usage_statistics": "Manda statistiche d'uso",
+    "send_usage_statistics_help": "Mostra le mie statistiche",
+    "send_usage_statistics_disclaimer": "Le informazioni sul sistema sono inviate all'avvio dell'applicazione; le informazioni sulle compressione sono inviate dopo la compressione. Non vengono mai condivise con terze parti.",
+    "scan_subfolders_on_import": "Importa sottocartelle",
+    "scan_subfolders_on_import_help": "Scansiona e importa anche le sottocartelle",
+    "direct_import_action": "Importazione diretta",
+    "direct_import_action_help": "Esegui alla fine della compressione",
+    "direct_import_actions": {
+      "import_only": "Solo importazione",
+      "import_and_compress": "Importa e comprimi"
+    },
+    "post_compression_actions": {
+      "none": "Nessuna",
+      "close_application": "Chiudi l'applicazione",
+      "sleep": "Sospendi",
+      "shutdown": "Spegni il computer",
+      "open_output_folder": "Apri la cartella di destinazione"
+    },
+    "post_compression_action": "Azione al termine",
+    "post_compression_action_help": "Esegui un'azione al termine della compressione",
+    "max_compression_threads": "Massimo numero di thread di compressione",
+    "threads_priority": "Priorità dei thread",
+    "threads_priorities": {
+      "lowest": "Minima",
+      "normal": "Normale",
+      "highest": "Massima"
+    }
+  },
+  "menubar": {
+    "file": "File",
+    "edit": "Modifica",
+    "view": "Visualizza",
+    "help": "Aiuto"
+  },
+  "update_process": {
+    "checking_for_updates_dots": "Controllo aggiornamenti...",
+    "latest_version": "Hai l'ultima versione!",
+    "new_update_available": "Nuovo aggiornamento disponibile!",
+    "ready_to_install": "Pronto all'installazione"
+  },
+  "compression_status": {
+    "compressing_dots": "Compressione...",
+    "paused": "In pausa",
+    "finishing_dots": "Completamento..."
+  },
+  "advanced_import_dialog": {
+    "title": "Importazione avanzata",
+    "import": "Importa",
+    "filename_pattern": "Filtra per nome (regex)",
+    "size_filter": "Filtra per dimensione",
+    "greater_than": "Maggiore di",
+    "equal_to": "Uguale a",
+    "less_than": "Minore di",
+    "path": "Percorso"
   }
 }

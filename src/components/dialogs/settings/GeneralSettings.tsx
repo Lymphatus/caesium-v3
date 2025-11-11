@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import useSettingsStore from '@/stores/settings.store.ts';
 import UsageStatsDialog from '@/components/dialogs/UsageStatsDialog.tsx';
 import { useState } from 'react';
+import i18n from 'i18next';
 
 function GeneralSettings() {
   const { t } = useTranslation();
@@ -26,7 +27,10 @@ function GeneralSettings() {
     { key: THEME.LIGHT, label: t('settings.theme_light') },
     { key: THEME.DARK, label: t('settings.theme_dark') },
   ];
-  const languages = [{ key: 'en', label: 'English' }];
+  const languages = [
+    { key: 'en-US', label: 'English (United States)' },
+    { key: 'it-IT', label: 'Italiano' },
+  ];
 
   const [usageStatsDialogOpen, setUsageStatsDialogOpen] = useState(false);
   return (
@@ -41,6 +45,7 @@ function GeneralSettings() {
               mainWrapper: 'max-w-[250px]',
               label: 'text-md',
               trigger: 'shadow-none',
+              popoverContent: 'bg-content2 border-2 border-content1',
             }}
             label={t('settings.theme')}
             labelPlacement="outside-left"
@@ -62,6 +67,7 @@ function GeneralSettings() {
               mainWrapper: 'max-w-[250px]',
               label: 'text-md',
               trigger: 'shadow-none',
+              popoverContent: 'bg-content2 border-2 border-content1',
             }}
             label={t('settings.language')}
             labelPlacement="outside-left"
@@ -69,7 +75,11 @@ function GeneralSettings() {
             selectionMode="single"
             size="sm"
             variant="faded"
-            onSelectionChange={(value) => setLanguage((value.currentKey as string) || 'en')}
+            onSelectionChange={async (value) => {
+              await i18n.changeLanguage(value.currentKey as string, () => {
+                setLanguage((value.currentKey as string) || 'en-US');
+              });
+            }}
           >
             {languages.map((t) => (
               <SelectItem key={t.key}>{t.label}</SelectItem>

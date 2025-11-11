@@ -238,6 +238,7 @@ function AdvancedImportDialog() {
                     aria-label={t('compression_options.output_options.output_format')}
                     classNames={{
                       trigger: 'shadow-none rounded-none rounded-r-sm ml-[2px]',
+                      popoverContent: 'bg-content2 border-2 border-content1',
                     }}
                     label={''}
                     selectedKeys={[sizeFilterUnit.toString()]}
@@ -261,6 +262,7 @@ function AdvancedImportDialog() {
                     aria-label={t('compression_options.output_options.output_format')}
                     classNames={{
                       trigger: 'shadow-none rounded-none rounded-l-sm ml-[-1px]',
+                      popoverContent: 'bg-content2 border-2 border-content1',
                     }}
                     label={''}
                     selectedKeys={[sizeFilterPattern]}

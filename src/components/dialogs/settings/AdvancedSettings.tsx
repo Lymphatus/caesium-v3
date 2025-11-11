@@ -45,6 +45,7 @@ function AdvancedSettings() {
             mainWrapper: 'max-w-[250px]',
             label: 'text-md',
             trigger: 'shadow-none',
+            popoverContent: 'bg-content2 border-2 border-content1',
           }}
           label={
             <div className="flex flex-col">
@@ -73,6 +74,7 @@ function AdvancedSettings() {
             mainWrapper: 'max-w-[250px]',
             label: 'text-md',
             trigger: 'shadow-none',
+            popoverContent: 'bg-content2 border-2 border-content1',
           }}
           label={
             <div className="flex flex-col">

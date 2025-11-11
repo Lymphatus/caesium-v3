@@ -30,6 +30,7 @@ function TiffOptions() {
         classNames={{
           label: 'text-md',
           trigger: 'shadow-none',
+          popoverContent: 'bg-content2 border-2 border-content1',
         }}
         label={t('compression_options.tiff.compression_method')}
         labelPlacement="outside"

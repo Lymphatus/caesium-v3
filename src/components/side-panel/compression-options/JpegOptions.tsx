@@ -59,6 +59,7 @@ function JpegOptions() {
         classNames={{
           label: 'text-md',
           trigger: 'shadow-none',
+          popoverContent: 'bg-content2 border-2 border-content1',
         }}
         label={t('compression_options.chroma_subsampling')}
         labelPlacement="outside"
