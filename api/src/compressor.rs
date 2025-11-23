@@ -173,6 +173,7 @@ pub fn compress_cimage(
 
     let mut compression_parameters = parse_compression_options(options, cimage);
 
+    let will_overwrite_original = output_full_path == PathBuf::from(cimage.path.clone());
     if options.resize_options.do_not_enlarge
         && (compression_parameters.width > cimage.width as u32
             || compression_parameters.height > cimage.height as u32)
@@ -246,7 +247,7 @@ pub fn compress_cimage(
         preserve_file_times(&output_file, &input_metadata, options).unwrap(); //TODO
     }
 
-    if options.output_options.move_original_file_enabled {
+    if options.output_options.move_original_file_enabled && !will_overwrite_original {
         if options.output_options.move_original_file_mode == "trash" {
             trash::delete(&cimage.path).unwrap(); //TODO
         } else if &options.output_options.move_original_file_mode == "delete" {
