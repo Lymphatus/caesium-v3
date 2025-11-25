@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 import { CImage, FileListPayload } from '@/types.ts';
-import { invoke } from '@tauri-apps/api/core';
 import { createJSONStorage, persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import useSettingsStore from '@/stores/settings.store.ts';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
-import { addToast, SortDescriptor } from '@heroui/react';
+import { SortDescriptor } from '@heroui/react';
 import { execPostCompressionAction } from '@/utils/post-compression-actions.ts';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 interface FileListStore {
   fileList: CImage[];
@@ -75,10 +75,10 @@ const useFileListStore = create<FileListStore>()(
 
           openPickerDialogs: async (type: 'files' | 'folder') => {
             if (type === 'files') {
-              await invoke('open_import_files_dialog');
+              await invokeBackend('open_import_files_dialog');
             } else {
               const recursive = useSettingsStore.getState().importSubfolderOnInput;
-              await invoke('open_import_folder_dialog', { recursive });
+              await invokeBackend('open_import_folder_dialog', { recursive });
             }
           },
           setFileList: (files: CImage[]) => set({ fileList: files }),
@@ -96,17 +96,10 @@ const useFileListStore = create<FileListStore>()(
           setCurrentSorting: (sorting: SortDescriptor) => set({ currentSorting: sorting }),
           filterList: async (query: string) => {
             set({ isListLoading: true });
-            invoke<FileListPayload>('filter_list', { query })
+            invokeBackend<FileListPayload>('filter_list', { query })
               .then((payload) => {
                 useFileListStore.getState().updateList(payload);
                 useFileListStore.getState().setCurrentPage(1);
-              })
-              .catch((e: string) => {
-                addToast({
-                  title: 'Error',
-                  description: `An error occurred: ${e}`,
-                  color: 'danger',
-                });
               })
               .finally(() => set({ isListLoading: false }));
           },
@@ -123,7 +116,7 @@ const useFileListStore = create<FileListStore>()(
               return;
             }
             set({ isCompressing: true });
-            invoke('compress', {
+            invokeBackend('compress', {
               options: {
                 compression_options: useCompressionOptionsStore.getState().getCompressionOptions(),
                 resize_options: useResizeOptionsStore.getState().getResizeOptions(),
@@ -150,15 +143,15 @@ const useFileListStore = create<FileListStore>()(
             }),
           invokePauseCompression: async () => {
             set({ isCompressionCancelling: true });
-            await invoke('pause_compression');
+            await invokeBackend('pause_compression');
             //set({ isCompressionPaused: true, isCompressionCancelling: false });
           },
           invokeCancelCompression: async () => {
             set({ isCompressionCancelling: true, isCompressionPaused: false });
-            await invoke('cancel_compression');
+            await invokeBackend('cancel_compression');
           },
           invokeResumeCompression: async () => {
-            await invoke('resume_compression');
+            await invokeBackend('resume_compression');
             set({ isCompressionPaused: false, isCompressionCancelling: false });
           },
           finishCompression: async () => {
@@ -187,15 +180,8 @@ useFileListStore.subscribe(
   (state) => state.currentPage,
   async (currentPage: number) => {
     useFileListStore.getState().setIsListLoading(true);
-    invoke<FileListPayload>('change_page', { page: currentPage })
+    invokeBackend<FileListPayload>('change_page', { page: currentPage })
       .then((payload) => useFileListStore.getState().updateList(payload))
-      .catch((e: string) => {
-        addToast({
-          title: 'Error',
-          description: `An error occurred: ${e}`,
-          color: 'danger',
-        });
-      })
       .finally(() => useFileListStore.getState().setIsListLoading(false));
   },
 );

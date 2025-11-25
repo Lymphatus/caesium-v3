@@ -3,9 +3,9 @@ import { immer } from 'zustand/middleware/immer';
 import { CHROMA_SUBSAMPLING, COMPRESSION_MODE, TIFF_COMPRESSION_METHOD, TIFF_DEFLATE_LEVEL } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { load } from '@tauri-apps/plugin-store';
-import { invoke } from '@tauri-apps/api/core';
 import { path } from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 interface JpegOptions {
   quality: number;
@@ -149,7 +149,7 @@ const defaultValues: StoredCompressionOptions = {
 
 let configPath = 'settings.json';
 if (platform() === 'windows') {
-  const exeDir = await invoke<string>('get_executable_dir');
+  const exeDir = await invokeBackend<string>('get_executable_dir');
   configPath = await path.join(exeDir, 'settings.json');
 }
 

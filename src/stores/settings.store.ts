@@ -3,9 +3,9 @@ import { load } from '@tauri-apps/plugin-store';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION, THEME } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { app, path } from '@tauri-apps/api';
-import { invoke } from '@tauri-apps/api/core';
 import { platform } from '@tauri-apps/plugin-os';
 import { setDocumentTheme } from '@/utils/utils.ts';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 interface SettingsOptionsStore {
   theme: THEME;
@@ -36,13 +36,13 @@ interface SettingsOptionsStore {
 
 let configPath = 'settings.json';
 if (platform() === 'windows') {
-  const exeDir = await invoke<string>('get_executable_dir');
+  const exeDir = await invokeBackend<string>('get_executable_dir');
   configPath = await path.join(exeDir, 'settings.json');
 }
 
 const settings = await load(configPath);
 const preferences = (await settings.get('settings')) || {};
-const maxThreads = (await invoke<number>('get_max_threads')) || 1;
+const maxThreads = (await invokeBackend<number>('get_max_threads')) || 1;
 
 const defaultOptions = {
   theme: THEME.SYSTEM,

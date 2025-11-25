@@ -38,6 +38,7 @@
   "changelog": "Changelog",
   "drop_files_here": "Drop files here",
   "errors": {
+    "generic_title": "Error",
     "generic": "An error has occurred",
     "generic_retry": "An error has occurred, retry later"
   },

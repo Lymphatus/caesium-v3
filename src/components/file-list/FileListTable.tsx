@@ -1,4 +1,4 @@
-import { addToast, Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import {
   ArrowDown,
@@ -16,9 +16,9 @@ import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
 import { sep } from '@tauri-apps/api/path';
 import { Selection } from '@react-types/shared';
-import { invoke } from '@tauri-apps/api/core';
 import { CImage, FileListPayload, IMAGE_STATUS } from '@/types.ts';
 import { getSavedPercentage } from '@/utils/utils.ts';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 function getSubpart(baseFolder: string | null, fullPath: string, filename: string) {
   if (!baseFolder) {
@@ -107,18 +107,11 @@ function FileListTable() {
         onSortChange={(sort) => {
           setIsListLoading(true);
           setCurrentSorting(sort);
-          invoke<FileListPayload>('sort_list', {
+          invokeBackend<FileListPayload>('sort_list', {
             column: sort.column,
             order: sort.direction,
           })
             .then((payload) => updateList(payload))
-            .catch((e: string) => {
-              addToast({
-                title: 'Error',
-                description: `An error occurred: ${e}`,
-                color: 'danger',
-              });
-            })
             .finally(() => setIsListLoading(false));
         }}
       >
@@ -220,15 +213,8 @@ function FileListTable() {
                     variant="light"
                     onPress={async () => {
                       setIsListLoading(true);
-                      invoke<FileListPayload>('remove_items_from_list', { keys: [cImage.id] })
+                      invokeBackend<FileListPayload>('remove_items_from_list', { keys: [cImage.id] })
                         .then((payload) => updateList(payload))
-                        .catch((e: string) =>
-                          addToast({
-                            title: 'Error',
-                            description: `An error occurred: ${e}`,
-                            color: 'danger',
-                          }),
-                        )
                         .finally(() => setIsListLoading(false));
                     }}
                   >

@@ -1,7 +1,7 @@
 import { POST_COMPRESSION_ACTION } from '@/types.ts';
 import { getCurrentWindow } from '@tauri-apps/api/window';
-import { invoke } from '@tauri-apps/api/core';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 export async function execPostCompressionAction(postCompressionAction: POST_COMPRESSION_ACTION) {
   if (postCompressionAction === POST_COMPRESSION_ACTION.CLOSE_APP) {
@@ -20,19 +20,19 @@ async function closeApp() {
 }
 
 async function shutdown() {
-  await invoke('exec_post_compression_action', {
+  await invokeBackend('exec_post_compression_action', {
     postCompressionAction: POST_COMPRESSION_ACTION.SHUTDOWN,
   });
 }
 
 async function sleep() {
-  await invoke('exec_post_compression_action', {
+  await invokeBackend('exec_post_compression_action', {
     postCompressionAction: POST_COMPRESSION_ACTION.SLEEP,
   });
 }
 
 async function openOutputFolder() {
-  await invoke('exec_post_compression_action', {
+  await invokeBackend('exec_post_compression_action', {
     postCompressionAction: POST_COMPRESSION_ACTION.OPEN_OUTPUT_FOLDER,
     payload: useOutputOptionsStore.getState().outputFolder,
   });

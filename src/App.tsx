@@ -10,7 +10,6 @@ import { addToast, Button } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 import AboutDialog from './components/dialogs/AboutDialog';
-import { invoke } from '@tauri-apps/api/core';
 import { getCurrentWindow, Theme } from '@tauri-apps/api/window';
 import useSettingsStore from '@/stores/settings.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
@@ -21,6 +20,7 @@ import prettyBytes from 'pretty-bytes';
 import DragDropOverlay from '@/components/DragDropOverlay.tsx';
 import AdvancedImportDialog from '@/components/dialogs/AdvancedImportDialog.tsx';
 import { setDocumentTheme } from '@/utils/utils.ts';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 function App() {
   const {
@@ -61,16 +61,12 @@ function App() {
         const filePaths = event.payload.paths;
         setIsDragging(false);
 
-        void invoke('add_from_drop', { filesOrFolders: filePaths, recursive: importSubfolderOnInput });
+        void invokeBackend('add_from_drop', { filesOrFolders: filePaths, recursive: importSubfolderOnInput });
       },
     );
 
-    const dragOverListener = listen('tauri://drag-over', () => {
+    const dragOverListener = listen(TauriEvent.DRAG_OVER, () => {
       setIsDragging(true);
-    });
-
-    const dragCancelListener = listen('tauri://drag-cancelled', () => {
-      setIsDragging(false);
     });
 
     const dragLeaveListener = listen('tauri://drag-leave', () => {
@@ -155,7 +151,7 @@ function App() {
       setIsCompressionCancelling(false);
     });
 
-    invoke<FileListPayload>('change_page', { page: currentPage }).then((payload) => updateList(payload));
+    invokeBackend<FileListPayload>('change_page', { page: currentPage }).then((payload) => updateList(payload));
 
     return () => {
       Promise.all([
@@ -169,7 +165,6 @@ function App() {
         compressionFinishedListener,
         dragDropListener,
         dragOverListener,
-        dragCancelListener,
         dragLeaveListener,
         compressionPausedListener,
         themeChangedListener,

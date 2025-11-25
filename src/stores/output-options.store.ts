@@ -1,9 +1,9 @@
 import { create } from 'zustand/index';
 import { load } from '@tauri-apps/plugin-store';
 import { FILE_DATE, MOVE_ORIGINAL_FILE, OUTPUT_FORMAT } from '@/types.ts';
-import { invoke } from '@tauri-apps/api/core';
 import { path } from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 interface OutputOptionsStore {
   outputFolder: string;
@@ -46,7 +46,7 @@ export interface OutputOptions {
 
 let configPath = 'settings.json';
 if (platform() === 'windows') {
-  const exeDir = await invoke<string>('get_executable_dir');
+  const exeDir = await invokeBackend<string>('get_executable_dir');
   configPath = await path.join(exeDir, 'settings.json');
 }
 

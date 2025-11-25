@@ -1,13 +1,13 @@
 import { CImage, IMAGE_STATUS } from '@/types.ts';
 import { create } from 'zustand/index';
 import useFileListStore from '@/stores/file-list.store.ts';
-import { invoke } from '@tauri-apps/api/core';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
 import useUIStore from '@/stores/ui.store.ts';
 import useSettingsStore from '@/stores/settings.store.ts';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 interface PreviewStore {
   isLoading: boolean;
@@ -37,7 +37,7 @@ const usePreviewStore = create<PreviewStore>()(
       for (const id of ids) {
         useFileListStore.getState().updateFile(id, { status: IMAGE_STATUS.COMPRESSING });
       }
-      invoke('preview', {
+      invokeBackend('preview', {
         ids,
         options: {
           compression_options: useCompressionOptionsStore.getState().getCompressionOptions(),

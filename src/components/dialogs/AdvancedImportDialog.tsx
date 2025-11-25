@@ -29,8 +29,8 @@ import { Delete, FilePlus, FolderPlus, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FILE_SIZE_FILTER_PATTERN, FILE_SIZE_UNIT } from '@/types.ts';
 import { open } from '@tauri-apps/plugin-dialog';
-import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
+import { invokeBackend } from '@/utils/invoker.tsx';
 
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
@@ -316,7 +316,7 @@ function AdvancedImportDialog() {
               isLoading={isValidationInProgress}
               onPress={async () => {
                 setIsValidationInProgress(true);
-                await invoke('add_from_advanced_import', {
+                await invokeBackend('add_from_advanced_import', {
                   files: [...importList],
                   recursive: scanSubfolders,
                   filter: {
