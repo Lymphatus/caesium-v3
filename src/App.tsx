@@ -5,13 +5,13 @@ import ImportDialog from '@/components/dialogs/ImportDialog.tsx';
 import CenterContainer from '@/components/CenterContainer.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { listen, TauriEvent } from '@tauri-apps/api/event';
-import { CImage, CompressionFinished, FileListPayload } from '@/types.ts';
+import { CImage, CompressionFinished, FileListPayload, THEME } from '@/types.ts';
 import { addToast, Button } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 import AboutDialog from './components/dialogs/AboutDialog';
 import { invoke } from '@tauri-apps/api/core';
-import { getCurrentWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow, Theme } from '@tauri-apps/api/window';
 import useSettingsStore from '@/stores/settings.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
 import AskDialog from '@/components/dialogs/AskDialog.tsx';
@@ -20,6 +20,7 @@ import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.ts
 import prettyBytes from 'pretty-bytes';
 import DragDropOverlay from '@/components/DragDropOverlay.tsx';
 import AdvancedImportDialog from '@/components/dialogs/AdvancedImportDialog.tsx';
+import { setDocumentTheme } from '@/utils/utils.ts';
 
 function App() {
   const {
@@ -36,13 +37,26 @@ function App() {
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
   const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
-  const { skipMessagesAndDialogs, importSubfolderOnInput } = useSettingsStore();
+  const { skipMessagesAndDialogs, importSubfolderOnInput, theme } = useSettingsStore();
   const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
+    const themeChangedListener = listen(TauriEvent.WINDOW_THEME_CHANGED, (event) => {
+      const eventTheme = event.payload as Theme;
+      if (theme !== THEME.SYSTEM) {
+        return;
+      }
+
+      if (eventTheme === 'dark') {
+        setDocumentTheme(THEME.DARK);
+      } else if (eventTheme === 'light') {
+        setDocumentTheme(THEME.LIGHT);
+      }
+    });
+
     const dragDropListener = listen<{ paths: string[]; position: { x: number; y: number } }>(
-      'tauri://drag-drop',
+      TauriEvent.DRAG_DROP,
       (event) => {
         const filePaths = event.payload.paths;
         setIsDragging(false);
@@ -158,6 +172,7 @@ function App() {
         dragCancelListener,
         dragLeaveListener,
         compressionPausedListener,
+        themeChangedListener,
       ]).then((cleanupFns) => {
         cleanupFns.forEach((cleanupFn) => cleanupFn());
       });

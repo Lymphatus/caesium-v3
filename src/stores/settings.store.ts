@@ -5,6 +5,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import { app, path } from '@tauri-apps/api';
 import { invoke } from '@tauri-apps/api/core';
 import { platform } from '@tauri-apps/plugin-os';
+import { setDocumentTheme } from '@/utils/utils.ts';
 
 interface SettingsOptionsStore {
   theme: THEME;
@@ -97,20 +98,21 @@ useSettingsStore.subscribe(async (state) => {
 useSettingsStore.subscribe(
   (state) => state.theme,
   async (theme: THEME) => {
-    if (
-      theme === THEME.LIGHT ||
-      (theme === THEME.SYSTEM && !window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      window.document.documentElement.classList.add('light');
-      window.document.documentElement.classList.remove('dark');
-      await app.setTheme('light');
-    } else if (
-      theme === THEME.DARK ||
-      (theme === THEME.SYSTEM && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      window.document.documentElement.classList.add('dark');
-      window.document.documentElement.classList.remove('light');
-      await app.setTheme('dark');
+    if (theme === THEME.SYSTEM) {
+      await app.setTheme(null);
+      if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setDocumentTheme(THEME.LIGHT);
+      } else {
+        setDocumentTheme(THEME.DARK);
+      }
+    } else {
+      if (theme === THEME.LIGHT) {
+        setDocumentTheme(THEME.LIGHT);
+        await app.setTheme('light');
+      } else if (theme === THEME.DARK) {
+        setDocumentTheme(THEME.DARK);
+        await app.setTheme('dark');
+      }
     }
   },
 );
