@@ -80,6 +80,7 @@
     "output_folder": "Cartella di output",
     "chroma_subsampling": "Chroma subsampling",
     "optimization_level": "Livello di ottimizzazione",
+    "preserve_icc": "Mantieni profilo ICC",
     "resize_options": {
       "resize_enabled": "Abilita ridimensionamento",
       "resize_mode": "Modo",

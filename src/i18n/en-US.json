@@ -81,6 +81,7 @@
     "output_folder": "Output folder",
     "chroma_subsampling": "Chroma subsampling",
     "optimization_level": "Optimization level",
+    "preserve_icc": "Preserve ICC profile",
     "resize_options": {
       "resize_enabled": "Enable resize",
       "resize_mode": "Mode",

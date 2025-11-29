@@ -23,6 +23,7 @@ struct JPEGOptions {
     chroma_subsampling: String, //TODO Create type
     progressive: bool,
     optimize: bool,
+    preserve_icc: bool,
 }
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 struct PNGOptions {
@@ -406,6 +407,7 @@ fn parse_compression_options(options: &OptionsPayload, cimage: &CImage) -> CSPar
     parameters.jpeg.quality = options.compression_options.jpeg.quality;
     parameters.jpeg.chroma_subsampling =
         parse_jpeg_chroma_subsampling(options.compression_options.jpeg.chroma_subsampling.as_str());
+    parameters.jpeg.preserve_icc = options.compression_options.jpeg.preserve_icc;
 
     // -- PNG --
     parameters.png.quality = options.compression_options.png.quality;

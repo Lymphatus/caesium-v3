@@ -12,6 +12,7 @@ interface JpegOptions {
   chromaSubsampling: CHROMA_SUBSAMPLING;
   progressive: boolean;
   optimize: boolean;
+  preserveICC: boolean;
 }
 
 interface PngOptions {
@@ -40,6 +41,7 @@ export interface CompressionOptions {
     chroma_subsampling: CHROMA_SUBSAMPLING;
     progressive: boolean;
     optimize: boolean;
+    preserve_icc: boolean;
   };
   png: {
     quality: number;
@@ -69,6 +71,7 @@ export interface StoredCompressionOptions {
     chromaSubsampling: CHROMA_SUBSAMPLING;
     progressive: boolean;
     optimize: boolean;
+    preserveICC: boolean;
   };
   pngOptions: {
     quality: number;
@@ -123,6 +126,7 @@ const defaultValues: StoredCompressionOptions = {
     chromaSubsampling: CHROMA_SUBSAMPLING.AUTO,
     progressive: true,
     optimize: false,
+    preserveICC: true,
   },
   pngOptions: {
     quality: 80,
@@ -210,6 +214,7 @@ const useCompressionOptionsStore = create<CompressionOptionsStore>()(
           chroma_subsampling: get().jpegOptions.chromaSubsampling,
           progressive: get().jpegOptions.progressive,
           optimize: get().jpegOptions.optimize,
+          preserve_icc: get().jpegOptions.preserveICC,
         },
         png: {
           quality: get().pngOptions.quality,

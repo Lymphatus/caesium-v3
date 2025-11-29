@@ -95,6 +95,16 @@ function JpegOptions() {
           onValueChange={(value) => setJpegOptions({ optimize: value })}
         ></Switch>
       </div>
+      <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col">
+          <span>{t('compression_options.preserve_icc')}</span>
+        </div>
+        <Switch
+          isSelected={jpegOptions.preserveICC}
+          size="sm"
+          onValueChange={(value) => setJpegOptions({ preserveICC: value })}
+        ></Switch>
+      </div>
     </div>
   );
 }
