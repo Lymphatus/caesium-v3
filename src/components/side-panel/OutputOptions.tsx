@@ -1,4 +1,4 @@
-import { Button, Checkbox, Divider, Input, Select, SelectItem, Switch } from '@heroui/react';
+import { Alert, Button, Checkbox, Divider, Input, Select, SelectItem, Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -53,9 +53,21 @@ function OutputOptions() {
   ];
 
   const moveOriginalFileWarning = moveOriginalFileType === MOVE_ORIGINAL_FILE.DELETE && (
-    <div className="text-warning flex items-center gap-1 text-xs">
-      <TriangleAlert className="size-4"></TriangleAlert> {t('move_original_files_modes.delete_warning')}
-    </div>
+    <Alert
+      hideIcon
+      hideIconWrapper
+      className="text-left"
+      classNames={{
+        base: 'p-2',
+        description: 'text-xs',
+        mainWrapper: 'min-h-5',
+      }}
+      color="warning"
+      description={t('move_original_files_modes.delete_warning')}
+      radius="sm"
+      startContent={<TriangleAlert className="max-h-5 min-h-5 max-w-5 min-w-5"></TriangleAlert>}
+      variant="flat"
+    ></Alert>
   );
 
   return (
@@ -97,10 +109,21 @@ function OutputOptions() {
             <Switch isSelected={sameFolderAsInput} size="sm" onValueChange={setSameFolderAsInput}></Switch>
           </div>
           {sameFolderAsInput && suffix.length === 0 && (
-            <span className="text-warning flex items-center gap-1 text-left text-xs">
-              <TriangleAlert className="size-4"></TriangleAlert>
-              {t('compression_options.output_options.same_folder_as_input_warning')}
-            </span>
+            <Alert
+              hideIcon
+              hideIconWrapper
+              className="text-left"
+              classNames={{
+                base: 'p-2',
+                description: 'text-xs',
+                mainWrapper: 'min-h-5',
+              }}
+              color="warning"
+              description={t('compression_options.output_options.same_folder_as_input_warning')}
+              radius="sm"
+              startContent={<TriangleAlert className="max-h-5 min-h-5 max-w-5 min-w-5"></TriangleAlert>}
+              variant="flat"
+            ></Alert>
           )}
         </div>
         <Divider></Divider>
@@ -133,6 +156,7 @@ function OutputOptions() {
               trigger: 'shadow-none',
               description: 'text-left',
               popoverContent: 'bg-content2 border-2 border-content1',
+              helperWrapper: 'px-0',
             }}
             description={moveOriginalFileWarning}
             isDisabled={!moveOriginalFile}
