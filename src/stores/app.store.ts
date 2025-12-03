@@ -5,11 +5,14 @@ import { path } from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
 import { v4 as uuidv4 } from 'uuid';
 import { invokeBackend } from '@/utils/invoker.tsx';
+import { Update } from '@tauri-apps/plugin-updater';
 
 interface AppOptionsStore {
   uuid: string;
+  appUpdate: Update | null;
 
   setUuid: (uuid: string) => void;
+  setAppUpdate: (isUpdateAvailable: Update | null) => void;
 }
 
 let configPath = 'settings.json';
@@ -23,6 +26,7 @@ const preferences = (await settings.get('app')) || {};
 
 const defaultOptions = {
   uuid: uuidv4(),
+  appUpdate: null,
 };
 
 const useAppStore = create<AppOptionsStore>()(
@@ -31,6 +35,7 @@ const useAppStore = create<AppOptionsStore>()(
     ...preferences,
 
     setUuid: (uuid: string) => set({ uuid }),
+    setAppUpdate: (appUpdate: Update | null) => set({ appUpdate }),
   })),
 );
 

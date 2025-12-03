@@ -1,9 +1,12 @@
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Button, Divider, Progress } from '@heroui/react';
+import { Button, Divider, Link, Progress } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
-import { Pause, Play, Square } from 'lucide-react';
+import { Info, Pause, Play, Square } from 'lucide-react';
+import useAppStore from '@/stores/app.store.ts';
+import useUIStore from '@/stores/ui.store.ts';
 
 function Footer() {
+  const { appUpdate } = useAppStore();
   const {
     baseFolder,
     totalFiles,
@@ -15,6 +18,7 @@ function Footer() {
     invokeCancelCompression,
     invokeResumeCompression,
   } = useFileListStore();
+  const { setCheckForUpdatesDialogOpen } = useUIStore();
   const { t } = useTranslation();
 
   const setProgressLabel = function () {
@@ -93,6 +97,22 @@ function Footer() {
           >
             <Square className="size-4"></Square>
           </Button>
+          {isCompressing && appUpdate !== null && <Divider className="h-[24px]" orientation="vertical"></Divider>}
+          {appUpdate !== null && (
+            <>
+              <Link
+                isBlock
+                className="flex items-center gap-1"
+                color="secondary"
+                href="#"
+                size="sm"
+                onPress={() => setCheckForUpdatesDialogOpen(true)}
+              >
+                <Info className="size-4"></Info>
+                {t('update_process.new_update_available_short')}
+              </Link>
+            </>
+          )}
         </div>
       )}
     </div>

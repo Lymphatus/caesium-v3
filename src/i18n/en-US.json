@@ -3,6 +3,7 @@
   "unit": "Unit",
   "select_dots": "Select...",
   "importing_dots": "Importing...",
+  "collecting_dots": "Collecting...",
   "width": "Width",
   "height": "Height",
   "long_edge": "Long edge",
@@ -202,6 +203,7 @@
     "checking_for_updates_dots": "Checking for updates...",
     "latest_version": "You have the latest version available!",
     "new_update_available": "New update available",
+    "new_update_available_short": "Update available",
     "ready_to_install": "Update downloaded, click to install"
   },
   "compression_status": {

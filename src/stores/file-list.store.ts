@@ -7,7 +7,7 @@ import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { SortDescriptor } from '@heroui/react';
-import { execPostCompressionAction } from '@/utils/post-compression-actions.ts';
+import { execPostCompressionAction } from '@/services/post-compression-actions.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
 
 interface FileListStore {

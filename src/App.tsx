@@ -21,6 +21,9 @@ import DragDropOverlay from '@/components/DragDropOverlay.tsx';
 import AdvancedImportDialog from '@/components/dialogs/AdvancedImportDialog.tsx';
 import { setDocumentTheme } from '@/utils/utils.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
+import { check } from '@tauri-apps/plugin-updater';
+import useAppStore from '@/stores/app.store.ts';
+import { error, info } from '@tauri-apps/plugin-log';
 
 function App() {
   const {
@@ -37,8 +40,9 @@ function App() {
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
   const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
-  const { skipMessagesAndDialogs, importSubfolderOnInput, theme } = useSettingsStore();
+  const { skipMessagesAndDialogs, importSubfolderOnInput, theme, checkUpdatesAtStartup } = useSettingsStore();
   const { t } = useTranslation();
+  const { setAppUpdate } = useAppStore();
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
@@ -152,6 +156,22 @@ function App() {
     });
 
     invokeBackend<FileListPayload>('change_page', { page: currentPage }).then((payload) => updateList(payload));
+
+    if (checkUpdatesAtStartup) {
+      void info('Checking for updates at startup...');
+      check({ timeout: 5000 })
+        .then((update) => {
+          if (update !== null) {
+            void info(`New update available: ${update?.version}`);
+            setAppUpdate(update);
+          } else {
+            void info('No updates available');
+          }
+        })
+        .catch((err) => {
+          void error(`Error checking for updates: ${err}`);
+        });
+    }
 
     return () => {
       Promise.all([
