@@ -37,6 +37,7 @@
   "resume": "Resume",
   "changelog": "Changelog",
   "drop_files_here": "Drop files here",
+  "files_in_list": "{{total}} images",
   "errors": {
     "generic_title": "Error",
     "generic": "An error has occurred",

@@ -1,5 +1,5 @@
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Button, Progress } from '@heroui/react';
+import { Button, Divider, Progress } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import { Pause, Play, Square } from 'lucide-react';
 
@@ -29,8 +29,14 @@ function Footer() {
   return (
     <div className="bg-content1 flex h-[40px] w-full items-center justify-between px-4 text-sm">
       <div>
-        <div>
-          {totalFiles} | {baseFolder}
+        <div className="text-default-500 flex items-center gap-2">
+          <span>{t('files_in_list', { total: totalFiles })}</span>
+          {import.meta.env.MODE === 'development' && (
+            <>
+              <Divider className="h-[24px]" orientation="vertical"></Divider>
+              <span>{baseFolder}</span>
+            </>
+          )}
         </div>
       </div>
       {isCompressing && (

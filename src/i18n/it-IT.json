@@ -37,6 +37,7 @@
   "resume": "Riprendi",
   "changelog": "Changelog",
   "drop_files_here": "Trascina qui i file",
+  "files_in_list": "{{total}} immagini",
   "errors": {
     "generic": "Errore",
     "generic_retry": "Errore, riprova più tardi"

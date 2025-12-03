@@ -5,7 +5,7 @@ import {
   TransformWrapper,
   useTransformComponent,
 } from 'react-zoom-pan-pinch';
-import { Button, NumberInput, Slider, Spinner } from '@heroui/react';
+import { Button, Chip, Divider, NumberInput, Slider, Spinner } from '@heroui/react';
 import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
 import { RefObject, useCallback, useEffect, useRef } from 'react';
 import prettyBytes from 'pretty-bytes';
@@ -147,12 +147,37 @@ function PreviewPanel() {
               )}
 
               <TransformComponent wrapperClass="!w-full relative !h-full">
-                <div ref={contentRef} className="size-full">
+                <div ref={contentRef} className="size-full cursor-grab">
                   <PreviewCanvas></PreviewCanvas>
                 </div>
               </TransformComponent>
 
               <div className="bg-content1 flex h-[40px] w-full items-center justify-between rounded-b-sm p-1">
+                <div className="flex items-center gap-2">
+                  {currentPreviewedCImage != null && (
+                    <>
+                      <Chip size="sm">
+                        <span className="font-bold uppercase">
+                          {visualizationMode === 'original' ? t('original') : t('compressed')}
+                        </span>
+                      </Chip>
+                      <Divider className="h-[28px]" orientation="vertical"></Divider>
+                      <div className="text-sm">
+                        <div>
+                          {currentPreviewedCImage &&
+                            visualizationMode === 'original' &&
+                            prettyBytes(currentPreviewedCImage.size)}
+                        </div>
+                        <div>
+                          {currentPreviewedCImage &&
+                            visualizationMode === 'compressed' &&
+                            prettyBytes(currentPreviewedCImage.compressed_size)}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-1">
                   <Button
                     disableRipple
@@ -160,35 +185,21 @@ function PreviewPanel() {
                     isDisabled={!currentPreviewedCImage?.compressed_file_path}
                     size="sm"
                     title={t('swap')}
-                    variant="faded"
+                    variant="light"
                     onPress={() => {
                       setVisualizationMode(visualizationMode === 'original' ? 'compressed' : 'original');
                     }}
                   >
                     <ArrowLeftRight className="size-4"></ArrowLeftRight> <span>{t('swap')}</span>
                   </Button>
-                  <span className="text-sm uppercase">
-                    [{visualizationMode === 'original' ? t('original') : t('compressed')}]
-                  </span>
-                  <div>
-                    {currentPreviewedCImage &&
-                      visualizationMode === 'original' &&
-                      prettyBytes(currentPreviewedCImage.size)}
-                  </div>
-                  <div>
-                    {currentPreviewedCImage &&
-                      visualizationMode === 'compressed' &&
-                      prettyBytes(currentPreviewedCImage.compressed_size)}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1">
+                  <Divider className="h-[28px]" orientation="vertical"></Divider>
                   <Button
                     disableRipple
                     isIconOnly
+                    isDisabled={currentPreviewedCImage == null}
                     size="sm"
                     title={t('fit_container')}
-                    variant="faded"
+                    variant="light"
                     onPress={() => {
                       fitContentToWrapper(centerView);
                     }}
@@ -198,9 +209,10 @@ function PreviewPanel() {
                   <Button
                     disableRipple
                     isIconOnly
+                    isDisabled={currentPreviewedCImage == null}
                     size="sm"
                     title={t('actual_size')}
-                    variant="faded"
+                    variant="light"
                     onPress={() => {
                       centerView(1);
                     }}
