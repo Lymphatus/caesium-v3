@@ -21,11 +21,15 @@ import { getSavedPercentage } from '@/utils/utils.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
 
 function getSubpart(baseFolder: string | null, fullPath: string, filename: string) {
-  if (!baseFolder) {
+  if (baseFolder == null) {
     return '';
   }
   const separator = sep();
-  return fullPath.replace(baseFolder, '').replace(filename, '').replace(separator, '');
+  console.log(baseFolder, fullPath);
+  if (baseFolder.length === 0) {
+    return fullPath.replace(filename, '');
+  }
+  return fullPath.replace(baseFolder + separator, '').replace(filename, '');
 }
 
 function StatusIcon({ cImage }: { cImage: CImage }) {

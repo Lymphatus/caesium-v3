@@ -46,7 +46,7 @@ impl SortOrder {
 #[derive(Default)]
 pub struct AppData {
     pub(crate) file_list: AppDataFileList,
-    pub(crate) base_path: PathBuf,
+    pub(crate) base_path: Option<PathBuf>,
     pub(crate) compression_status: CompressionStatus,
 }
 
@@ -78,7 +78,7 @@ impl AppData {
     pub fn default() -> Self {
         Self {
             file_list: AppDataFileList::new(),
-            base_path: PathBuf::new(),
+            base_path: None,
             compression_status: CompressionStatus {
                 is_compression_cancelled: AtomicBool::new(false),
                 is_compression_paused: AtomicBool::new(false),
@@ -92,10 +92,10 @@ impl AppData {
     }
 
     pub fn compute_base_path(&mut self) -> Result<(), std::io::Error> {
-        let mut base_path = PathBuf::default();
+        let mut base_path = None;
         for c in self.file_list.iter() {
-            base_path = match scan_files::compute_base_path(c.path.as_ref(), &base_path) {
-                Some(p) => p,
+            base_path = match scan_files::compute_base_path(c.path.as_ref(), base_path) {
+                Some(p) => Some(p),
                 None => {
                     return Err(std::io::Error::other(format!(
                         "Could not compute base path for file {0}",

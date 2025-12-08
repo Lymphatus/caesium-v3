@@ -57,7 +57,7 @@ pub fn remove_items_from_list(
     Ok(FileList {
         files: state.file_list.paged_list.clone(),
         total_files: state.file_list.len(),
-        base_folder: absolute(&state.base_path)
+        base_folder: absolute(state.base_path.clone().unwrap_or(PathBuf::new())) //TODO
             .unwrap_or_default()
             .display()
             .to_string(),
@@ -66,7 +66,7 @@ pub fn remove_items_from_list(
 
 fn remove_all_items_from_list(state: &mut AppData) -> Result<FileList, CommandError> {
     state.file_list.clear();
-    state.base_path = PathBuf::default();
+    state.base_path = None;
 
     Ok(FileList {
         files: vec![],
@@ -85,7 +85,7 @@ pub fn change_page(app: tauri::AppHandle, page: usize) -> Result<FileList, Comma
     Ok(FileList {
         files: state.file_list.paged_list.clone(),
         total_files: state.file_list.len(),
-        base_folder: absolute(&state.base_path)
+        base_folder: absolute(state.base_path.clone().unwrap_or(PathBuf::new())) //TODO
             .unwrap_or_default()
             .display()
             .to_string(),
@@ -111,7 +111,7 @@ pub fn sort_list(
     Ok(FileList {
         files: state.file_list.paged_list.clone(),
         total_files: state.file_list.len(),
-        base_folder: absolute(&state.base_path)
+        base_folder: absolute(state.base_path.clone().unwrap_or(PathBuf::new())) //TODO
             .unwrap_or_default()
             .display()
             .to_string(),
@@ -128,7 +128,7 @@ pub fn filter_list(app: tauri::AppHandle, query: String) -> Result<FileList, Com
     Ok(FileList {
         files: state.file_list.paged_list.clone(),
         total_files: state.file_list.len(),
-        base_folder: absolute(&state.base_path)
+        base_folder: absolute(state.base_path.clone().unwrap_or(PathBuf::new())) //TODO
             .unwrap_or_default()
             .display()
             .to_string(),
