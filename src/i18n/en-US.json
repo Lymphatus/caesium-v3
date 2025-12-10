@@ -39,10 +39,12 @@
   "changelog": "Changelog",
   "drop_files_here": "Drop files here",
   "files_in_list": "{{total}} images",
+  "open_log_folder": "Open log folder",
   "errors": {
     "generic_title": "Error",
     "generic": "An error has occurred",
-    "generic_retry": "An error has occurred, retry later"
+    "generic_retry": "An error has occurred, retry later",
+    "cannot_open_folder": "Cannot open folder"
   },
   "formats": {
     "original": "Same as input",
@@ -226,5 +228,16 @@
     "add_files_description": "Add images to the import list or parse a list from a text file",
     "add_folders": "Add folders",
     "add_folders_description": "Scan a folder and add to the import list"
+  },
+  "compression_report": {
+    "compression_finished": "Compression finished",
+    "total_files": "Total files: {{total}}",
+    "compressed": "{{compressed}} compressed",
+    "skipped": "{{skipped}} skipped",
+    "errors": "{{errors}} errors",
+    "original_size": "Original size: {{originalSize}}",
+    "compressed_size": "Compressed size: {{compressedSize}}",
+    "saved": "Saved: {{saved}} ({{savedPercent}}%)",
+    "total_time": "Total time: {{totalTime}}"
   }
 }

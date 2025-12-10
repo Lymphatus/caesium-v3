@@ -19,7 +19,7 @@ import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.ts
 import prettyBytes from 'pretty-bytes';
 import DragDropOverlay from '@/components/DragDropOverlay.tsx';
 import AdvancedImportDialog from '@/components/dialogs/AdvancedImportDialog.tsx';
-import { setDocumentTheme } from '@/utils/utils.ts';
+import { getSavedPercentage, saveCompressionReport, setDocumentTheme } from '@/utils/utils.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
 import { check } from '@tauri-apps/plugin-updater';
 import useAppStore from '@/stores/app.store.ts';
@@ -120,25 +120,36 @@ function App() {
 
     const compressionFinishedListener = listen<CompressionFinished>('fileList:compressionFinished', (event) => {
       finishCompression();
-      //TODO translations
       addToast({
-        title: 'Compression finished',
+        title: t('compression_report.compression_finished'),
+        hideIcon: true,
         description: (
-          <div className="flex flex-col gap-2">
-            <span>Total files: {event.payload.total_images}</span>
-            <span>Compressed: {event.payload.total_success}</span>
-            <span>Skipped: {event.payload.total_skipped}</span>
-            <span>Errors: {event.payload.total_errors}</span>
+          <div className="flex flex-col gap-1">
             <span>
-              {prettyBytes(event.payload.original_size)} to {prettyBytes(event.payload.compressed_size)} - Saved&nbsp;
-              {prettyBytes(event.payload.original_size - event.payload.compressed_size)}
+              {t('compression_report.total_files', { total: event.payload.total_images })} (
+              {t('compression_report.compressed', { compressed: event.payload.total_success })} |{' '}
+              {t('compression_report.skipped', { skipped: event.payload.total_skipped })} |{' '}
+              {t('compression_report.errors', { errors: event.payload.total_errors })})
             </span>
-            <span>Elapsed time: {event.payload.total_time} ms</span>
+            <span>
+              {t('compression_report.original_size', { originalSize: prettyBytes(event.payload.original_size) })}
+            </span>
+            <span>
+              {t('compression_report.compressed_size', { compressedSize: prettyBytes(event.payload.compressed_size) })}
+            </span>
+            <span>
+              {t('compression_report.saved', {
+                saved: prettyBytes(event.payload.original_size - event.payload.compressed_size),
+                savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
+              })}
+            </span>
+            <span>{t('compression_report.total_time', { totalTime: event.payload.total_time })} ms</span>
           </div>
         ),
-        // timeout: 3000,
+        timeout: 0,
         color: 'success',
       });
+      void saveCompressionReport(event.payload);
     });
 
     const closeRequestedListener = getCurrentWindow().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {

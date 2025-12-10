@@ -45,7 +45,7 @@ function AboutDialog() {
                   await openPath(logDir);
                 }}
               >
-                Open log folder
+                {t('open_log_folder')}
               </Button>
               <a
                 className="text-primary text-sm hover:underline"

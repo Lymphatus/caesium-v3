@@ -39,6 +39,7 @@
   "changelog": "Changelog",
   "drop_files_here": "Trascina qui i file",
   "files_in_list": "{{total}} immagini",
+  "open_log_folder": "Apri cartella log",
   "errors": {
     "generic": "Errore",
     "generic_retry": "Errore, riprova più tardi"
@@ -218,5 +219,16 @@
     "equal_to": "Uguale a",
     "less_than": "Minore di",
     "path": "Percorso"
+  },
+  "compression_report": {
+    "compression_finished": "Compression finished",
+    "total_files": "Total files: {{total}}",
+    "compressed": "{{compressed}} compressed",
+    "skipped": "{{skipped}} skipped",
+    "errors": "{{errors}} errors",
+    "original_size": "Original size: {{originalSize}}",
+    "compressed_size": "Compressed size: {{compressedSize}}",
+    "saved": "Saved: {{saved}} ({{savedPercent}}%)",
+    "total_time": "Total time: {{totalTime}}"
   }
 }
