@@ -37,6 +37,9 @@
         "displayLanguageSelector": true
       }
     },
+    "macOS": {
+      "signingIdentity": "-"
+    },
     "createUpdaterArtifacts": true
   },
   "plugins": {
