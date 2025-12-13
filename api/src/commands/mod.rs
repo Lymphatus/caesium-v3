@@ -19,7 +19,7 @@ pub fn open_import_folder_dialog(app: tauri::AppHandle, recursive: bool) {
 }
 #[tauri::command]
 pub fn open_import_files_dialog(app: tauri::AppHandle) {
-    let dialog = app.dialog().file();
+    let mut dialog = app.dialog().file();
 
     #[cfg(any(target_os = "windows", target_os = "macos"))]
     {
