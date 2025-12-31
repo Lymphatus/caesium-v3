@@ -1,9 +1,10 @@
 import useFileListStore from '@/stores/file-list.store.ts';
 import { Button, Divider, Link, Progress } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
-import { Info, Pause, Play, Square } from 'lucide-react';
+import { Info, Pause, Play, X } from 'lucide-react';
 import useAppStore from '@/stores/app.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
+import { isInDevelopmentMode } from '@/utils/utils.ts';
 
 function Footer() {
   const { appUpdate } = useAppStore();
@@ -18,7 +19,8 @@ function Footer() {
     invokeCancelCompression,
     invokeResumeCompression,
   } = useFileListStore();
-  const { setCheckForUpdatesDialogOpen } = useUIStore();
+  const { setCheckForUpdatesDialogOpen, compressionProgressDialogMinimized, setCompressionProgressDialogMinimized } =
+    useUIStore();
   const { t } = useTranslation();
 
   const setProgressLabel = function () {
@@ -31,73 +33,68 @@ function Footer() {
     return t('compression_status.compressing_dots');
   };
   return (
-    <div className="bg-content1 flex h-[40px] w-full items-center justify-between px-4 text-sm">
+    <div className="bg-content1 flex h-10 w-full items-center justify-between px-4 text-sm">
       <div>
         <div className="text-default-500 flex items-center gap-2">
           <span>{t('files_in_list', { total: totalFiles })}</span>
-          {import.meta.env.MODE === 'development' && (
+          {isInDevelopmentMode() && (
             <>
-              <Divider className="h-[24px]" orientation="vertical"></Divider>
-              <span>{baseFolder}</span>
+              <Divider className="h-6" orientation="vertical"></Divider>
+              <span>{baseFolder || '-'}</span>
             </>
           )}
         </div>
       </div>
-      {isCompressing && (
+      {isCompressing && compressionProgressDialogMinimized && (
         <div className="flex items-center justify-center gap-2">
           <div className="max-w-[50%] min-w-60">
-            <Progress
+            <Button
               disableAnimation
-              showValueLabel
-              aria-label="compressionProgress"
-              className="w-full gap-1"
-              isIndeterminate={isCompressionCancelling}
-              label={setProgressLabel()}
-              maxValue={totalFiles}
-              minValue={0}
+              disableRipple
+              className="w-full"
               size="sm"
-              value={compressionProgress}
-            ></Progress>
+              variant="light"
+              onPress={() => setCompressionProgressDialogMinimized(false)}
+            >
+              <Progress
+                disableAnimation
+                showValueLabel
+                aria-label="compressionProgress"
+                className="w-full gap-1"
+                isIndeterminate={isCompressionCancelling}
+                label={setProgressLabel()}
+                maxValue={totalFiles}
+                minValue={0}
+                size="sm"
+                value={compressionProgress}
+              ></Progress>
+            </Button>
           </div>
 
-          {!isCompressionPaused && (
-            <Button
-              disableRipple
-              isIconOnly
-              className="max-h-[32px] max-w-[32px] min-w-[32px]"
-              size="sm"
-              title={t('pause')}
-              variant="light"
-              onPress={invokePauseCompression}
-            >
-              <Pause className="size-4"></Pause>
-            </Button>
-          )}
-          {isCompressionPaused && (
-            <Button
-              disableRipple
-              isIconOnly
-              className="max-h-[32px] max-w-[32px] min-w-[32px]"
-              size="sm"
-              title={t('resume')}
-              variant="light"
-              onPress={invokeResumeCompression}
-            >
-              <Play className="size-4"></Play>
-            </Button>
-          )}
           <Button
             disableRipple
             isIconOnly
-            className="max-h-[32px]"
+            className="size-8"
+            isDisabled={isCompressionCancelling}
             size="sm"
-            title={t('stop')}
+            title={isCompressionPaused ? t('resume') : t('pause')}
+            variant="light"
+            onPress={isCompressionPaused ? invokeResumeCompression : invokePauseCompression}
+          >
+            {isCompressionPaused ? <Play className="size-4"></Play> : <Pause className="size-4"></Pause>}
+          </Button>
+          <Button
+            disableRipple
+            isIconOnly
+            className="max-h-8"
+            size="sm"
+            title={t('cancel')}
             variant="light"
             onPress={invokeCancelCompression}
           >
-            <Square className="size-4"></Square>
+            <X className="size-4"></X>
           </Button>
-          {isCompressing && appUpdate !== null && <Divider className="h-[24px]" orientation="vertical"></Divider>}
+          {isCompressing && appUpdate !== null && <Divider className="h-6" orientation="vertical"></Divider>}
           {appUpdate !== null && (
             <>
               <Link

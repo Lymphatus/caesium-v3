@@ -9,6 +9,7 @@ import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { SortDescriptor } from '@heroui/react';
 import { execPostCompressionAction } from '@/services/post-compression-actions.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
+import useUIStore from '@/stores/ui.store.ts';
 
 interface FileListStore {
   fileList: CImage[];
@@ -161,6 +162,7 @@ const useFileListStore = create<FileListStore>()(
               isCompressionPaused: false,
               isCompressionCancelling: false,
             });
+            useUIStore.getState().setCompressionProgressDialogMinimized(false);
             await execPostCompressionAction(useSettingsStore.getState().postCompressionAction);
           },
         }),

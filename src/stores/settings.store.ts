@@ -6,6 +6,8 @@ import { app, path } from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
 import { setDocumentTheme } from '@/utils/utils.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
+import { isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
+import { debug } from '@tauri-apps/plugin-log';
 
 interface SettingsOptionsStore {
   theme: THEME;
@@ -20,6 +22,7 @@ interface SettingsOptionsStore {
   threadsCount: number;
   threadsPriority: number;
   maxThreads: number;
+  allowNotifications: boolean;
 
   setTheme: (theme: THEME) => void;
   setLanguage: (language: string) => void;
@@ -32,6 +35,7 @@ interface SettingsOptionsStore {
   setPostCompressionAction: (postCompressionAction: POST_COMPRESSION_ACTION) => void;
   setThreadsCount: (threadsCount: number) => void;
   setThreadsPriority: (threadsPriority: number) => void;
+  setAllowNotifications: (allowNotifications: boolean) => void;
 }
 
 let configPath = 'settings.json';
@@ -54,8 +58,9 @@ const defaultOptions = {
   importSubfolderOnInput: true,
   directImportAction: DIRECT_IMPORT_ACTION.IMPORT,
   postCompressionAction: POST_COMPRESSION_ACTION.NONE,
-  threadsCount: maxThreads,
+  threadsCount: maxThreads / 2,
   threadsPriority: 4,
+  allowNotifications: false,
 };
 
 const useSettingsStore = create<SettingsOptionsStore>()(
@@ -74,6 +79,26 @@ const useSettingsStore = create<SettingsOptionsStore>()(
     setPostCompressionAction: (postCompressionAction: POST_COMPRESSION_ACTION) => set({ postCompressionAction }),
     setThreadsCount: (threadsCount: number) => set({ threadsCount }),
     setThreadsPriority: (threadsPriority: number) => set({ threadsPriority }),
+    setAllowNotifications: async (allowNotifications: boolean) => {
+      if (!allowNotifications) {
+        set({ allowNotifications: false });
+        return;
+      }
+
+      const permissionGranted = await isPermissionGranted();
+      await debug(String(permissionGranted));
+      if (permissionGranted) {
+        set({ allowNotifications: true });
+        return;
+      }
+      if (!permissionGranted) {
+        const permission = await requestPermission();
+        await debug(String(permission));
+        set({ allowNotifications: permission === 'granted' });
+        return;
+      }
+      set({ allowNotifications: false });
+    },
   })),
 );
 
@@ -90,6 +115,7 @@ useSettingsStore.subscribe(async (state) => {
     postCompressionAction: state.postCompressionAction,
     threadsCount: state.threadsCount,
     threadsPriority: state.threadsPriority,
+    allowNotifications: state.allowNotifications,
   };
 
   await settings.set('settings', dataToSave);

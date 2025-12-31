@@ -188,12 +188,14 @@
     "post_compression_action": "Post compression",
     "post_compression_action_help": "Perform an action after compression",
     "max_compression_threads": "Max compression threads",
+    "max_compression_threads_warning": "Increasing this value can make the application and/or your device unresponsive.",
     "threads_priority": "Threads priority",
     "threads_priorities": {
       "lowest": "Lowest",
       "normal": "Normal",
       "highest": "Highest"
-    }
+    },
+    "allow_notifications": "Allow notifications"
   },
   "menubar": {
     "file": "File",
@@ -238,6 +240,7 @@
     "original_size": "Original size: {{originalSize}}",
     "compressed_size": "Compressed size: {{compressedSize}}",
     "saved": "Saved: {{saved}} ({{savedPercent}}%)",
+    "saved_long": "You just saved {{saved}} ({{savedPercent}}%)",
     "total_time": "Total time: {{totalTime}}"
   }
 }

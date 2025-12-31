@@ -5,6 +5,8 @@ import useSettingsStore from '@/stores/settings.store.ts';
 import UsageStatsDialog from '@/components/dialogs/UsageStatsDialog.tsx';
 import { useState } from 'react';
 import i18n from 'i18next';
+import { showNotification } from '@/utils/notification-manager.ts';
+import { isInDevelopmentMode } from '@/utils/utils.ts';
 
 function GeneralSettings() {
   const { t } = useTranslation();
@@ -15,12 +17,14 @@ function GeneralSettings() {
     checkUpdatesAtStartup,
     skipMessagesAndDialogs,
     sendUsageData,
+    allowNotifications,
     setTheme,
     setPromptBeforeExit,
     setLanguage,
     setCheckUpdatesAtStartup,
     setSkipMessagesAndDialogs,
     setSendUsageData,
+    setAllowNotifications,
   } = useSettingsStore();
   const themes = [
     { key: THEME.SYSTEM, label: t('settings.theme_system') },
@@ -103,6 +107,21 @@ function GeneralSettings() {
               <span className="text-default-500 text-sm">{t('settings.skip_dialogs_help')}</span>
             </div>
             <Switch isSelected={skipMessagesAndDialogs} size="sm" onValueChange={setSkipMessagesAndDialogs}></Switch>
+          </div>
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-col">
+              <span>{t('settings.allow_notifications')}</span>
+              {isInDevelopmentMode() && (
+                <Link
+                  className="text-primary cursor-pointer text-sm"
+                  underline="hover"
+                  onPress={() => showNotification({ title: 'Test notification' })}
+                >
+                  Send test notification
+                </Link>
+              )}
+            </div>
+            <Switch isSelected={allowNotifications} size="sm" onValueChange={setAllowNotifications}></Switch>
           </div>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">

@@ -25,7 +25,6 @@ function getSubpart(baseFolder: string | null, fullPath: string, filename: strin
     return '';
   }
   const separator = sep();
-  console.log(baseFolder, fullPath);
   if (baseFolder.length === 0) {
     return fullPath.replace(filename, '');
   }

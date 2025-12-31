@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '@/stores/settings.store.ts';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION } from '@/types.ts';
-import { Select, SelectItem, Slider } from '@heroui/react';
+import { Select, SelectItem, Slider, Tooltip } from '@heroui/react';
+import { TriangleAlert } from 'lucide-react';
 
 function AdvancedSettings() {
   const { t } = useTranslation();
@@ -95,18 +96,30 @@ function AdvancedSettings() {
             <SelectItem key={t.key}>{t.label}</SelectItem>
           ))}
         </Select>
-        <div className="flex w-full items-center justify-between">
+        <div className="flex w-full items-center justify-between gap-2">
           <div className="flex flex-col">
-            <span>{t('settings.max_compression_threads')}</span>
-            {/*<span className="text-default-500 text-sm">{t('settings.send_usage_statistics_help')}</span>*/}
+            <span className="flex items-center gap-1">
+              {t('settings.max_compression_threads')}
+              {threadsValue >= Math.ceil(maxThreads * 0.75) && (
+                <Tooltip color="warning" content={t('settings.max_compression_threads_warning')} delay={100}>
+                  <TriangleAlert className="min-size-5 text-warning max-h-5 min-h-5 cursor-help"></TriangleAlert>
+                </Tooltip>
+              )}
+            </span>
           </div>
           <Slider
+            showSteps
+            showTooltip
             aria-label={t('settings.max_compression_threads')}
             className="max-w-[250px]"
             classNames={{
               label: 'text-sm',
             }}
-            endContent={<span>{threadsValue}</span>}
+            color={threadsValue >= Math.ceil(maxThreads * 0.75) ? 'warning' : 'primary'}
+            marks={[
+              { value: 1, label: '1' },
+              { value: maxThreads, label: maxThreads.toString() },
+            ]}
             maxValue={maxThreads}
             minValue={1}
             size="sm"
@@ -121,7 +134,7 @@ function AdvancedSettings() {
             }}
           />
         </div>
-        <div className="flex w-full items-center justify-between">
+        <div className="flex w-full items-center justify-between gap-2">
           <div className="flex flex-col">
             <span>{t('settings.threads_priority')}</span>
             {/*<span className="text-default-500 text-sm">{t('settings.send_usage_statistics_help')}</span>*/}

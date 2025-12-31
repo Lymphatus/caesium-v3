@@ -19,6 +19,7 @@
     "updater:default",
     "log:default",
     "fs:default",
+    "notification:default",
     {
       "identifier": "fs:allow-write-text-file",
       "allow": [
@@ -43,6 +44,7 @@
           "path": "$APPLOG/*"
         }
       ]
-    }
+    },
+    "notification:default"
   ]
 }

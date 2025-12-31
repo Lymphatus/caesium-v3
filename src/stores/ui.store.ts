@@ -29,6 +29,7 @@ interface UIOptions {
   promptExitDialogOpen: boolean;
   checkForUpdatesDialogOpen: boolean;
   advancedImportDialogOpen: boolean;
+  compressionProgressDialogMinimized: boolean;
 
   setSplitPanels: (options: Partial<SplitPanels>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
@@ -45,6 +46,7 @@ interface UIOptions {
   setPromptExitDialogOpen: (open: boolean) => void;
   setCheckForUpdatesDialogOpen: (open: boolean) => void;
   setAdvancedImportDialogOpen: (open: boolean) => void;
+  setCompressionProgressDialogMinimized: (minimized: boolean) => void;
 
   getAppMenuSelectedItems: () => string[];
   getAppMenuDisabledItems: () => string[];
@@ -75,6 +77,7 @@ const defaultOptions = {
   promptExitDialogOpen: false,
   checkForUpdatesDialogOpen: false,
   advancedImportDialogOpen: false,
+  compressionProgressDialogMinimized: false,
 };
 
 const useUIStore = create<UIOptions>()(
@@ -159,6 +162,12 @@ const useUIStore = create<UIOptions>()(
       setAdvancedImportDialogOpen: (open: boolean) => {
         set((state) => {
           state.advancedImportDialogOpen = open;
+        });
+      },
+
+      setCompressionProgressDialogMinimized: (minimized: boolean) => {
+        set((state) => {
+          state.compressionProgressDialogMinimized = minimized;
         });
       },
 

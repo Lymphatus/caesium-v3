@@ -27,3 +27,7 @@ export async function saveCompressionReport(report: CompressionFinished) {
     baseDir: BaseDirectory.AppLog,
   });
 }
+
+export function isInDevelopmentMode() {
+  return import.meta.env.MODE === 'development';
+}

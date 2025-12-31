@@ -24,6 +24,8 @@ import { invokeBackend } from '@/utils/invoker.tsx';
 import { check } from '@tauri-apps/plugin-updater';
 import useAppStore from '@/stores/app.store.ts';
 import { error, info } from '@tauri-apps/plugin-log';
+import CompressionProgressDialog from '@/components/dialogs/CompressionProgressDialog.tsx';
+import { showNotification } from '@/utils/notification-manager.ts';
 
 function App() {
   const {
@@ -120,6 +122,13 @@ function App() {
 
     const compressionFinishedListener = listen<CompressionFinished>('fileList:compressionFinished', (event) => {
       finishCompression();
+      void showNotification({
+        title: t('compression_report.compression_finished'),
+        body: t('compression_report.saved_long', {
+          saved: prettyBytes(event.payload.original_size - event.payload.compressed_size),
+          savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
+        }),
+      });
       addToast({
         title: t('compression_report.compression_finished'),
         hideIcon: true,
@@ -217,6 +226,7 @@ function App() {
       <AboutDialog></AboutDialog>
       <CheckForUpdatesDialog></CheckForUpdatesDialog>
       <AdvancedImportDialog></AdvancedImportDialog>
+      <CompressionProgressDialog></CompressionProgressDialog>
       <AskDialog
         buttons={
           <>
