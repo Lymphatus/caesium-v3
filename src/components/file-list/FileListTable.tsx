@@ -1,24 +1,14 @@
 import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
-import {
-  ArrowDown,
-  ArrowUp,
-  Circle,
-  CircleAlert,
-  CircleCheck,
-  CircleX,
-  Delete,
-  LoaderCircle,
-  Search,
-} from 'lucide-react';
+import { Circle, CircleAlert, CircleCheck, CircleX, Delete, LoaderCircle, Search } from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
 import { sep } from '@tauri-apps/api/path';
 import { Selection } from '@react-types/shared';
 import { CImage, FileListPayload, IMAGE_STATUS } from '@/types.ts';
-import { getSavedPercentage } from '@/utils/utils.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
+import { SavedLabel } from '@/components/SavedLabel.tsx';
 
 function getSubpart(baseFolder: string | null, fullPath: string, filename: string) {
   if (baseFolder == null) {
@@ -42,21 +32,6 @@ function StatusIcon({ cImage }: { cImage: CImage }) {
     return <LoaderCircle className="text-primary size-4 animate-spin" />;
   }
   return <Circle className="text-primary size-4"></Circle>;
-}
-
-function SavedLabel({ cImage }: { cImage: CImage }) {
-  if (cImage.compressed_size === 0 || cImage.size === cImage.compressed_size) {
-    return <span className="text-default-400 text-nowrap">&nbsp;</span>;
-  }
-  const saved = getSavedPercentage(cImage.size, cImage.compressed_size);
-  const textColor = saved < 0 ? 'text-danger' : 'text-success';
-  const icon = saved < 0 ? <ArrowUp className="size-4" /> : <ArrowDown className="size-4" />;
-  return (
-    <span className={textColor + ' flex items-center gap-0.5 text-nowrap'}>
-      {icon}
-      <span>{cImage.compressed_size !== 0 ? saved * -1 : 0}%</span>
-    </span>
-  );
 }
 
 function FileListTable() {

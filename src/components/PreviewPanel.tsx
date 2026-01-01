@@ -13,6 +13,7 @@ import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import PreviewCanvas from '@/components/PreviewCanvas.tsx';
+import { SavedLabel } from '@/components/SavedLabel.tsx';
 
 const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 'zoomIn' | 'zoomOut'>) => {
   const setZoomLevel = (value: number | number[], state: ReactZoomPanPinchState) => {
@@ -152,7 +153,7 @@ function PreviewPanel() {
                 </div>
               </TransformComponent>
 
-              <div className="bg-content1 flex h-[40px] w-full items-center justify-between rounded-b-sm p-1">
+              <div className="bg-content1 flex h-10 w-full items-center justify-between rounded-b-sm p-1">
                 <div className="flex items-center gap-2">
                   {currentPreviewedCImage != null && (
                     <>
@@ -161,17 +162,30 @@ function PreviewPanel() {
                           {visualizationMode === 'original' ? t('original') : t('compressed')}
                         </span>
                       </Chip>
-                      <Divider className="h-[28px]" orientation="vertical"></Divider>
+                      <Divider className="h-7" orientation="vertical"></Divider>
                       <div className="text-sm">
                         <div>
-                          {currentPreviewedCImage &&
-                            visualizationMode === 'original' &&
-                            prettyBytes(currentPreviewedCImage.size)}
+                          {currentPreviewedCImage && visualizationMode === 'original' && (
+                            <div className="flex items-center">
+                              <span>
+                                {currentPreviewedCImage.width}x{currentPreviewedCImage.height}
+                              </span>
+                              &nbsp;&mdash;&nbsp;
+                              <span>{prettyBytes(currentPreviewedCImage.size)}</span>
+                            </div>
+                          )}
                         </div>
                         <div>
-                          {currentPreviewedCImage &&
-                            visualizationMode === 'compressed' &&
-                            prettyBytes(currentPreviewedCImage.compressed_size)}
+                          {currentPreviewedCImage && visualizationMode === 'compressed' && (
+                            <div className="flex items-center">
+                              <span>
+                                {currentPreviewedCImage.compressed_width}x{currentPreviewedCImage.compressed_height}
+                              </span>
+                              &nbsp;&mdash;&nbsp;<span>{prettyBytes(currentPreviewedCImage.compressed_size)}</span>
+                              &nbsp;[
+                              <SavedLabel cImage={currentPreviewedCImage} />]
+                            </div>
+                          )}
                         </div>
                       </div>
                     </>
@@ -192,7 +206,7 @@ function PreviewPanel() {
                   >
                     <ArrowLeftRight className="size-4"></ArrowLeftRight> <span>{t('swap')}</span>
                   </Button>
-                  <Divider className="h-[28px]" orientation="vertical"></Divider>
+                  <Divider className="h-7" orientation="vertical"></Divider>
                   <Button
                     disableRipple
                     isIconOnly
