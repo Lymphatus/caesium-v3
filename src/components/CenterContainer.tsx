@@ -1,5 +1,5 @@
-import ListPanel from '@/components/ListPanel.tsx';
-import PreviewPanel from '@/components/PreviewPanel.tsx';
+import ListPanel from '@/components/file-list/ListPanel.tsx';
+import PreviewPanel from '@/components/preview-panel/PreviewPanel.tsx';
 import SidePanel from '@/components/side-panel/SidePanel.tsx';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import useUIStore from '@/stores/ui.store.ts';

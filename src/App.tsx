@@ -6,14 +6,13 @@ import CenterContainer from '@/components/CenterContainer.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { listen, TauriEvent } from '@tauri-apps/api/event';
 import { CImage, CompressionFinished, FileListPayload, THEME } from '@/types.ts';
-import { addToast, Button } from '@heroui/react';
-import SettingsDialog from '@/components/dialogs/SettingsDialog.tsx';
+import { addToast } from '@heroui/react';
+import SettingsDialog from '@/components/dialogs/settings/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 import AboutDialog from './components/dialogs/AboutDialog';
 import { getCurrentWindow, Theme } from '@tauri-apps/api/window';
 import useSettingsStore from '@/stores/settings.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
-import AskDialog from '@/components/dialogs/AskDialog.tsx';
 import { useTranslation } from 'react-i18next';
 import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.tsx';
 import prettyBytes from 'pretty-bytes';
@@ -26,6 +25,7 @@ import useAppStore from '@/stores/app.store.ts';
 import { error, info } from '@tauri-apps/plugin-log';
 import CompressionProgressDialog from '@/components/dialogs/CompressionProgressDialog.tsx';
 import { showNotification } from '@/utils/notification-manager.ts';
+import PromptOnExitDialog from '@/components/dialogs/PromptOnExitDialog.tsx';
 
 function App() {
   const {
@@ -41,8 +41,8 @@ function App() {
   } = useFileListStore();
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
-  const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
-  const { skipMessagesAndDialogs, importSubfolderOnInput, theme, checkUpdatesAtStartup } = useSettingsStore();
+  const { setPromptExitDialogOpen } = useUIStore();
+  const { importSubfolderOnInput, theme, checkUpdatesAtStartup } = useSettingsStore();
   const { t } = useTranslation();
   const { setAppUpdate } = useAppStore();
   const [isDragging, setIsDragging] = useState(false);
@@ -227,20 +227,7 @@ function App() {
       <CheckForUpdatesDialog></CheckForUpdatesDialog>
       <AdvancedImportDialog></AdvancedImportDialog>
       <CompressionProgressDialog></CompressionProgressDialog>
-      <AskDialog
-        buttons={
-          <>
-            <Button disableRipple color="primary" onPress={async () => await getCurrentWindow().destroy()}>
-              {t('affirmative_answer')}
-            </Button>
-            <Button disableRipple onPress={() => setPromptExitDialogOpen(false)}>
-              {t('negative_answer')}
-            </Button>
-          </>
-        }
-        isOpen={promptExitDialogOpen && !skipMessagesAndDialogs}
-        message={t('confirm_exit_message')}
-      ></AskDialog>
+      <PromptOnExitDialog></PromptOnExitDialog>
     </>
   );
 }

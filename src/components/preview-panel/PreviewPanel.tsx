@@ -12,7 +12,7 @@ import prettyBytes from 'pretty-bytes';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
-import PreviewCanvas from '@/components/PreviewCanvas.tsx';
+import PreviewCanvas from '@/components/preview-panel/PreviewCanvas.tsx';
 import { SavedLabel } from '@/components/SavedLabel.tsx';
 
 const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 'zoomIn' | 'zoomOut'>) => {

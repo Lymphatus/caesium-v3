@@ -1,5 +1,4 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
-import useUIStore from '@/stores/ui.store.ts';
 import { ReactNode } from 'react';
 
 type AskDialogProps = {
@@ -7,10 +6,10 @@ type AskDialogProps = {
   message?: string;
   buttons?: ReactNode;
   isOpen: boolean;
+  onClosed?: () => void;
 };
 
-function AskDialog({ title, message, buttons, isOpen }: AskDialogProps) {
-  const { setPromptExitDialogOpen } = useUIStore();
+function AskDialog({ title, message, buttons, isOpen, onClosed }: AskDialogProps) {
   return (
     <Modal
       isDismissable
@@ -21,7 +20,7 @@ function AskDialog({ title, message, buttons, isOpen }: AskDialogProps) {
       isOpen={isOpen}
       shadow="none"
       size="sm"
-      onClose={() => setPromptExitDialogOpen(false)}
+      onClose={onClosed}
     >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>

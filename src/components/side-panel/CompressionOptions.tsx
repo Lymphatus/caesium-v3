@@ -71,7 +71,7 @@ function CompressionOptions() {
     {
       key: FILE_SIZE_UNIT.BYTE,
       label: t('size_units.byte', {
-        count: 2,
+        count: maxSize,
       }),
     },
     { key: FILE_SIZE_UNIT.KILOBYTE, label: t('size_units.kb') },
@@ -136,7 +136,7 @@ function CompressionOptions() {
               <Accordion
                 isCompact
                 keepContentMounted
-                className="!px-0"
+                className="px-0!"
                 defaultSelectedKeys={defaultAccordionOpen}
                 itemClasses={{
                   base: 'shadow-none bg-content2',

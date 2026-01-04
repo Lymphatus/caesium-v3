@@ -67,7 +67,7 @@ function FileListTable() {
         isHeaderSticky
         removeWrapper
         aria-label="File list"
-        checkboxesProps={{ disableAnimation: true, size: 'sm', className: 'p-0 pb-1' }}
+        checkboxesProps={{ disableAnimation: true, size: 'sm', className: 'p-0 pl-1 mb-1' }}
         className="rounded-t-sm"
         classNames={{
           base: 'h-full justify-between overflow-auto',

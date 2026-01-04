@@ -67,7 +67,8 @@
     "decimal_separator": ","
   },
   "size_units": {
-    "byte": "byte",
+    "byte": "bytes",
+    "byte_one": "byte",
     "kb": "Kb",
     "mb": "Mb",
     "gb": "Gb"

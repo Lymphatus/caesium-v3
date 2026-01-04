@@ -10,12 +10,12 @@ function AdvancedSettings() {
     directImportAction,
     postCompressionAction,
     threadsCount,
-    threadsPriority,
+    // threadsPriority,
     maxThreads,
     setDirectImportAction,
     setPostCompressionAction,
     setThreadsCount,
-    setThreadsPriority,
+    // setThreadsPriority,
   } = useSettingsStore();
 
   const directImportActions = [
@@ -108,18 +108,13 @@ function AdvancedSettings() {
             </span>
           </div>
           <Slider
-            showSteps
-            showTooltip
             aria-label={t('settings.max_compression_threads')}
             className="max-w-[250px]"
             classNames={{
               label: 'text-sm',
             }}
             color={threadsValue >= Math.ceil(maxThreads * 0.75) ? 'warning' : 'primary'}
-            marks={[
-              { value: 1, label: '1' },
-              { value: maxThreads, label: maxThreads.toString() },
-            ]}
+            endContent={threadsValue}
             maxValue={maxThreads}
             minValue={1}
             size="sm"
@@ -134,38 +129,37 @@ function AdvancedSettings() {
             }}
           />
         </div>
-        <div className="flex w-full items-center justify-between gap-2">
-          <div className="flex flex-col">
-            <span>{t('settings.threads_priority')}</span>
-            {/*<span className="text-default-500 text-sm">{t('settings.send_usage_statistics_help')}</span>*/}
-          </div>
-          <Slider
-            hideValue
-            showSteps
-            aria-label={t('settings.threads_priority')}
-            className="max-w-[250px]"
-            classNames={{
-              label: 'text-sm',
-            }}
-            marks={[
-              { value: 1, label: t('settings.threads_priorities.lowest') },
-              { value: 4, label: t('settings.threads_priorities.normal') },
-              { value: 7, label: t('settings.threads_priorities.highest') },
-            ]}
-            maxValue={7}
-            minValue={1}
-            size="sm"
-            step={1}
-            value={threadsPriority}
-            onChange={(v) => {
-              if (Array.isArray(v)) {
-                v = v[0];
-              }
+        {/*<div className="flex w-full items-center justify-between gap-2">*/}
+        {/*  <div className="flex flex-col">*/}
+        {/*    <span>{t('settings.threads_priority')}</span>*/}
+        {/*  </div>*/}
+        {/*  <Slider*/}
+        {/*    hideValue*/}
+        {/*    showSteps*/}
+        {/*    aria-label={t('settings.threads_priority')}*/}
+        {/*    className="max-w-[250px]"*/}
+        {/*    classNames={{*/}
+        {/*      label: 'text-sm',*/}
+        {/*    }}*/}
+        {/*    marks={[*/}
+        {/*      { value: 1, label: t('settings.threads_priorities.lowest') },*/}
+        {/*      { value: 4, label: t('settings.threads_priorities.normal') },*/}
+        {/*      { value: 7, label: t('settings.threads_priorities.highest') },*/}
+        {/*    ]}*/}
+        {/*    maxValue={7}*/}
+        {/*    minValue={1}*/}
+        {/*    size="sm"*/}
+        {/*    step={1}*/}
+        {/*    value={threadsPriority}*/}
+        {/*    onChange={(v) => {*/}
+        {/*      if (Array.isArray(v)) {*/}
+        {/*        v = v[0];*/}
+        {/*      }*/}
 
-              setThreadsPriority(v);
-            }}
-          />
-        </div>
+        {/*      setThreadsPriority(v);*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*</div>*/}
       </div>
     </div>
   );
