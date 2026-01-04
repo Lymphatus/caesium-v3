@@ -13,7 +13,7 @@ function ListPanel() {
     <div className="size-full">
       <div className="bg-content1 flex size-full flex-col rounded">
         <FileListTable></FileListTable>
-        <div className="bg-content2 flex min-h-[40px] items-center justify-between rounded-b p-2">
+        <div className="bg-content2 flex min-h-10 items-center justify-between rounded-b p-2">
           <div className="flex flex-1 justify-start">
             <Button
               disableRipple
