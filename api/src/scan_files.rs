@@ -35,7 +35,10 @@ fn is_filetype_supported(path: &Path) -> bool {
     let mime_type = fmt.media_type();
 
     if mime_type == "image/tiff" {
-        let extension = path.extension().unwrap().to_ascii_lowercase();
+        let extension = match path.extension() {
+            Some(e) => e.to_ascii_lowercase(),
+            None => return false,
+        };
         if extension != "tif" && extension != "tiff" {
             return false;
         }
