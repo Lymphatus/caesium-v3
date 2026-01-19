@@ -34,8 +34,5 @@ export function isInDevelopmentMode() {
 }
 
 export async function exitApplication() {
-  // We have this delay because we need time to clear the preview panel before closing, due to a memory leak in macos
-  setTimeout(async () => {
-    await getCurrentWindow().destroy();
-  }, 100);
+  await getCurrentWindow().close();
 }

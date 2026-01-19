@@ -4,7 +4,7 @@ import Footer from '@/components/Footer.tsx';
 import ImportDialog from '@/components/dialogs/ImportDialog.tsx';
 import CenterContainer from '@/components/CenterContainer.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
-import { listen, TauriEvent } from '@tauri-apps/api/event';
+import { listen, TauriEvent, UnlistenFn } from '@tauri-apps/api/event';
 import { CImage, CompressionFinished, FileListPayload, THEME } from '@/types.ts';
 import { addToast } from '@heroui/react';
 import SettingsDialog from '@/components/dialogs/settings/SettingsDialog.tsx';
@@ -46,6 +46,16 @@ function App() {
   const { t } = useTranslation();
   const { setAppUpdate } = useAppStore();
   const [isDragging, setIsDragging] = useState(false);
+
+  const closeEventCallback = async () => {
+    if (useSettingsStore.getState().promptBeforeExit && !useSettingsStore.getState().skipMessagesAndDialogs) {
+      setPromptExitDialogOpen(true);
+    } else {
+      await exitApplication();
+    }
+  };
+
+  let closeRequestedListener: Promise<UnlistenFn> | null = null;
 
   useEffect(() => {
     const themeChangedListener = listen(TauriEvent.WINDOW_THEME_CHANGED, (event) => {
@@ -161,14 +171,7 @@ function App() {
       void saveCompressionReport(event.payload);
     });
 
-    const closeRequestedListener = getCurrentWindow().listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {
-      if (useSettingsStore.getState().promptBeforeExit && !useSettingsStore.getState().skipMessagesAndDialogs) {
-        setPromptExitDialogOpen(true);
-      } else {
-        //Avoid infinite loop
-        await exitApplication();
-      }
-    });
+    closeRequestedListener = getCurrentWindow().once(TauriEvent.WINDOW_CLOSE_REQUESTED, closeEventCallback);
 
     const compressionPausedListener = listen('fileList:compressionPaused', () => {
       setIsCompressionPaused(true);
@@ -209,7 +212,7 @@ function App() {
         compressionPausedListener,
         themeChangedListener,
       ]).then((cleanupFns) => {
-        cleanupFns.forEach((cleanupFn) => cleanupFn());
+        cleanupFns.forEach((cleanupFn) => cleanupFn?.());
       });
     };
   }, []);
@@ -228,9 +231,11 @@ function App() {
       <AdvancedImportDialog></AdvancedImportDialog>
       <CompressionProgressDialog></CompressionProgressDialog>
       <PromptOnExitDialog
-        onCancel={() => setPromptExitDialogOpen(false)}
+        onCancel={() => {
+          closeRequestedListener = getCurrentWindow().once(TauriEvent.WINDOW_CLOSE_REQUESTED, closeEventCallback);
+          setPromptExitDialogOpen(false);
+        }}
         onConfirm={async () => {
-          console.log(1);
           await exitApplication();
         }}
       ></PromptOnExitDialog>
