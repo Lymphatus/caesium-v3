@@ -18,7 +18,7 @@ import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.ts
 import prettyBytes from 'pretty-bytes';
 import DragDropOverlay from '@/components/DragDropOverlay.tsx';
 import AdvancedImportDialog from '@/components/dialogs/AdvancedImportDialog.tsx';
-import { getSavedPercentage, saveCompressionReport, setDocumentTheme } from '@/utils/utils.ts';
+import { exitApplication, getSavedPercentage, saveCompressionReport, setDocumentTheme } from '@/utils/utils.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
 import { check } from '@tauri-apps/plugin-updater';
 import useAppStore from '@/stores/app.store.ts';
@@ -166,7 +166,7 @@ function App() {
         setPromptExitDialogOpen(true);
       } else {
         //Avoid infinite loop
-        await getCurrentWindow().destroy();
+        await exitApplication();
       }
     });
 
@@ -227,7 +227,13 @@ function App() {
       <CheckForUpdatesDialog></CheckForUpdatesDialog>
       <AdvancedImportDialog></AdvancedImportDialog>
       <CompressionProgressDialog></CompressionProgressDialog>
-      <PromptOnExitDialog></PromptOnExitDialog>
+      <PromptOnExitDialog
+        onCancel={() => setPromptExitDialogOpen(false)}
+        onConfirm={async () => {
+          console.log(1);
+          await exitApplication();
+        }}
+      ></PromptOnExitDialog>
     </>
   );
 }

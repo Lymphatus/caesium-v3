@@ -42,6 +42,25 @@ function PreviewCanvas() {
   const { currentPreviewedCImage, visualizationMode, setIsLoading, setVisualizationMode } = usePreviewStore();
   const { showPreviewPanel } = useUIStore();
 
+  const cleanupCanvases = (originalCanvas: HTMLCanvasElement | null, compressedCanvas: HTMLCanvasElement | null) => {
+    if (originalCanvas === null) {
+      originalCanvas = canvasRef.current;
+    }
+    const originalContext = originalCanvas?.getContext('2d');
+
+    if (compressedCanvas === null) {
+      compressedCanvas = compressedCanvasRef.current;
+    }
+    const compressedContext = compressedCanvas?.getContext('2d');
+
+    if (originalCanvas && originalContext) {
+      originalContext.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+    }
+    if (compressedCanvas && compressedContext) {
+      compressedContext.clearRect(0, 0, compressedCanvas.width, compressedCanvas.height);
+    }
+  };
+
   useEffect(() => {
     if (!showPreviewPanel) {
       return;
@@ -62,6 +81,7 @@ function PreviewCanvas() {
 
     return () => {
       worker.removeEventListener('message', listener);
+      cleanupCanvases(null, null);
     };
   }, []);
 
@@ -75,19 +95,13 @@ function PreviewCanvas() {
     if (!originalCanvas || !compressedCanvas) {
       return;
     }
-    const originalContext = originalCanvas.getContext('2d');
-    const compressedContext = compressedCanvas.getContext('2d');
-    if (!originalContext || !compressedContext) {
-      return;
-    }
 
     if (currentPreviewedCImage) {
       setIsLoading(true);
       if (visualizationMode === 'compressed' && !currentPreviewedCImage?.compressed_file_path) {
         setVisualizationMode('original');
       }
-      originalContext.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
-      compressedContext.clearRect(0, 0, compressedCanvas.width, compressedCanvas.height);
+      cleanupCanvases(originalCanvas, compressedCanvas);
 
       const imageURL = convertFileSrc(currentPreviewedCImage.path);
       let compressedImageURL = '';
@@ -112,8 +126,7 @@ function PreviewCanvas() {
     }
 
     return () => {
-      originalContext.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
-      compressedContext.clearRect(0, 0, compressedCanvas.width, compressedCanvas.height);
+      cleanupCanvases(originalCanvas, compressedCanvas);
     };
   }, [currentPreviewedCImage]);
 

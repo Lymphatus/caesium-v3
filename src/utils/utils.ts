@@ -1,6 +1,7 @@
 import { CompressionFinished, THEME } from '@/types.ts';
 import { BaseDirectory, writeTextFile } from '@tauri-apps/plugin-fs';
 import dayjs from 'dayjs';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 export function range(start: number, stop: number, step: number) {
   return Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
@@ -30,4 +31,11 @@ export async function saveCompressionReport(report: CompressionFinished) {
 
 export function isInDevelopmentMode() {
   return import.meta.env.MODE === 'development';
+}
+
+export async function exitApplication() {
+  // We have this delay because we need time to clear the preview panel before closing, due to a memory leak in macos
+  setTimeout(async () => {
+    await getCurrentWindow().destroy();
+  }, 100);
 }

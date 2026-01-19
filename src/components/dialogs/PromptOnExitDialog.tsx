@@ -1,11 +1,10 @@
 import AskDialog from '@/components/dialogs/AskDialog.tsx';
 import { Button } from '@heroui/react';
-import { getCurrentWindow } from '@tauri-apps/api/window';
 import { t } from 'i18next';
 import useUIStore from '@/stores/ui.store.ts';
 import useSettingsStore from '@/stores/settings.store.ts';
 
-function PromptOnExitDialog() {
+function PromptOnExitDialog({ onConfirm, onCancel }: { onConfirm?: () => void; onCancel?: () => void }) {
   const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
   const { skipMessagesAndDialogs } = useSettingsStore();
 
@@ -13,10 +12,10 @@ function PromptOnExitDialog() {
     <AskDialog
       buttons={
         <>
-          <Button disableRipple color="primary" onPress={async () => await getCurrentWindow().destroy()}>
+          <Button disableRipple color="primary" onPress={onConfirm}>
             {t('affirmative_answer')}
           </Button>
-          <Button disableRipple onPress={() => setPromptExitDialogOpen(false)}>
+          <Button disableRipple onPress={onCancel}>
             {t('negative_answer')}
           </Button>
         </>
