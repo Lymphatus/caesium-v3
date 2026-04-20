@@ -1,17 +1,14 @@
-import { Delete, Ellipsis, FolderPlus, ImagePlus, Play, Settings, Trash2 } from 'lucide-react';
+import { Ellipsis, FolderPlus, ImagePlus, Play, Settings } from 'lucide-react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
-import { Button as HeroButton, Divider, Dropdown, DropdownTrigger } from '@heroui/react';
+import { Divider, Dropdown, DropdownTrigger } from '@heroui/react';
 import AppMenu from '@/components/AppMenu.tsx';
-import { FileListPayload } from '@/types.ts';
 import FileListFilter from '@/components/file-list/FileListFilter.tsx';
-import { invokeBackend } from '@/utils/invoker.tsx';
 import { Button } from './ui/button';
 
 function Toolbar() {
-  const { openPickerDialogs, fileList, selectedItems, invokeCompress, updateList, setIsListLoading, isCompressing } =
-    useFileListStore();
+  const { openPickerDialogs, fileList, invokeCompress, isCompressing } = useFileListStore();
   const { setSettingsDialogOpen, showLabelsInToolbar } = useUIStore();
   const { t } = useTranslation();
 

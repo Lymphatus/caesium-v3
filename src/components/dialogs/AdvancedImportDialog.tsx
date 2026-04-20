@@ -24,7 +24,7 @@ import {
 } from '@heroui/react';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
-import { Delete, FilePlus, FolderPlus, LoaderCircle, Plus, X } from 'lucide-react';
+import { FilePlus, FolderPlus, LoaderCircle, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FILE_SIZE_FILTER_PATTERN, FILE_SIZE_UNIT } from '@/types.ts';
 import { open } from '@tauri-apps/plugin-dialog';
