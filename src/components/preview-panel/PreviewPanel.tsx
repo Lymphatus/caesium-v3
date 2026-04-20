@@ -5,7 +5,7 @@ import {
   TransformWrapper,
   useTransformComponent,
 } from 'react-zoom-pan-pinch';
-import { Button, Chip, Divider, NumberInput, Slider, Spinner } from '@heroui/react';
+import { Chip, Divider, NumberInput, Slider, Spinner } from '@heroui/react';
 import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
 import { RefObject, useCallback, useEffect, useRef } from 'react';
 import prettyBytes from 'pretty-bytes';
@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import PreviewCanvas from '@/components/preview-panel/PreviewCanvas.tsx';
 import { SavedLabel } from '@/components/SavedLabel.tsx';
+import { Button } from '../ui/button';
 
 const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 'zoomIn' | 'zoomOut'>) => {
   const setZoomLevel = (value: number | number[], state: ReactZoomPanPinchState) => {
@@ -52,15 +53,8 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           variant="faded"
           onValueChange={(value) => setZoomLevel(value, state)}
         ></NumberInput>
-        <Button
-          disableRipple
-          isIconOnly
-          size="sm"
-          title={i18next.t('zoom_out')}
-          variant="light"
-          onPress={() => zoomOut(0.1)}
-        >
-          <Minus className="size-3"></Minus>
+        <Button size="icon-xs" title={i18next.t('zoom_out')} variant="outline" onClick={() => zoomOut(0.1)}>
+          <Minus></Minus>
         </Button>
         <Slider
           aria-label="zoom"
@@ -71,15 +65,8 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           value={zoomLevel}
           onChange={(value) => setZoomLevel(value, state)}
         ></Slider>
-        <Button
-          disableRipple
-          isIconOnly
-          size="sm"
-          title={i18next.t('zoom_in')}
-          variant="light"
-          onPress={() => zoomIn(0.1)}
-        >
-          <Plus className="size-3"></Plus>
+        <Button size="icon-xs" title={i18next.t('zoom_in')} variant="outline" onClick={() => zoomIn(0.1)}>
+          <Plus></Plus>
         </Button>
       </>
     );
@@ -194,44 +181,38 @@ function PreviewPanel() {
 
                 <div className="flex items-center gap-1">
                   <Button
-                    disableRipple
-                    className="text-sm"
-                    isDisabled={!currentPreviewedCImage?.compressed_file_path}
-                    size="sm"
+                    disabled={!currentPreviewedCImage?.compressed_file_path}
+                    size="xs"
                     title={t('swap')}
-                    variant="light"
-                    onPress={() => {
+                    variant="outline"
+                    onClick={() => {
                       setVisualizationMode(visualizationMode === 'original' ? 'compressed' : 'original');
                     }}
                   >
-                    <ArrowLeftRight className="size-4"></ArrowLeftRight> <span>{t('swap')}</span>
+                    <ArrowLeftRight></ArrowLeftRight> <span>{t('swap')}</span>
                   </Button>
                   <Divider className="h-7" orientation="vertical"></Divider>
                   <Button
-                    disableRipple
-                    isIconOnly
-                    isDisabled={currentPreviewedCImage == null}
-                    size="sm"
+                    disabled={currentPreviewedCImage == null}
+                    size="icon-xs"
                     title={t('fit_container')}
-                    variant="light"
-                    onPress={() => {
+                    variant="outline"
+                    onClick={() => {
                       fitContentToWrapper(centerView);
                     }}
                   >
-                    <Fullscreen className="size-4"></Fullscreen>
+                    <Fullscreen></Fullscreen>
                   </Button>
                   <Button
-                    disableRipple
-                    isIconOnly
-                    isDisabled={currentPreviewedCImage == null}
-                    size="sm"
+                    disabled={currentPreviewedCImage == null}
+                    size="icon-xs"
                     title={t('actual_size')}
-                    variant="light"
-                    onPress={() => {
+                    variant="outline"
+                    onClick={() => {
                       centerView(1);
                     }}
                   >
-                    <Maximize className="size-4"></Maximize>
+                    <Maximize></Maximize>
                   </Button>
                   <TransformControls zoomIn={zoomIn} zoomOut={zoomOut}></TransformControls>
                 </div>

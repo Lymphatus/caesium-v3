@@ -1,5 +1,4 @@
 import {
-  Button,
   Divider,
   Dropdown,
   DropdownItem,
@@ -25,12 +24,13 @@ import {
 } from '@heroui/react';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
-import { Delete, FilePlus, FolderPlus, Plus } from 'lucide-react';
+import { Delete, FilePlus, FolderPlus, LoaderCircle, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FILE_SIZE_FILTER_PATTERN, FILE_SIZE_UNIT } from '@/types.ts';
 import { open } from '@tauri-apps/plugin-dialog';
 import { listen } from '@tauri-apps/api/event';
 import { invokeBackend } from '@/utils/invoker.tsx';
+import { Button } from '../ui/button';
 
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
@@ -157,14 +157,9 @@ function AdvancedImportDialog() {
             <div className="flex w-full justify-start gap-2">
               <Dropdown isDisabled={isValidationInProgress}>
                 <DropdownTrigger>
-                  <Button
-                    disableRipple
-                    isIconOnly
-                    size="sm"
-                    startContent={<Plus className="size-4"></Plus>}
-                    title={t('')}
-                    variant="solid"
-                  ></Button>
+                  <Button size="icon-sm" title={t('')} variant="outline">
+                    <Plus></Plus>
+                  </Button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Import actions">
                   <DropdownItem
@@ -186,19 +181,18 @@ function AdvancedImportDialog() {
                 </DropdownMenu>
               </Dropdown>
               <Button
-                disableRipple
-                isIconOnly
-                isDisabled={selectedItems.length === 0 || isValidationInProgress}
-                size="sm"
-                startContent={<Delete className="text-danger size-4"></Delete>}
+                disabled={selectedItems.length === 0 || isValidationInProgress}
+                size="icon-sm"
                 title={t('actions.remove')}
-                variant="solid"
-                onPress={() => {
+                variant="destructive"
+                onClick={() => {
                   const newList = [...importList].filter((item) => !selectedItems.includes(item));
                   setSelectedItems([]);
                   setImportList(new Set<string>(newList));
                 }}
-              ></Button>
+              >
+                <X></X>
+              </Button>
             </div>
             <Divider></Divider>
             <div className="flex w-full items-center justify-between">
@@ -310,11 +304,8 @@ function AdvancedImportDialog() {
         <ModalFooter>
           <div className="flex w-full justify-end gap-2">
             <Button
-              disableRipple
-              color="primary"
-              isDisabled={importList.size === 0}
-              isLoading={isValidationInProgress}
-              onPress={async () => {
+              disabled={importList.size === 0}
+              onClick={async () => {
                 setIsValidationInProgress(true);
                 await invokeBackend('add_from_advanced_import', {
                   files: [...importList],
@@ -329,17 +320,21 @@ function AdvancedImportDialog() {
                     },
                   },
                 });
+                setIsValidationInProgress(false);
               }}
             >
-              {isValidationInProgress
-                ? t('advanced_import_dialog.validating_dots')
-                : t('advanced_import_dialog.import')}
+              {isValidationInProgress ? (
+                <>
+                  <LoaderCircle className="animate-spin"></LoaderCircle> {t('advanced_import_dialog.validating_dots')}
+                </>
+              ) : (
+                t('advanced_import_dialog.import')
+              )}
             </Button>
             <Button
-              disableRipple
-              isDisabled={isValidationInProgress}
-              variant="flat"
-              onPress={() => setAdvancedImportDialogOpen(false)}
+              disabled={isValidationInProgress}
+              variant="secondary"
+              onClick={() => setAdvancedImportDialogOpen(false)}
             >
               {t('cancel')}
             </Button>

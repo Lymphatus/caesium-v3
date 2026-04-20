@@ -1,10 +1,11 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tab, Tabs } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Tab, Tabs } from '@heroui/react';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
 import { Code, Import, Settings2 } from 'lucide-react';
 import GeneralSettings from '@/components/dialogs/settings/GeneralSettings.tsx';
 import ImportSettings from '@/components/dialogs/settings/ImportSettings.tsx';
 import AdvancedSettings from '@/components/dialogs/settings/AdvancedSettings.tsx';
+import { Button } from '@/components/ui/button';
 
 function SettingsDialog() {
   const { setSettingsDialogOpen, settingsDialogOpen } = useUIStore();
@@ -72,7 +73,7 @@ function SettingsDialog() {
           </Tabs>
         </ModalBody>
         <ModalFooter>
-          <Button disableRipple onPress={() => setSettingsDialogOpen(false)}>
+          <Button variant="secondary" onClick={() => setSettingsDialogOpen(false)}>
             {t('close')}
           </Button>
         </ModalFooter>

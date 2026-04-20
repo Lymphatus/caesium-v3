@@ -1,9 +1,10 @@
-import { Alert, Button, Checkbox, Divider, Input, Select, SelectItem, Switch } from '@heroui/react';
+import { Alert, Checkbox, Divider, Input, Select, SelectItem, Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { open } from '@tauri-apps/plugin-dialog';
 import { FILE_DATE, MOVE_ORIGINAL_FILE, OUTPUT_FORMAT } from '@/types.ts';
 import { TriangleAlert } from 'lucide-react';
+import { Button } from '../ui/button';
 
 function OutputOptions() {
   const { t } = useTranslation();
@@ -81,10 +82,10 @@ function OutputOptions() {
             }}
             endContent={
               <Button
-                disableRipple
                 className="h-full rounded-l-none"
                 size="sm"
-                onPress={async () => {
+                variant="secondary"
+                onClick={async () => {
                   const folder = await open({ directory: true, multiple: false });
                   if (folder) {
                     setOutputFolder(folder);

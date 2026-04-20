@@ -1,8 +1,8 @@
 import AskDialog from '@/components/dialogs/AskDialog.tsx';
-import { Button } from '@heroui/react';
 import { t } from 'i18next';
 import useUIStore from '@/stores/ui.store.ts';
 import useSettingsStore from '@/stores/settings.store.ts';
+import { Button } from '../ui/button';
 
 function PromptOnExitDialog({ onConfirm, onCancel }: { onConfirm?: () => void; onCancel?: () => void }) {
   const { promptExitDialogOpen, setPromptExitDialogOpen } = useUIStore();
@@ -12,10 +12,10 @@ function PromptOnExitDialog({ onConfirm, onCancel }: { onConfirm?: () => void; o
     <AskDialog
       buttons={
         <>
-          <Button disableRipple color="primary" onPress={onConfirm}>
+          <Button variant="destructive" onClick={onConfirm}>
             {t('affirmative_answer')}
           </Button>
-          <Button disableRipple onPress={onCancel}>
+          <Button variant="secondary" onClick={onCancel}>
             {t('negative_answer')}
           </Button>
         </>

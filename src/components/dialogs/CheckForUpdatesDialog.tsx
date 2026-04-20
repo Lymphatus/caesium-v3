@@ -1,10 +1,11 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@heroui/react';
 import useUIStore from '@/stores/ui.store.ts';
 import { check, DownloadEvent, Update } from '@tauri-apps/plugin-updater';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CircleAlert, CircleCheck, TriangleAlert } from 'lucide-react';
 import { relaunch } from '@tauri-apps/plugin-process';
+import { Button } from '../ui/button';
 
 enum UpdateStatus {
   CHECKING,
@@ -88,7 +89,7 @@ function CheckForUpdatesDialog() {
 
   let message = <span>{t('update_process.checking_for_updates_dots')}</span>;
   let updateButton = (
-    <Button disableRipple color="primary" isDisabled={update === null} onPress={startDownload}>
+    <Button disabled={update === null} onClick={startDownload}>
       {t('update')}
     </Button>
   );
@@ -123,11 +124,7 @@ function CheckForUpdatesDialog() {
       </span>
     );
 
-    updateButton = (
-      <Button disableRipple color="primary" onPress={installUpdate}>
-        {t('install')}
-      </Button>
-    );
+    updateButton = <Button onClick={installUpdate}>{t('install')}</Button>;
   }
 
   return (
@@ -173,7 +170,7 @@ function CheckForUpdatesDialog() {
         <ModalFooter>
           <div className="flex w-full items-center justify-between gap-2">
             <div>
-              <Button disableRipple variant="flat" onPress={() => setCheckForUpdatesDialogOpen(false)}>
+              <Button variant="secondary" onClick={() => setCheckForUpdatesDialogOpen(false)}>
                 {t('cancel')}
               </Button>
             </div>

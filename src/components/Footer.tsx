@@ -1,10 +1,11 @@
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Button, Divider, Link, Progress } from '@heroui/react';
+import { Divider, Link, Progress } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import { Info, Pause, Play, X } from 'lucide-react';
 import useAppStore from '@/stores/app.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
 import { isInDevelopmentMode } from '@/utils/utils.ts';
+import { Button } from './ui/button';
 
 function Footer() {
   const { appUpdate } = useAppStore();
@@ -48,14 +49,7 @@ function Footer() {
       {isCompressing && compressionProgressDialogMinimized && (
         <div className="flex items-center justify-center gap-2">
           <div className="max-w-[50%] min-w-60">
-            <Button
-              disableAnimation
-              disableRipple
-              className="w-full"
-              size="sm"
-              variant="light"
-              onPress={() => setCompressionProgressDialogMinimized(false)}
-            >
+            <Button className="w-full" variant="ghost" onClick={() => setCompressionProgressDialogMinimized(false)}>
               <Progress
                 disableAnimation
                 showValueLabel
@@ -72,27 +66,22 @@ function Footer() {
           </div>
 
           <Button
-            disableRipple
-            isIconOnly
-            className="size-8"
-            isDisabled={isCompressionCancelling}
-            size="sm"
+            disabled={isCompressionCancelling}
+            size="icon-xs"
             title={isCompressionPaused ? t('resume') : t('pause')}
-            variant="light"
-            onPress={isCompressionPaused ? invokeResumeCompression : invokePauseCompression}
+            variant="outline"
+            onClick={isCompressionPaused ? invokeResumeCompression : invokePauseCompression}
           >
-            {isCompressionPaused ? <Play className="size-4"></Play> : <Pause className="size-4"></Pause>}
+            {isCompressionPaused ? <Play></Play> : <Pause></Pause>}
           </Button>
           <Button
-            disableRipple
-            isIconOnly
-            className="max-h-8"
-            size="sm"
+            disabled={isCompressionCancelling}
+            size="icon-xs"
             title={t('cancel')}
-            variant="light"
-            onPress={invokeCancelCompression}
+            variant="destructive"
+            onClick={invokeCancelCompression}
           >
-            <X className="size-4"></X>
+            <X></X>
           </Button>
           {isCompressing && appUpdate !== null && <Divider className="h-6" orientation="vertical"></Divider>}
           {appUpdate !== null && (

@@ -1,6 +1,6 @@
-import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Circle, CircleAlert, CircleCheck, CircleX, Delete, LoaderCircle, Search } from 'lucide-react';
+import { Circle, CircleAlert, CircleCheck, CircleX, LoaderCircle, Search, X } from 'lucide-react';
 import prettyBytes from 'pretty-bytes';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import { Selection } from '@react-types/shared';
 import { CImage, FileListPayload, IMAGE_STATUS } from '@/types.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
 import { SavedLabel } from '@/components/SavedLabel.tsx';
+import { Button } from '../ui/button';
 
 function getSubpart(baseFolder: string | null, fullPath: string, filename: string) {
   if (baseFolder == null) {
@@ -171,32 +172,27 @@ function FileListTable() {
               <TableCell>
                 <div className="flex items-center justify-between gap-1">
                   <Button
-                    disableRipple
-                    isIconOnly
-                    isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING || isCompressing}
-                    size="sm"
+                    disabled={cImage.status === IMAGE_STATUS.COMPRESSING || isCompressing}
+                    size="icon-xs"
                     title={t('actions.preview')}
-                    variant="light"
-                    onPress={() => invokePreview([cImage.id])}
+                    variant="ghost"
+                    onClick={() => invokePreview([cImage.id])}
                   >
-                    <Search className="size-4"></Search>
+                    <Search></Search>
                   </Button>
                   <Button
-                    disableRipple
-                    isIconOnly
-                    color="danger"
-                    isDisabled={cImage.status === IMAGE_STATUS.COMPRESSING || isCompressing}
-                    size="sm"
+                    disabled={cImage.status === IMAGE_STATUS.COMPRESSING || isCompressing}
+                    size="icon-xs"
                     title={t('actions.remove')}
-                    variant="light"
-                    onPress={async () => {
+                    variant="destructive"
+                    onClick={async () => {
                       setIsListLoading(true);
                       invokeBackend<FileListPayload>('remove_items_from_list', { keys: [cImage.id] })
                         .then((payload) => updateList(payload))
                         .finally(() => setIsListLoading(false));
                     }}
                   >
-                    <Delete className="size-4"></Delete>
+                    <X></X>
                   </Button>
                 </div>
               </TableCell>

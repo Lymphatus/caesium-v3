@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
@@ -9,6 +9,7 @@ import { Check, Copy, X } from 'lucide-react';
 import { useState } from 'react';
 import useAppStore from '@/stores/app.store.ts';
 import { UsageStats } from '@/types.ts';
+import { Button } from '../ui/button';
 
 type UsageStatsDialogProps = {
   isOpen: boolean;
@@ -96,10 +97,11 @@ function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
         </ModalBody>
         <ModalFooter>
           <div className="flex w-full justify-between gap-2">
-            <Button disableRipple radius="sm" startContent={copyStatusIcon()} variant="light" onPress={onCopyPressed}>
+            <Button variant="ghost" onClick={onCopyPressed}>
+              {copyStatusIcon()}
               {t('copy')}
             </Button>
-            <Button disableRipple radius="sm" onPress={onClose}>
+            <Button variant="secondary" onClick={onClose}>
               {t('close')}
             </Button>
           </div>

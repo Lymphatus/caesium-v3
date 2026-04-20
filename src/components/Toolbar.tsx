@@ -1,126 +1,62 @@
-import { Delete, Ellipsis, FolderPlus, ImagePlus, Play, Search, Settings, Trash2 } from 'lucide-react';
+import { Delete, Ellipsis, FolderPlus, ImagePlus, Play, Settings, Trash2 } from 'lucide-react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
-import { Button, Divider, Dropdown, DropdownTrigger } from '@heroui/react';
+import { Button as HeroButton, Divider, Dropdown, DropdownTrigger } from '@heroui/react';
 import AppMenu from '@/components/AppMenu.tsx';
-import usePreviewStore from '@/stores/preview.store.ts';
 import { FileListPayload } from '@/types.ts';
 import FileListFilter from '@/components/file-list/FileListFilter.tsx';
 import { invokeBackend } from '@/utils/invoker.tsx';
+import { Button } from './ui/button';
 
 function Toolbar() {
   const { openPickerDialogs, fileList, selectedItems, invokeCompress, updateList, setIsListLoading, isCompressing } =
     useFileListStore();
   const { setSettingsDialogOpen, showLabelsInToolbar } = useUIStore();
-  const { invokePreview } = usePreviewStore();
   const { t } = useTranslation();
-
-  const onClearPressed = async () =>
-    invokeBackend<FileListPayload>('clear_list').then((payload: FileListPayload) => updateList(payload));
-  const onRemoveItemFromListPressed = async () => {
-    setIsListLoading(true);
-    invokeBackend<FileListPayload>('remove_items_from_list', { keys: selectedItems.map((c) => c.id) })
-      .then((payload) => updateList(payload))
-      .finally(() => setIsListLoading(false));
-  };
 
   return (
     <div className="bg-content1 flex h-[40px] w-full items-center justify-between px-2">
-      <div className="flex h-full items-center gap-1">
+      <div className="flex h-full items-center gap-2">
         <Button
-          disableRipple
-          isDisabled={isCompressing}
-          isIconOnly={!showLabelsInToolbar}
+          disabled={isCompressing}
           size="sm"
           title={t('actions.add_dots')}
-          variant="light"
-          onPress={() => openPickerDialogs('files')}
+          variant="ghost"
+          onClick={() => openPickerDialogs('files')}
         >
-          <ImagePlus className="size-5"></ImagePlus>
+          <ImagePlus></ImagePlus>
           {showLabelsInToolbar && <span>{t('actions.add_dots')}</span>}
         </Button>
         <Button
-          disableRipple
-          isDisabled={isCompressing}
-          isIconOnly={!showLabelsInToolbar}
+          disabled={isCompressing}
           size="sm"
           title={t('actions.add_folder_dots')}
-          variant="light"
-          onPress={() => openPickerDialogs('folder')}
+          variant="ghost"
+          onClick={() => openPickerDialogs('folder')}
         >
-          <FolderPlus className="size-5"></FolderPlus>
+          <FolderPlus></FolderPlus>
           {showLabelsInToolbar && <span>{t('actions.add_folder_dots')}</span>}
         </Button>
-        <div className="h-full py-2">
-          <Divider orientation="vertical"></Divider>
-        </div>
+      </div>
+      <div className="flex h-full items-center gap-2">
+        <FileListFilter></FileListFilter>
+      </div>
+      <div className="flex h-full items-center gap-2">
         <Button
-          disableRipple
-          color="danger"
-          isDisabled={selectedItems.length === 0 || isCompressing}
-          isIconOnly={!showLabelsInToolbar}
-          size="sm"
-          title={t('actions.remove')}
-          variant="light"
-          onPress={onRemoveItemFromListPressed}
-        >
-          <Delete className="size-5"></Delete>
-          {showLabelsInToolbar && <span>{t('actions.remove')}</span>}
-        </Button>
-        <Button
-          disableRipple
-          color="danger"
-          isDisabled={fileList.length === 0 || isCompressing}
-          isIconOnly={!showLabelsInToolbar}
-          size="sm"
-          title={t('actions.clear')}
-          variant="light"
-          onPress={onClearPressed}
-        >
-          <Trash2 className="size-5"></Trash2>
-          {showLabelsInToolbar && <span>{t('actions.clear')}</span>}
-        </Button>
-        <div className="h-full py-2">
-          <Divider orientation="vertical"></Divider>
-        </div>
-        <Button
-          disableRipple
-          isDisabled={selectedItems.length === 0 || isCompressing}
-          isIconOnly={!showLabelsInToolbar}
-          size="sm"
-          title={t('actions.preview')}
-          variant="light"
-          onPress={() => invokePreview(selectedItems.map((c) => c.id))}
-        >
-          <Search className="size-5"></Search>
-          {showLabelsInToolbar && <span>{t('actions.preview')}</span>}
-        </Button>
-        <Button
-          disableRipple
-          color="primary"
-          isDisabled={fileList.length === 0 || isCompressing}
-          isIconOnly={!showLabelsInToolbar}
+          disabled={fileList.length === 0 || isCompressing}
           size="sm"
           title={t('actions.compress')}
-          variant="light"
-          onPress={() => invokeCompress()}
+          onClick={() => invokeCompress()}
         >
-          <Play className="size-5"></Play>
+          <Play></Play>
           {showLabelsInToolbar && <span>{t('actions.compress')}</span>}
         </Button>
-      </div>
-      <div className="flex h-full items-center gap-1">
-        <FileListFilter></FileListFilter>
-        <Button
-          disableRipple
-          isIconOnly={!showLabelsInToolbar}
-          size="sm"
-          title={t('actions.settings')}
-          variant="light"
-          onPress={() => setSettingsDialogOpen(true)}
-        >
-          <Settings className="size-5"></Settings>
+        <div className="h-full py-2">
+          <Divider orientation="vertical"></Divider>
+        </div>
+        <Button size="sm" title={t('actions.settings')} variant="ghost" onClick={() => setSettingsDialogOpen(true)}>
+          <Settings></Settings>
           {showLabelsInToolbar && <span>{t('actions.settings')}</span>}
         </Button>
         <Dropdown
@@ -129,8 +65,8 @@ function Toolbar() {
           }}
         >
           <DropdownTrigger>
-            <Button disableRipple isIconOnly size="sm" title={t('actions.menu')} variant="light" onPress={() => {}}>
-              <Ellipsis className="size-5"></Ellipsis>
+            <Button size="icon-sm" title={t('actions.menu')} variant="ghost" onClick={() => {}}>
+              <Ellipsis></Ellipsis>
             </Button>
           </DropdownTrigger>
           <AppMenu></AppMenu>

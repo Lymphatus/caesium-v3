@@ -1,8 +1,9 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useTranslation } from 'react-i18next';
 import { Pause, Play, X } from 'lucide-react';
 import useUIStore from '@/stores/ui.store.ts';
+import { Button } from '../ui/button';
 
 function CompressionProgressDialog() {
   const {
@@ -57,14 +58,11 @@ function CompressionProgressDialog() {
                 value={compressionProgress}
               ></Progress>
               <Button
-                disableRipple
-                isIconOnly
-                className="size-8"
-                isDisabled={isCompressionCancelling}
-                size="sm"
+                disabled={isCompressionCancelling}
+                size="icon-sm"
                 title={isCompressionPaused ? t('resume') : t('pause')}
-                variant="flat"
-                onPress={isCompressionPaused ? invokeResumeCompression : invokePauseCompression}
+                variant="outline"
+                onClick={isCompressionPaused ? invokeResumeCompression : invokePauseCompression}
               >
                 {isCompressionPaused ? <Play className="size-4"></Play> : <Pause className="size-4"></Pause>}
               </Button>
@@ -74,15 +72,14 @@ function CompressionProgressDialog() {
         <ModalFooter>
           <div className="flex w-full items-center justify-between gap-2">
             <Button
-              disableRipple
               title={'Hide'} //TODO
-              variant="light"
-              onPress={() => setCompressionProgressDialogMinimized(true)}
+              variant="ghost"
+              onClick={() => setCompressionProgressDialogMinimized(true)}
             >
               Hide
             </Button>
-            <Button disableRipple title={t('cancel')} variant="solid" onPress={invokeCancelCompression}>
-              <X className="size-4"></X> {t('cancel')}
+            <Button title={t('cancel')} variant="destructive" onClick={invokeCancelCompression}>
+              <X></X> {t('cancel')}
             </Button>
           </div>
         </ModalFooter>

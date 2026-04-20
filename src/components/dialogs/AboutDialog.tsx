@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store';
 import appLogo from '@/assets/images/app-icon.png';
@@ -6,6 +6,7 @@ import { app } from '@tauri-apps/api';
 import useAppStore from '@/stores/app.store.ts';
 import { openPath } from '@tauri-apps/plugin-opener';
 import { appLogDir } from '@tauri-apps/api/path';
+import { Button } from '../ui/button';
 
 const appVersion = await app.getVersion();
 
@@ -38,9 +39,9 @@ function AboutDialog() {
             <div className="flex flex-col items-center justify-center gap-1">
               <small className="font-mono text-xs">UUID: {uuid}</small>
               <Button
-                disableRipple
                 size="sm"
-                onPress={async () => {
+                variant="secondary"
+                onClick={async () => {
                   const logDir = await appLogDir();
                   await openPath(logDir);
                 }}
