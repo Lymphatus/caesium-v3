@@ -1,6 +1,6 @@
-import { Switch } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '@/stores/settings.store.ts';
+import { Switch } from '@/components/ui/switch';
 
 function ImportSettings() {
   const { t } = useTranslation();
@@ -14,7 +14,7 @@ function ImportSettings() {
             <span>{t('settings.scan_subfolders_on_import')}</span>
             <span className="text-default-500 text-sm">{t('settings.scan_subfolders_on_import_help')}</span>
           </div>
-          <Switch isSelected={importSubfolderOnInput} size="sm" onValueChange={setImportSubfolderOnInput}></Switch>
+          <Switch checked={importSubfolderOnInput} onCheckedChange={setImportSubfolderOnInput}></Switch>
         </div>
       </div>
     </div>

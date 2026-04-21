@@ -1,4 +1,5 @@
-import { Alert, Checkbox, Divider, Input, Select, SelectItem, Switch } from '@heroui/react';
+import { Alert, Checkbox, Divider, Input, Select, SelectItem } from '@heroui/react';
+import { Switch } from '@/components/ui/switch';
 import { useTranslation } from 'react-i18next';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -107,7 +108,7 @@ function OutputOptions() {
             <div className="flex flex-col">
               <span>{t('compression_options.output_options.same_folder_as_input')}</span>
             </div>
-            <Switch isSelected={sameFolderAsInput} size="sm" onValueChange={setSameFolderAsInput}></Switch>
+            <Switch checked={sameFolderAsInput} onCheckedChange={setSameFolderAsInput}></Switch>
           </div>
           {sameFolderAsInput && suffix.length === 0 && (
             <Alert
@@ -132,14 +133,14 @@ function OutputOptions() {
           <div className="flex flex-col">
             <span>{t('compression_options.output_options.keep_structure')}</span>
           </div>
-          <Switch isSelected={keepFolderStructure} size="sm" onValueChange={setKeepFolderStructure}></Switch>
+          <Switch checked={keepFolderStructure} onCheckedChange={setKeepFolderStructure}></Switch>
         </div>
 
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
             <span>{t('compression_options.output_options.skip_if_output_is_bigger')}</span>
           </div>
-          <Switch isSelected={skipIfOutputIsBigger} size="sm" onValueChange={setSkipIfOutputIsBigger}></Switch>
+          <Switch checked={skipIfOutputIsBigger} onCheckedChange={setSkipIfOutputIsBigger}></Switch>
         </div>
 
         <div className="flex w-full flex-col justify-between gap-1">
@@ -147,7 +148,7 @@ function OutputOptions() {
             <div className="flex flex-col">
               <span>{t('compression_options.output_options.move_original')}</span>
             </div>
-            <Switch isSelected={moveOriginalFile} size="sm" onValueChange={setMoveOriginalFile}></Switch>
+            <Switch checked={moveOriginalFile} onCheckedChange={setMoveOriginalFile}></Switch>
           </div>
           <Select
             disallowEmptySelection

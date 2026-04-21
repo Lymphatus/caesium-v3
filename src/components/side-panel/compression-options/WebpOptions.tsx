@@ -1,4 +1,5 @@
-import { NumberInput, Slider, Switch } from '@heroui/react';
+import { NumberInput, Slider } from '@heroui/react';
+import { Switch } from '@/components/ui/switch';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 
@@ -51,9 +52,8 @@ function WebpOptions() {
           <span>{t('compression_options.lossless')}</span>
         </div>
         <Switch
-          isSelected={webpOptions.lossless}
-          size="sm"
-          onValueChange={(value) => setWebpOptions({ lossless: value })}
+          checked={webpOptions.lossless}
+          onCheckedChange={(value) => setWebpOptions({ lossless: value })}
         ></Switch>
       </div>
     </div>

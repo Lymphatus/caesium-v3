@@ -1,4 +1,5 @@
-import { NumberInput, Slider, Switch } from '@heroui/react';
+import { NumberInput, Slider } from '@heroui/react';
+import { Switch } from '@/components/ui/switch';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 
@@ -84,11 +85,7 @@ function PngOptions() {
         <div className="flex flex-col">
           <span>{t('compression_options.lossless')}</span>
         </div>
-        <Switch
-          isSelected={pngOptions.optimize}
-          size="sm"
-          onValueChange={(value) => setPngOptions({ optimize: value })}
-        ></Switch>
+        <Switch checked={pngOptions.optimize} onCheckedChange={(value) => setPngOptions({ optimize: value })}></Switch>
       </div>
     </div>
   );

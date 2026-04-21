@@ -1,5 +1,6 @@
 import { RESIZE_MODE } from '@/types.ts';
-import { NumberInput, Select, SelectItem, Switch } from '@heroui/react';
+import { NumberInput, Select, SelectItem } from '@heroui/react';
+import { Switch } from '@/components/ui/switch';
 import { useTranslation } from 'react-i18next';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 
@@ -260,9 +261,8 @@ function ResizeOptions() {
                 <span>{t('compression_options.resize_options.do_not_enlarge')}</span>
               </div>
               <Switch
-                isSelected={doNotEnlarge}
-                size="sm"
-                onValueChange={(enabled) => {
+                checked={doNotEnlarge}
+                onCheckedChange={(enabled) => {
                   setDoNotEnlarge(enabled);
                   if (enabled) {
                     if (widthPercentage > 100) {
@@ -281,10 +281,9 @@ function ResizeOptions() {
                 <span>{t('compression_options.resize_options.keep_aspect_ratio')}</span>
               </div>
               <Switch
-                isDisabled={keepAspectRatioDisabled}
-                isSelected={keepAspectRatio}
-                size="sm"
-                onValueChange={(enabled) => {
+                checked={keepAspectRatio}
+                disabled={keepAspectRatioDisabled}
+                onCheckedChange={(enabled) => {
                   setKeepAspectRatio(enabled);
                   if (enabled) {
                     setHeightPercentage(widthPercentage);
