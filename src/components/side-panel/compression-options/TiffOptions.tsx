@@ -1,7 +1,9 @@
-import { Select, SelectItem, Slider } from '@heroui/react';
+import { Select, SelectItem } from '@heroui/react';
+import { Slider } from '@/components/ui/slider';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import { TIFF_COMPRESSION_METHOD, TIFF_DEFLATE_LEVEL } from '@/types.ts';
+import { cn } from '@/lib/utils';
 
 function TiffOptions() {
   const { t } = useTranslation();
@@ -15,13 +17,12 @@ function TiffOptions() {
     { key: TIFF_COMPRESSION_METHOD.PACKBITS, label: t('compression_options.tiff.packbits') },
   ];
 
-  const handleChange = (value: number | number[]) => {
-    if (Array.isArray(value)) {
-      value = value[0];
-    }
-
-    setTiffOptions({ deflateLevel: value });
-  };
+  const deflateMarks = [
+    { value: TIFF_DEFLATE_LEVEL.FAST, label: t('compression_options.tiff.fast') },
+    { value: TIFF_DEFLATE_LEVEL.BALANCED, label: t('compression_options.tiff.balanced') },
+    { value: TIFF_DEFLATE_LEVEL.BEST, label: t('compression_options.tiff.best') },
+  ];
+  const deflateDisabled = tiffOptions.method !== TIFF_COMPRESSION_METHOD.DEFLATE;
 
   return (
     <div className="flex flex-col gap-2">
@@ -47,25 +48,31 @@ function TiffOptions() {
         ))}
       </Select>
 
-      <Slider
-        hideValue
-        classNames={{
-          label: 'text-sm',
-        }}
-        isDisabled={tiffOptions.method !== TIFF_COMPRESSION_METHOD.DEFLATE}
-        label={t('compression_options.tiff.deflate_level')}
-        marks={[
-          { value: TIFF_DEFLATE_LEVEL.FAST, label: t('compression_options.tiff.fast') },
-          { value: TIFF_DEFLATE_LEVEL.BALANCED, label: t('compression_options.tiff.balanced') },
-          { value: TIFF_DEFLATE_LEVEL.BEST, label: t('compression_options.tiff.best') },
-        ]}
-        maxValue={2}
-        minValue={0}
-        size="sm"
-        step={1}
-        value={tiffOptions.deflateLevel}
-        onChange={handleChange}
-      />
+      <div className="flex flex-col gap-1">
+        <span className="text-left text-sm">{t('compression_options.tiff.deflate_level')}</span>
+        <Slider
+          aria-label={t('compression_options.tiff.deflate_level')}
+          disabled={deflateDisabled}
+          max={2}
+          min={0}
+          step={1}
+          value={[tiffOptions.deflateLevel]}
+          onValueChange={([v]) => setTiffOptions({ deflateLevel: v })}
+        />
+        <div className="flex justify-between text-xs select-none">
+          {deflateMarks.map((mark) => (
+            <span
+              key={mark.value}
+              className={cn(
+                'text-muted-foreground',
+                !deflateDisabled && tiffOptions.deflateLevel >= mark.value && 'text-foreground',
+              )}
+            >
+              {mark.label}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

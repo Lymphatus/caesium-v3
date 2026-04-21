@@ -1,5 +1,7 @@
-import { NumberInput, Select, SelectItem, Slider } from '@heroui/react';
+import { NumberInput, Select, SelectItem } from '@heroui/react';
 import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import { CHROMA_SUBSAMPLING } from '@/types.ts';
@@ -17,43 +19,33 @@ function JpegOptions() {
     { key: CHROMA_SUBSAMPLING.CS411, label: '4:1:1' },
   ];
 
-  const handleChange = (value: number | number[]) => {
-    if (Array.isArray(value)) {
-      value = value[0];
-    }
-
-    setJpegOptions({ quality: value });
-  };
   return (
     <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <Label>{t('quality')}</Label>
+        <NumberInput
+          aria-label={t('quality')}
+          className="max-w-20"
+          classNames={{
+            inputWrapper: 'p-1 h-8 shadow-none',
+            input: 'text-right',
+          }}
+          isDisabled={jpegOptions.optimize}
+          maxValue={100}
+          minValue={0}
+          size="sm"
+          value={jpegOptions.quality}
+          variant="faded"
+          onValueChange={(value) => setJpegOptions({ quality: value })}
+        ></NumberInput>
+      </div>
       <Slider
-        classNames={{
-          label: 'text-sm',
-        }}
-        isDisabled={jpegOptions.optimize}
-        label={t('quality')}
-        maxValue={100}
-        minValue={0}
-        renderValue={() => (
-          <NumberInput
-            aria-label={t('quality')}
-            className="max-w-20"
-            classNames={{
-              inputWrapper: 'p-1 h-8 shadow-none',
-              input: 'text-right',
-            }}
-            maxValue={100}
-            minValue={0}
-            size="sm"
-            value={jpegOptions.quality}
-            variant="faded"
-            onValueChange={(value) => setJpegOptions({ quality: value })}
-          ></NumberInput>
-        )}
-        size="sm"
+        disabled={jpegOptions.optimize}
+        max={100}
+        min={0}
         step={1}
-        value={jpegOptions.quality}
-        onChange={handleChange}
+        value={[jpegOptions.quality]}
+        onValueChange={([value]) => setJpegOptions({ quality: value })}
       />
       <Select
         disallowEmptySelection

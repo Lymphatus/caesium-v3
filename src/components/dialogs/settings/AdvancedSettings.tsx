@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '@/stores/settings.store.ts';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION } from '@/types.ts';
-import { Select, SelectItem, Slider, Tooltip } from '@heroui/react';
+import { Select, SelectItem, Tooltip } from '@heroui/react';
+import { Slider } from '@/components/ui/slider';
 import { TriangleAlert } from 'lucide-react';
 
 function AdvancedSettings() {
@@ -107,27 +108,18 @@ function AdvancedSettings() {
               )}
             </span>
           </div>
-          <Slider
-            aria-label={t('settings.max_compression_threads')}
-            className="max-w-[250px]"
-            classNames={{
-              label: 'text-sm',
-            }}
-            color={threadsValue >= Math.ceil(maxThreads * 0.75) ? 'warning' : 'primary'}
-            endContent={threadsValue}
-            maxValue={maxThreads}
-            minValue={1}
-            size="sm"
-            step={1}
-            value={threadsValue}
-            onChange={(v) => {
-              if (Array.isArray(v)) {
-                v = v[0];
-              }
-
-              setThreadsCount(v);
-            }}
-          />
+          <div className="flex max-w-[250px] flex-1 items-center gap-2">
+            <Slider
+              aria-label={t('settings.max_compression_threads')}
+              max={maxThreads}
+              min={1}
+              step={1}
+              value={[threadsValue]}
+              variant={threadsValue >= Math.ceil(maxThreads * 0.75) ? 'warning' : 'default'}
+              onValueChange={([v]) => setThreadsCount(v)}
+            />
+            <span className="text-sm">{threadsValue}</span>
+          </div>
         </div>
         {/*<div className="flex w-full items-center justify-between gap-2">*/}
         {/*  <div className="flex flex-col">*/}

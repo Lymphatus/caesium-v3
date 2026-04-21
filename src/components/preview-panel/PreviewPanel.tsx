@@ -5,7 +5,8 @@ import {
   TransformWrapper,
   useTransformComponent,
 } from 'react-zoom-pan-pinch';
-import { Chip, Divider, NumberInput, Slider, Spinner } from '@heroui/react';
+import { Chip, Divider, NumberInput, Spinner } from '@heroui/react';
+import { Slider } from '@/components/ui/slider';
 import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
 import { RefObject, useCallback, useEffect, useRef } from 'react';
 import prettyBytes from 'pretty-bytes';
@@ -59,12 +60,12 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
         <Slider
           aria-label="zoom"
           className="w-[150px]"
-          maxValue={300}
-          minValue={1}
-          size="sm"
-          value={zoomLevel}
-          onChange={(value) => setZoomLevel(value, state)}
-        ></Slider>
+          max={300}
+          min={1}
+          value={[zoomLevel]}
+          onValueChange={([value]) => setZoomLevel(value, state)}
+        />
+
         <Button size="icon-xs" title={i18next.t('zoom_in')} variant="outline" onClick={() => zoomIn(0.1)}>
           <Plus></Plus>
         </Button>
