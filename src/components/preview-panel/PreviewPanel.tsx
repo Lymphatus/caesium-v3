@@ -5,7 +5,8 @@ import {
   TransformWrapper,
   useTransformComponent,
 } from 'react-zoom-pan-pinch';
-import { Chip, Divider, NumberInput, Spinner } from '@heroui/react';
+import { Chip, NumberInput, Spinner } from '@heroui/react';
+import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
 import { RefObject, useCallback, useEffect, useRef } from 'react';
@@ -150,7 +151,7 @@ function PreviewPanel() {
                           {visualizationMode === 'original' ? t('original') : t('compressed')}
                         </span>
                       </Chip>
-                      <Divider className="h-7" orientation="vertical"></Divider>
+                      <Separator orientation="vertical" />
                       <div className="text-sm">
                         <div>
                           {currentPreviewedCImage && visualizationMode === 'original' && (
@@ -192,7 +193,7 @@ function PreviewPanel() {
                   >
                     <ArrowLeftRight></ArrowLeftRight> <span>{t('swap')}</span>
                   </Button>
-                  <Divider className="h-7" orientation="vertical"></Divider>
+                  <Separator orientation="vertical" />
                   <Button
                     disabled={currentPreviewedCImage == null}
                     size="icon-xs"

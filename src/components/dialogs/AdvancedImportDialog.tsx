@@ -1,5 +1,4 @@
 import {
-  Divider,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -21,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from '@heroui/react';
+import { Separator } from '@/components/ui/separator';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
 import { FilePlus, FolderPlus, LoaderCircle, Plus, X } from 'lucide-react';
@@ -195,7 +195,7 @@ function AdvancedImportDialog() {
                 <X></X>
               </Button>
             </div>
-            <Divider></Divider>
+            <Separator />
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col text-sm">
                 <Label htmlFor="switch-scan-subfolders">{t('settings.scan_subfolders_on_import')}</Label>

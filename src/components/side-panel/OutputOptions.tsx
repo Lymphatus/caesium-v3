@@ -1,4 +1,5 @@
-import { Alert, Checkbox, Divider, Input, Select, SelectItem } from '@heroui/react';
+import { Alert, Checkbox, Input, Select, SelectItem } from '@heroui/react';
+import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
@@ -135,7 +136,7 @@ function OutputOptions() {
             ></Alert>
           )}
         </div>
-        <Divider></Divider>
+        <Separator />
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
             <Label htmlFor="switch-keep-folder-structure">
@@ -200,7 +201,7 @@ function OutputOptions() {
             ))}
           </Select>
         </div>
-        <Divider></Divider>
+        <Separator />
         <div className="flex flex-col gap-1">
           <Checkbox
             disableAnimation
@@ -242,7 +243,7 @@ function OutputOptions() {
             {t('file_dates.last_access')}
           </Checkbox>
         </div>
-        <Divider></Divider>
+        <Separator />
         <Select
           disallowEmptySelection
           aria-label={t('compression_options.output_options.output_format')}

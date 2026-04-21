@@ -1,5 +1,6 @@
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Divider, Link, Progress } from '@heroui/react';
+import { Link, Progress } from '@heroui/react';
+import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
 import { Info, Pause, Play, X } from 'lucide-react';
 import useAppStore from '@/stores/app.store.ts';
@@ -40,7 +41,7 @@ function Footer() {
           <span>{t('files_in_list', { total: totalFiles })}</span>
           {isInDevelopmentMode() && (
             <>
-              <Divider className="h-6" orientation="vertical"></Divider>
+              <Separator orientation="vertical" />
               <span>{baseFolder || '-'}</span>
             </>
           )}
@@ -83,7 +84,7 @@ function Footer() {
           >
             <X></X>
           </Button>
-          {isCompressing && appUpdate !== null && <Divider className="h-6" orientation="vertical"></Divider>}
+          {isCompressing && appUpdate !== null && <Separator orientation="vertical" />}
           {appUpdate !== null && (
             <>
               <Link

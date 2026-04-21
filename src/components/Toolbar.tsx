@@ -2,7 +2,8 @@ import { Ellipsis, FolderPlus, ImagePlus, Play, Settings } from 'lucide-react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
-import { Divider, Dropdown, DropdownTrigger } from '@heroui/react';
+import { Dropdown, DropdownTrigger } from '@heroui/react';
+import { Separator } from '@/components/ui/separator';
 import AppMenu from '@/components/AppMenu.tsx';
 import FileListFilter from '@/components/file-list/FileListFilter.tsx';
 import { Button } from './ui/button';
@@ -13,7 +14,7 @@ function Toolbar() {
   const { t } = useTranslation();
 
   return (
-    <div className="bg-content1 flex h-[40px] w-full items-center justify-between px-2">
+    <div className="bg-content1 flex h-[40px] w-full items-center justify-between p-2">
       <div className="flex h-full items-center gap-2">
         <Button
           disabled={isCompressing}
@@ -49,9 +50,7 @@ function Toolbar() {
           <Play></Play>
           {showLabelsInToolbar && <span>{t('actions.compress')}</span>}
         </Button>
-        <div className="h-full py-2">
-          <Divider orientation="vertical"></Divider>
-        </div>
+        <Separator orientation="vertical" />
         <Button size="sm" title={t('actions.settings')} variant="ghost" onClick={() => setSettingsDialogOpen(true)}>
           <Settings></Settings>
           {showLabelsInToolbar && <span>{t('actions.settings')}</span>}
