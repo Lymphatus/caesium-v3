@@ -1,5 +1,6 @@
 import { Link, Select, SelectItem } from '@heroui/react';
 import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { THEME } from '@/types.ts';
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '@/stores/settings.store.ts';
@@ -92,26 +93,38 @@ function GeneralSettings() {
           </Select>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
-              <span>{t('settings.prompt_on_exit')}</span>
+              <Label htmlFor="switch-prompt-before-exit">{t('settings.prompt_on_exit')}</Label>
             </div>
-            <Switch checked={promptBeforeExit} onCheckedChange={setPromptBeforeExit}></Switch>
+            <Switch
+              checked={promptBeforeExit}
+              id="switch-prompt-before-exit"
+              onCheckedChange={setPromptBeforeExit}
+            ></Switch>
           </div>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
-              <span>{t('settings.auto_check_updates')}</span>
+              <Label htmlFor="switch-check-updates-at-startup">{t('settings.auto_check_updates')}</Label>
             </div>
-            <Switch checked={checkUpdatesAtStartup} onCheckedChange={setCheckUpdatesAtStartup}></Switch>
+            <Switch
+              checked={checkUpdatesAtStartup}
+              id="switch-check-updates-at-startup"
+              onCheckedChange={setCheckUpdatesAtStartup}
+            ></Switch>
           </div>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
-              <span>{t('settings.skip_dialogs')}</span>
+              <Label htmlFor="switch-skip-messages-and-dialogs">{t('settings.skip_dialogs')}</Label>
               <span className="text-default-500 text-sm">{t('settings.skip_dialogs_help')}</span>
             </div>
-            <Switch checked={skipMessagesAndDialogs} onCheckedChange={setSkipMessagesAndDialogs}></Switch>
+            <Switch
+              checked={skipMessagesAndDialogs}
+              id="switch-skip-messages-and-dialogs"
+              onCheckedChange={setSkipMessagesAndDialogs}
+            ></Switch>
           </div>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
-              <span>{t('settings.allow_notifications')}</span>
+              <Label htmlFor="switch-allow-notifications">{t('settings.allow_notifications')}</Label>
               {isInDevelopmentMode() && (
                 <Link
                   className="text-primary cursor-pointer text-sm"
@@ -122,11 +135,15 @@ function GeneralSettings() {
                 </Link>
               )}
             </div>
-            <Switch checked={allowNotifications} onCheckedChange={setAllowNotifications}></Switch>
+            <Switch
+              checked={allowNotifications}
+              id="switch-allow-notifications"
+              onCheckedChange={setAllowNotifications}
+            ></Switch>
           </div>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
-              <span>{t('settings.send_usage_statistics')}</span>
+              <Label htmlFor="switch-send-usage-data">{t('settings.send_usage_statistics')}</Label>
               <Link
                 className="text-primary cursor-pointer text-sm"
                 underline="hover"
@@ -135,7 +152,7 @@ function GeneralSettings() {
                 {t('settings.send_usage_statistics_help')}
               </Link>
             </div>
-            <Switch checked={sendUsageData} onCheckedChange={setSendUsageData}></Switch>
+            <Switch checked={sendUsageData} id="switch-send-usage-data" onCheckedChange={setSendUsageData}></Switch>
           </div>
         </div>
       </div>

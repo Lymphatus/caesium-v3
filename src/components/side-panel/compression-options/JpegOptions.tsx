@@ -2,6 +2,7 @@ import { NumberInput, Select, SelectItem } from '@heroui/react';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import { CHROMA_SUBSAMPLING } from '@/types.ts';
@@ -70,28 +71,31 @@ function JpegOptions() {
       </Select>
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col">
-          <span>{t('compression_options.progressive')}</span>
+          <Label htmlFor="switch-jpeg-progressive">{t('compression_options.progressive')}</Label>
         </div>
         <Switch
           checked={jpegOptions.progressive}
+          id="switch-jpeg-progressive"
           onCheckedChange={(value) => setJpegOptions({ progressive: value })}
         ></Switch>
       </div>
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col">
-          <span>{t('compression_options.lossless')}</span>
+          <Label htmlFor="switch-jpeg-optimize">{t('compression_options.lossless')}</Label>
         </div>
         <Switch
           checked={jpegOptions.optimize}
+          id="switch-jpeg-optimize"
           onCheckedChange={(value) => setJpegOptions({ optimize: value })}
         ></Switch>
       </div>
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col">
-          <span>{t('compression_options.preserve_icc')}</span>
+          <Label htmlFor="switch-jpeg-preserve-icc">{t('compression_options.preserve_icc')}</Label>
         </div>
         <Switch
           checked={jpegOptions.preserveICC}
+          id="switch-jpeg-preserve-icc"
           onCheckedChange={(value) => setJpegOptions({ preserveICC: value })}
         ></Switch>
       </div>

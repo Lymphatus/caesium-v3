@@ -67,9 +67,13 @@ function PngOptions() {
       />
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col">
-          <span>{t('compression_options.lossless')}</span>
+          <Label htmlFor="switch-png-optimize">{t('compression_options.lossless')}</Label>
         </div>
-        <Switch checked={pngOptions.optimize} onCheckedChange={(value) => setPngOptions({ optimize: value })}></Switch>
+        <Switch
+          checked={pngOptions.optimize}
+          id="switch-png-optimize"
+          onCheckedChange={(value) => setPngOptions({ optimize: value })}
+        ></Switch>
       </div>
     </div>
   );

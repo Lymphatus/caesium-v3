@@ -1,5 +1,6 @@
 import { Accordion, AccordionItem, NumberInput, Select, SelectItem, SharedSelection, Tab, Tabs } from '@heroui/react';
 import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import JpegOptions from '@/components/side-panel/compression-options/JpegOptions.tsx';
 import useUIStore from '@/stores/ui.store.ts';
@@ -156,9 +157,9 @@ function CompressionOptions() {
 
               <div className="flex w-full items-center justify-between">
                 <div className="flex flex-col">
-                  <span>{t('compression_options.keep_metadata')}</span>
+                  <Label htmlFor="switch-keep-metadata">{t('compression_options.keep_metadata')}</Label>
                 </div>
-                <Switch checked={keepMetadata} onCheckedChange={setKeepMetadata}></Switch>
+                <Switch checked={keepMetadata} id="switch-keep-metadata" onCheckedChange={setKeepMetadata}></Switch>
               </div>
             </div>
           </Tab>

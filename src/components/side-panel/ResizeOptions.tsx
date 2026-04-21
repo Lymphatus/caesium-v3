@@ -1,6 +1,7 @@
 import { RESIZE_MODE } from '@/types.ts';
 import { NumberInput, Select, SelectItem } from '@heroui/react';
 import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 
@@ -258,10 +259,11 @@ function ResizeOptions() {
             )}
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col">
-                <span>{t('compression_options.resize_options.do_not_enlarge')}</span>
+                <Label htmlFor="switch-do-not-enlarge">{t('compression_options.resize_options.do_not_enlarge')}</Label>
               </div>
               <Switch
                 checked={doNotEnlarge}
+                id="switch-do-not-enlarge"
                 onCheckedChange={(enabled) => {
                   setDoNotEnlarge(enabled);
                   if (enabled) {
@@ -278,11 +280,14 @@ function ResizeOptions() {
 
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col">
-                <span>{t('compression_options.resize_options.keep_aspect_ratio')}</span>
+                <Label htmlFor="switch-keep-aspect-ratio">
+                  {t('compression_options.resize_options.keep_aspect_ratio')}
+                </Label>
               </div>
               <Switch
                 checked={keepAspectRatio}
                 disabled={keepAspectRatioDisabled}
+                id="switch-keep-aspect-ratio"
                 onCheckedChange={(enabled) => {
                   setKeepAspectRatio(enabled);
                   if (enabled) {

@@ -31,6 +31,7 @@ import { listen } from '@tauri-apps/api/event';
 import { invokeBackend } from '@/utils/invoker.tsx';
 import { Button } from '../ui/button';
 import { Switch } from '../ui/switch';
+import { Label } from '../ui/label';
 
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
@@ -197,17 +198,27 @@ function AdvancedImportDialog() {
             <Divider></Divider>
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col text-sm">
-                <span>{t('settings.scan_subfolders_on_import')}</span>
+                <Label htmlFor="switch-scan-subfolders">{t('settings.scan_subfolders_on_import')}</Label>
               </div>
-              <Switch checked={scanSubfolders} disabled={isValidationInProgress} onCheckedChange={setScanSubfolders} />
+              <Switch
+                checked={scanSubfolders}
+                disabled={isValidationInProgress}
+                id="switch-scan-subfolders"
+                onCheckedChange={setScanSubfolders}
+              />
             </div>
 
             <div className="flex w-full flex-col items-center justify-between gap-1">
               <div className="flex w-full items-center justify-between">
                 <div className="flex flex-col text-sm">
-                  <span>{t('advanced_import_dialog.size_filter')}</span>
+                  <Label htmlFor="switch-size-filter">{t('advanced_import_dialog.size_filter')}</Label>
                 </div>
-                <Switch checked={sizeFilter} disabled={isValidationInProgress} onCheckedChange={setSizeFilter} />
+                <Switch
+                  checked={sizeFilter}
+                  disabled={isValidationInProgress}
+                  id="switch-size-filter"
+                  onCheckedChange={setSizeFilter}
+                />
               </div>
               <NumberInput
                 hideStepper

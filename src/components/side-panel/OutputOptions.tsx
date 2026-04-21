@@ -1,5 +1,6 @@
 import { Alert, Checkbox, Divider, Input, Select, SelectItem } from '@heroui/react';
 import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -106,9 +107,15 @@ function OutputOptions() {
           />
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
-              <span>{t('compression_options.output_options.same_folder_as_input')}</span>
+              <Label htmlFor="switch-same-folder-as-input">
+                {t('compression_options.output_options.same_folder_as_input')}
+              </Label>
             </div>
-            <Switch checked={sameFolderAsInput} onCheckedChange={setSameFolderAsInput}></Switch>
+            <Switch
+              checked={sameFolderAsInput}
+              id="switch-same-folder-as-input"
+              onCheckedChange={setSameFolderAsInput}
+            ></Switch>
           </div>
           {sameFolderAsInput && suffix.length === 0 && (
             <Alert
@@ -131,24 +138,40 @@ function OutputOptions() {
         <Divider></Divider>
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
-            <span>{t('compression_options.output_options.keep_structure')}</span>
+            <Label htmlFor="switch-keep-folder-structure">
+              {t('compression_options.output_options.keep_structure')}
+            </Label>
           </div>
-          <Switch checked={keepFolderStructure} onCheckedChange={setKeepFolderStructure}></Switch>
+          <Switch
+            checked={keepFolderStructure}
+            id="switch-keep-folder-structure"
+            onCheckedChange={setKeepFolderStructure}
+          ></Switch>
         </div>
 
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
-            <span>{t('compression_options.output_options.skip_if_output_is_bigger')}</span>
+            <Label htmlFor="switch-skip-if-output-is-bigger">
+              {t('compression_options.output_options.skip_if_output_is_bigger')}
+            </Label>
           </div>
-          <Switch checked={skipIfOutputIsBigger} onCheckedChange={setSkipIfOutputIsBigger}></Switch>
+          <Switch
+            checked={skipIfOutputIsBigger}
+            id="switch-skip-if-output-is-bigger"
+            onCheckedChange={setSkipIfOutputIsBigger}
+          ></Switch>
         </div>
 
         <div className="flex w-full flex-col justify-between gap-1">
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
-              <span>{t('compression_options.output_options.move_original')}</span>
+              <Label htmlFor="switch-move-original-file">{t('compression_options.output_options.move_original')}</Label>
             </div>
-            <Switch checked={moveOriginalFile} onCheckedChange={setMoveOriginalFile}></Switch>
+            <Switch
+              checked={moveOriginalFile}
+              id="switch-move-original-file"
+              onCheckedChange={setMoveOriginalFile}
+            ></Switch>
           </div>
           <Select
             disallowEmptySelection

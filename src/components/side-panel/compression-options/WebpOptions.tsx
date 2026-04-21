@@ -40,10 +40,11 @@ function WebpOptions() {
       />
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col">
-          <span>{t('compression_options.lossless')}</span>
+          <Label htmlFor="switch-webp-lossless">{t('compression_options.lossless')}</Label>
         </div>
         <Switch
           checked={webpOptions.lossless}
+          id="switch-webp-lossless"
           onCheckedChange={(value) => setWebpOptions({ lossless: value })}
         ></Switch>
       </div>
