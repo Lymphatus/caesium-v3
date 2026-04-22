@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '@/stores/settings.store.ts';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION } from '@/types.ts';
-import { Select, SelectItem, Tooltip } from '@heroui/react';
+import { Select, SelectItem } from '@heroui/react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Slider } from '@/components/ui/slider';
 import { TriangleAlert } from 'lucide-react';
 
@@ -102,8 +103,11 @@ function AdvancedSettings() {
             <span className="flex items-center gap-1">
               {t('settings.max_compression_threads')}
               {threadsValue >= Math.ceil(maxThreads * 0.75) && (
-                <Tooltip color="warning" content={t('settings.max_compression_threads_warning')} delay={100}>
-                  <TriangleAlert className="min-size-5 text-warning max-h-5 min-h-5 cursor-help"></TriangleAlert>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TriangleAlert className="min-size-5 text-warning max-h-5 min-h-5 cursor-help"></TriangleAlert>
+                  </TooltipTrigger>
+                  <TooltipContent variant="warning">{t('settings.max_compression_threads_warning')}</TooltipContent>
                 </Tooltip>
               )}
             </span>
