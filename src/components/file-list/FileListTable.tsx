@@ -1,6 +1,7 @@
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Circle, CircleAlert, CircleCheck, CircleX, LoaderCircle, Search, X } from 'lucide-react';
+import { Circle, CircleAlert, CircleCheck, CircleX, Search, X } from 'lucide-react';
+import { Spinner } from '@/components/ui/spinner';
 import prettyBytes from 'pretty-bytes';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +31,7 @@ function StatusIcon({ cImage }: { cImage: CImage }) {
   } else if (cImage.status === IMAGE_STATUS.WARNING) {
     return <CircleAlert className="text-warning size-4" />;
   } else if (cImage.status === IMAGE_STATUS.COMPRESSING) {
-    return <LoaderCircle className="text-primary size-4 animate-spin" />;
+    return <Spinner className="text-primary size-4" />;
   }
   return <Circle className="text-primary size-4"></Circle>;
 }
@@ -57,7 +58,7 @@ function FileListTable() {
 
   const listLoader = (
     <div className="bg-background/70 absolute z-10 flex size-full items-center justify-center">
-      <LoaderCircle className="text-primary size-10 animate-spin" />
+      <Spinner className="text-primary size-10" />
     </div>
   );
   return (

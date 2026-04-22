@@ -5,8 +5,9 @@ import {
   TransformWrapper,
   useTransformComponent,
 } from 'react-zoom-pan-pinch';
-import { NumberInput, Spinner } from '@heroui/react';
+import { NumberInput } from '@heroui/react';
 import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
@@ -134,7 +135,8 @@ function PreviewPanel() {
                   style={{
                     top: 'calc(50% - 20px)',
                   }}
-                ></Spinner>
+                />
+
               )}
 
               <TransformComponent wrapperClass="!w-full relative !h-full">

@@ -23,7 +23,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
-import { FilePlus, FolderPlus, LoaderCircle, Plus, X } from 'lucide-react';
+import { FilePlus, FolderPlus, Plus, X } from 'lucide-react';
+import { Spinner } from '@/components/ui/spinner';
 import { useEffect, useState } from 'react';
 import { FILE_SIZE_FILTER_PATTERN, FILE_SIZE_UNIT } from '@/types.ts';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -326,7 +327,7 @@ function AdvancedImportDialog() {
             >
               {isValidationInProgress ? (
                 <>
-                  <LoaderCircle className="animate-spin"></LoaderCircle> {t('advanced_import_dialog.validating_dots')}
+                  <Spinner /> {t('advanced_import_dialog.validating_dots')}
                 </>
               ) : (
                 t('advanced_import_dialog.import')
