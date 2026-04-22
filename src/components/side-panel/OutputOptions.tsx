@@ -1,7 +1,8 @@
-import { Alert, Checkbox, Input, Select, SelectItem } from '@heroui/react';
+import { Alert, Input, Select, SelectItem } from '@heroui/react';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from 'react-i18next';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
 import { open } from '@tauri-apps/plugin-dialog';
@@ -203,45 +204,45 @@ function OutputOptions() {
         </div>
         <Separator />
         <div className="flex flex-col gap-1">
-          <Checkbox
-            disableAnimation
-            isIndeterminate={keepFileDates.length > 0 && keepFileDates.length < 3}
-            isSelected={keepFileDates.length === 3}
-            size="sm"
-            onValueChange={(v) =>
-              setKeepFileDates(v ? [FILE_DATE.CREATED, FILE_DATE.MODIFIED, FILE_DATE.ACCESSED] : [])
-            }
-          >
-            {t('compression_options.output_options.keep_file_dates')}
-          </Checkbox>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              checked={
+                keepFileDates.length === 3 ? true : keepFileDates.length > 0 ? 'indeterminate' : false
+              }
+              id="checkbox-keep-file-dates"
+              onCheckedChange={(v) =>
+                setKeepFileDates(v === true ? [FILE_DATE.CREATED, FILE_DATE.MODIFIED, FILE_DATE.ACCESSED] : [])
+              }
+            />
+            <Label htmlFor="checkbox-keep-file-dates">
+              {t('compression_options.output_options.keep_file_dates')}
+            </Label>
+          </div>
 
-          <Checkbox
-            disableAnimation
-            className="ml-4"
-            isSelected={keepFileDates.includes(FILE_DATE.CREATED)}
-            size="sm"
-            onValueChange={(v) => toggleFileDateCreation(FILE_DATE.CREATED, v)}
-          >
-            {t('file_dates.creation')}
-          </Checkbox>
-          <Checkbox
-            disableAnimation
-            className="ml-4"
-            isSelected={keepFileDates.includes(FILE_DATE.MODIFIED)}
-            size="sm"
-            onValueChange={(v) => toggleFileDateCreation(FILE_DATE.MODIFIED, v)}
-          >
-            {t('file_dates.last_modified')}
-          </Checkbox>
-          <Checkbox
-            disableAnimation
-            className="ml-4"
-            isSelected={keepFileDates.includes(FILE_DATE.ACCESSED)}
-            size="sm"
-            onValueChange={(v) => toggleFileDateCreation(FILE_DATE.ACCESSED, v)}
-          >
-            {t('file_dates.last_access')}
-          </Checkbox>
+          <div className="ml-4 flex items-center gap-2">
+            <Checkbox
+              checked={keepFileDates.includes(FILE_DATE.CREATED)}
+              id="checkbox-file-date-creation"
+              onCheckedChange={(v) => toggleFileDateCreation(FILE_DATE.CREATED, v === true)}
+            />
+            <Label htmlFor="checkbox-file-date-creation">{t('file_dates.creation')}</Label>
+          </div>
+          <div className="ml-4 flex items-center gap-2">
+            <Checkbox
+              checked={keepFileDates.includes(FILE_DATE.MODIFIED)}
+              id="checkbox-file-date-modified"
+              onCheckedChange={(v) => toggleFileDateCreation(FILE_DATE.MODIFIED, v === true)}
+            />
+            <Label htmlFor="checkbox-file-date-modified">{t('file_dates.last_modified')}</Label>
+          </div>
+          <div className="ml-4 flex items-center gap-2">
+            <Checkbox
+              checked={keepFileDates.includes(FILE_DATE.ACCESSED)}
+              id="checkbox-file-date-accessed"
+              onCheckedChange={(v) => toggleFileDateCreation(FILE_DATE.ACCESSED, v === true)}
+            />
+            <Label htmlFor="checkbox-file-date-accessed">{t('file_dates.last_access')}</Label>
+          </div>
         </div>
         <Separator />
         <Select
