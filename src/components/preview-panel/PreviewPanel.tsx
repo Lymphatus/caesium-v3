@@ -5,7 +5,8 @@ import {
   TransformWrapper,
   useTransformComponent,
 } from 'react-zoom-pan-pinch';
-import { Chip, NumberInput, Spinner } from '@heroui/react';
+import { NumberInput, Spinner } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
@@ -146,11 +147,11 @@ function PreviewPanel() {
                 <div className="flex items-center gap-2">
                   {currentPreviewedCImage != null && (
                     <>
-                      <Chip size="sm">
-                        <span className="font-bold uppercase">
+                      <Badge variant="secondary">
+                        <span className="uppercase">
                           {visualizationMode === 'original' ? t('original') : t('compressed')}
                         </span>
-                      </Chip>
+                      </Badge>
                       <Separator orientation="vertical" />
                       <div className="text-sm">
                         <div>
