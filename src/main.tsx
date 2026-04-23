@@ -6,6 +6,11 @@ import './assets/css/App.css';
 import './i18n';
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
 
+if (import.meta.env.DEV) {
+  const inspector = (await import('@/stores/inspector')).default;
+  (window as unknown as { stores: typeof inspector }).stores = inspector;
+}
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ErrorBoundary>
