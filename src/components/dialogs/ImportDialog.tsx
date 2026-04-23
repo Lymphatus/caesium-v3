@@ -1,4 +1,5 @@
-import { Modal, ModalBody, ModalContent, Progress } from '@heroui/react';
+import { Modal, ModalBody, ModalContent } from '@heroui/react';
+import { Progress } from '@/components/ui/progress';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useTranslation } from 'react-i18next';
 
@@ -21,15 +22,13 @@ function ImportDialog() {
     >
       <ModalContent>
         <ModalBody className="py-8">
-          <Progress
-            disableAnimation
-            showValueLabel
-            className="w-full"
-            isIndeterminate={!importProgress}
-            label={importProgress ? t('importing_dots') : t('collecting_dots')}
-            size="sm"
-            value={importProgress || 0}
-          ></Progress>
+          <div className="flex w-full flex-col gap-1">
+            <div className="flex justify-between text-xs">
+              <span>{importProgress ? t('importing_dots') : t('collecting_dots')}</span>
+              {!!importProgress && <span>{Math.round(importProgress)}%</span>}
+            </div>
+            <Progress value={importProgress || undefined} />
+          </div>
         </ModalBody>
       </ModalContent>
     </Modal>

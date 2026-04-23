@@ -1,5 +1,6 @@
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Link, Progress } from '@heroui/react';
+import { Link } from '@heroui/react';
+import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
 import { Info, Pause, Play, X } from 'lucide-react';
@@ -51,18 +52,18 @@ function Footer() {
         <div className="flex items-center justify-center gap-2">
           <div className="max-w-[50%] min-w-60">
             <Button className="w-full" variant="ghost" onClick={() => setCompressionProgressDialogMinimized(false)}>
-              <Progress
-                disableAnimation
-                showValueLabel
-                aria-label="compressionProgress"
-                className="w-full gap-1"
-                isIndeterminate={isCompressionCancelling}
-                label={setProgressLabel()}
-                maxValue={totalFiles}
-                minValue={0}
-                size="sm"
-                value={compressionProgress}
-              ></Progress>
+              <div className="flex w-full flex-col gap-1">
+                <div className="flex justify-between text-xs">
+                  <span>{setProgressLabel()}</span>
+                  {!isCompressionCancelling && totalFiles > 0 && (
+                    <span>{Math.round((compressionProgress / totalFiles) * 100)}%</span>
+                  )}
+                </div>
+                <Progress
+                  aria-label="compressionProgress"
+                  value={isCompressionCancelling ? undefined : (compressionProgress / totalFiles) * 100}
+                />
+              </div>
             </Button>
           </div>
 

@@ -1,4 +1,5 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@heroui/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import { Progress } from '@/components/ui/progress';
 import useUIStore from '@/stores/ui.store.ts';
 import { check, DownloadEvent, Update } from '@tauri-apps/plugin-updater';
 import { useEffect, useState } from 'react';
@@ -143,17 +144,23 @@ function CheckForUpdatesDialog() {
         <ModalHeader className="flex flex-col gap-1"></ModalHeader>
         <ModalBody>
           <div className="flex flex-col gap-4">
-            <Progress
-              disableAnimation
-              isIndeterminate={updateStatus === UpdateStatus.CHECKING}
-              label={message}
-              maxValue={bytesTotal}
-              minValue={0}
-              showValueLabel={updateStatus === UpdateStatus.DOWNLOADING}
-              size="sm"
-              value={bytesDownloaded}
-              valueLabel={<span>{Math.round((bytesDownloaded / bytesTotal) * 100) || 0}%</span>}
-            ></Progress>
+            <div className="flex flex-col gap-1">
+              <div className="flex justify-between text-xs">
+                {message}
+                {updateStatus === UpdateStatus.DOWNLOADING && (
+                  <span>{Math.round((bytesDownloaded / bytesTotal) * 100) || 0}%</span>
+                )}
+              </div>
+              <Progress
+                value={
+                  updateStatus === UpdateStatus.CHECKING
+                    ? undefined
+                    : bytesTotal > 0
+                      ? (bytesDownloaded / bytesTotal) * 100
+                      : 0
+                }
+              />
+            </div>
             <span className="text-danger text-sm" hidden={!error}>
               {error}
             </span>
