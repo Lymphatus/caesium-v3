@@ -1,5 +1,4 @@
 import useFileListStore from '@/stores/file-list.store.ts';
-import { Link } from '@heroui/react';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
@@ -87,19 +86,10 @@ function Footer() {
           </Button>
           {isCompressing && appUpdate !== null && <Separator orientation="vertical" />}
           {appUpdate !== null && (
-            <>
-              <Link
-                isBlock
-                className="flex items-center gap-1"
-                color="secondary"
-                href="#"
-                size="sm"
-                onPress={() => setCheckForUpdatesDialogOpen(true)}
-              >
-                <Info className="size-4"></Info>
-                {t('update_process.new_update_available_short')}
-              </Link>
-            </>
+            <Button className="gap-1" size="sm" variant="link" onClick={() => setCheckForUpdatesDialogOpen(true)}>
+              <Info></Info>
+              {t('update_process.new_update_available_short')}
+            </Button>
           )}
         </div>
       )}

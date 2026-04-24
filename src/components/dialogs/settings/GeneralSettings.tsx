@@ -1,6 +1,7 @@
-import { Link, Select, SelectItem } from '@heroui/react';
+import { Select, SelectItem } from '@heroui/react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { THEME } from '@/types.ts';
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '@/stores/settings.store.ts';
@@ -126,13 +127,13 @@ function GeneralSettings() {
             <div className="flex flex-col">
               <Label htmlFor="switch-allow-notifications">{t('settings.allow_notifications')}</Label>
               {isInDevelopmentMode() && (
-                <Link
-                  className="text-primary cursor-pointer text-sm"
-                  underline="hover"
-                  onPress={() => showNotification({ title: 'Test notification' })}
+                <Button
+                  className="h-auto justify-start p-0 text-sm"
+                  variant="link"
+                  onClick={() => showNotification({ title: 'Test notification' })}
                 >
                   Send test notification
-                </Link>
+                </Button>
               )}
             </div>
             <Switch
@@ -144,13 +145,13 @@ function GeneralSettings() {
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
               <Label htmlFor="switch-send-usage-data">{t('settings.send_usage_statistics')}</Label>
-              <Link
-                className="text-primary cursor-pointer text-sm"
-                underline="hover"
-                onPress={() => setUsageStatsDialogOpen(true)}
+              <Button
+                className="h-auto justify-start p-0 text-sm"
+                variant="link"
+                onClick={() => setUsageStatsDialogOpen(true)}
               >
                 {t('settings.send_usage_statistics_help')}
-              </Link>
+              </Button>
             </div>
             <Switch checked={sendUsageData} id="switch-send-usage-data" onCheckedChange={setSendUsageData}></Switch>
           </div>
