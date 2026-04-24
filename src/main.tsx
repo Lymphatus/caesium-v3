@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ErrorBoundary>
       <HeroUIProvider>
-        <Toaster position="bottom-right" />
+        <Toaster richColors position="bottom-right" />
         <main className="dark:bg-background bg-default-200 text-foreground h-screen w-screen text-center">
           <App />
         </main>
