@@ -19,7 +19,7 @@ function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxP
         data-slot="checkbox-indicator"
       >
         <CheckIcon className="size-3.5 group-data-[state=indeterminate]:hidden" />
-        <MinusIcon className="size-3.5 hidden group-data-[state=indeterminate]:block" />
+        <MinusIcon className="hidden size-3.5 group-data-[state=indeterminate]:block" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );

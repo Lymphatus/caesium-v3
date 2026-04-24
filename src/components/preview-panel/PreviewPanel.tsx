@@ -136,7 +136,6 @@ function PreviewPanel() {
                     top: 'calc(50% - 20px)',
                   }}
                 />
-
               )}
 
               <TransformComponent wrapperClass="!w-full relative !h-full">
