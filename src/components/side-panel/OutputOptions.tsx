@@ -1,4 +1,5 @@
-import { Alert, Input, Select, SelectItem } from '@heroui/react';
+import { Input, Select, SelectItem } from '@heroui/react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -58,21 +59,10 @@ function OutputOptions() {
   ];
 
   const moveOriginalFileWarning = moveOriginalFileType === MOVE_ORIGINAL_FILE.DELETE && (
-    <Alert
-      hideIcon
-      hideIconWrapper
-      className="text-left"
-      classNames={{
-        base: 'p-2',
-        description: 'text-xs',
-        mainWrapper: 'min-h-5',
-      }}
-      color="warning"
-      description={t('move_original_files_modes.delete_warning')}
-      radius="sm"
-      startContent={<TriangleAlert className="max-h-5 min-h-5 max-w-5 min-w-5"></TriangleAlert>}
-      variant="flat"
-    ></Alert>
+    <Alert variant="warning">
+      <TriangleAlert />
+      <AlertDescription>{t('move_original_files_modes.delete_warning')}</AlertDescription>
+    </Alert>
   );
 
   return (
@@ -120,21 +110,10 @@ function OutputOptions() {
             ></Switch>
           </div>
           {sameFolderAsInput && suffix.length === 0 && (
-            <Alert
-              hideIcon
-              hideIconWrapper
-              className="text-left"
-              classNames={{
-                base: 'p-2',
-                description: 'text-xs',
-                mainWrapper: 'min-h-5',
-              }}
-              color="warning"
-              description={t('compression_options.output_options.same_folder_as_input_warning')}
-              radius="sm"
-              startContent={<TriangleAlert className="max-h-5 min-h-5 max-w-5 min-w-5"></TriangleAlert>}
-              variant="flat"
-            ></Alert>
+            <Alert variant="warning">
+              <TriangleAlert />
+              <AlertDescription>{t('compression_options.output_options.same_folder_as_input_warning')}</AlertDescription>
+            </Alert>
           )}
         </div>
         <Separator />
