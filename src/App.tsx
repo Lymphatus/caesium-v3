@@ -6,7 +6,7 @@ import CenterContainer from '@/components/CenterContainer.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { listen, TauriEvent, UnlistenFn } from '@tauri-apps/api/event';
 import { CImage, CompressionFinished, FileListPayload, THEME } from '@/types.ts';
-import { addToast } from '@heroui/react';
+import { toast } from 'sonner';
 import SettingsDialog from '@/components/dialogs/settings/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
 import AboutDialog from './components/dialogs/AboutDialog';
@@ -93,10 +93,8 @@ function App() {
       'fileImporter:importFinished',
       (event) => {
         setIsImporting(false);
-        addToast({
-          title: 'Import finished',
+        toast.success('Import finished', {
           description: `Imported ${event.payload.new_list_length - event.payload.original_list_length} files`,
-          color: 'success',
         });
       },
     );
@@ -139,9 +137,7 @@ function App() {
           savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
         }),
       });
-      addToast({
-        title: t('compression_report.compression_finished'),
-        hideIcon: true,
+      toast.success(t('compression_report.compression_finished'), {
         description: (
           <div className="flex flex-col gap-1">
             <span>
@@ -165,8 +161,7 @@ function App() {
             <span>{t('compression_report.total_time', { totalTime: event.payload.total_time })} ms</span>
           </div>
         ),
-        timeout: 0,
-        color: 'success',
+        duration: 5000,
       });
       void saveCompressionReport(event.payload);
     });
