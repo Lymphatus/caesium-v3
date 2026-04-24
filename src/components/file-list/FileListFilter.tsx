@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react';
-import { Input } from '@heroui/react';
+import { Input } from '@/components/ui/input';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useDebounce } from '@/hooks/useDebounce.ts';
 import { useTranslation } from 'react-i18next';
@@ -10,19 +10,14 @@ const FileListFilter = () => {
   const debouncedFilterList = useDebounce((v: string) => filterList(v), 500);
 
   return (
-    <div>
+    <div className="relative">
+      <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
       <Input
-        isClearable
-        classNames={{
-          inputWrapper: 'shadow-none',
-        }}
-        label=""
+        className="pl-9"
         placeholder={t('file_list.search_help')}
         size="sm"
-        startContent={<Search className="size-4" />}
         type="text"
-        variant="faded"
-        onValueChange={(v) => debouncedFilterList(v)}
+        onChange={(e) => debouncedFilterList(e.target.value)}
       />
     </div>
   );
