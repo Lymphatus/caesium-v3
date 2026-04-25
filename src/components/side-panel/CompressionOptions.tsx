@@ -1,4 +1,5 @@
-import { Accordion, AccordionItem, Select, SelectItem, SharedSelection, Tab, Tabs } from '@heroui/react';
+import { Select, SelectItem, SharedSelection, Tab, Tabs } from '@heroui/react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -9,7 +10,6 @@ import PngOptions from '@/components/side-panel/compression-options/PngOptions.t
 import WebpOptions from '@/components/side-panel/compression-options/WebpOptions.tsx';
 import TiffOptions from '@/components/side-panel/compression-options/TiffOptions.tsx';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
-import type { Selection } from '@react-types/shared';
 import GifOptions from '@/components/side-panel/compression-options/GifOptions.tsx';
 import { Key } from 'react';
 import { COMPRESSION_MODE, FILE_SIZE_UNIT } from '@/types.ts';
@@ -49,15 +49,12 @@ function CompressionOptions() {
   } = useCompressionOptionsStore();
 
   const handleChange = (value: SharedSelection) => {
-    let actualValue = 1024;
-    if (value instanceof Selection) {
-      setMaxSizeUnit(actualValue);
-
+    if (value === 'all') {
+      setMaxSizeUnit(1024);
       return;
     }
 
-    actualValue = parseInt(value.currentKey || '1024');
-    setMaxSizeUnit(actualValue);
+    setMaxSizeUnit(parseInt(value.currentKey || '1024'));
   };
 
   const maxSizeUnits = [
@@ -88,22 +85,12 @@ function CompressionOptions() {
     defaultAccordionOpen.push(ACCORDION_KEY.TIFF);
   }
 
-  const handleAccordionOpen = (keys: Selection) => {
-    if (keys === 'all') {
-      setJpegAccordionOpen(true);
-      setPngAccordionOpen(true);
-      setGifAccordionOpen(true);
-      setWebpAccordionOpen(true);
-      setTiffAccordionOpen(true);
-
-      return;
-    }
-
-    setJpegAccordionOpen(keys.has(ACCORDION_KEY.JPEG));
-    setPngAccordionOpen(keys.has(ACCORDION_KEY.PNG));
-    setGifAccordionOpen(keys.has(ACCORDION_KEY.GIF));
-    setWebpAccordionOpen(keys.has(ACCORDION_KEY.WEBP));
-    setTiffAccordionOpen(keys.has(ACCORDION_KEY.TIFF));
+  const handleAccordionOpen = (values: string[]) => {
+    setJpegAccordionOpen(values.includes(ACCORDION_KEY.JPEG));
+    setPngAccordionOpen(values.includes(ACCORDION_KEY.PNG));
+    setGifAccordionOpen(values.includes(ACCORDION_KEY.GIF));
+    setWebpAccordionOpen(values.includes(ACCORDION_KEY.WEBP));
+    setTiffAccordionOpen(values.includes(ACCORDION_KEY.TIFF));
   };
 
   const handleCompressionModeChange = (key: Key) => {
@@ -126,33 +113,36 @@ function CompressionOptions() {
         >
           <Tab key="quality" title={t('quality')}>
             <div className="flex flex-col gap-2">
-              <Accordion
-                isCompact
-                keepContentMounted
-                className="px-0!"
-                defaultSelectedKeys={defaultAccordionOpen}
-                itemClasses={{
-                  base: 'shadow-none bg-content2',
-                  content: 'py-2',
-                }}
-                selectionMode="multiple"
-                variant="splitted"
-                onSelectionChange={handleAccordionOpen}
-              >
-                <AccordionItem key={ACCORDION_KEY.JPEG} aria-label={t('formats.jpeg')} title={t('formats.jpeg')}>
-                  <JpegOptions></JpegOptions>
+              <Accordion defaultValue={defaultAccordionOpen} type="multiple" onValueChange={handleAccordionOpen}>
+                <AccordionItem value={ACCORDION_KEY.JPEG}>
+                  <AccordionTrigger>{t('formats.jpeg')}</AccordionTrigger>
+                  <AccordionContent>
+                    <JpegOptions />
+                  </AccordionContent>
                 </AccordionItem>
-                <AccordionItem key={ACCORDION_KEY.PNG} aria-label={t('formats.png')} title={t('formats.png')}>
-                  <PngOptions></PngOptions>
+                <AccordionItem value={ACCORDION_KEY.PNG}>
+                  <AccordionTrigger>{t('formats.png')}</AccordionTrigger>
+                  <AccordionContent>
+                    <PngOptions />
+                  </AccordionContent>
                 </AccordionItem>
-                <AccordionItem key={ACCORDION_KEY.GIF} aria-label={t('formats.gif')} title={t('formats.gif')}>
-                  <GifOptions></GifOptions>
+                <AccordionItem value={ACCORDION_KEY.GIF}>
+                  <AccordionTrigger>{t('formats.gif')}</AccordionTrigger>
+                  <AccordionContent>
+                    <GifOptions />
+                  </AccordionContent>
                 </AccordionItem>
-                <AccordionItem key={ACCORDION_KEY.WEBP} aria-label={t('formats.webp')} title={t('formats.webp')}>
-                  <WebpOptions></WebpOptions>
+                <AccordionItem value={ACCORDION_KEY.WEBP}>
+                  <AccordionTrigger>{t('formats.webp')}</AccordionTrigger>
+                  <AccordionContent>
+                    <WebpOptions />
+                  </AccordionContent>
                 </AccordionItem>
-                <AccordionItem key={ACCORDION_KEY.TIFF} aria-label={t('formats.tiff')} title={t('formats.tiff')}>
-                  <TiffOptions></TiffOptions>
+                <AccordionItem value={ACCORDION_KEY.TIFF}>
+                  <AccordionTrigger>{t('formats.tiff')}</AccordionTrigger>
+                  <AccordionContent>
+                    <TiffOptions />
+                  </AccordionContent>
                 </AccordionItem>
               </Accordion>
 

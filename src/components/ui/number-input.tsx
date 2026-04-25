@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Button } from './button';
