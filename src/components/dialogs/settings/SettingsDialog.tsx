@@ -19,6 +19,7 @@ function SettingsDialog() {
       classNames={{
         backdrop: 'bg-content3/50',
       }}
+      isDismissable={false}
       isOpen={settingsDialogOpen}
       shadow="none"
       size="3xl"

@@ -1,4 +1,4 @@
-import { Select, SelectItem } from '@heroui/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -44,54 +44,43 @@ function GeneralSettings() {
     <>
       <div className="h-full">
         <div className="flex size-full flex-col gap-4">
-          <Select
-            disallowEmptySelection
-            aria-label={t('settings.theme')}
-            classNames={{
-              base: 'justify-between',
-              mainWrapper: 'max-w-[250px]',
-              label: 'text-md',
-              trigger: 'shadow-none',
-              popoverContent: 'bg-content2 border-2 border-content1',
-            }}
-            label={t('settings.theme')}
-            labelPlacement="outside-left"
-            selectedKeys={[theme]}
-            selectionMode="single"
-            size="sm"
-            variant="faded"
-            onSelectionChange={(value) => setTheme((value.currentKey as THEME) || THEME.SYSTEM)}
-          >
-            {themes.map((t) => (
-              <SelectItem key={t.key}>{t.label}</SelectItem>
-            ))}
-          </Select>
-          <Select
-            disallowEmptySelection
-            aria-label={t('settings.language')}
-            classNames={{
-              base: 'justify-between',
-              mainWrapper: 'max-w-[250px]',
-              label: 'text-md',
-              trigger: 'shadow-none',
-              popoverContent: 'bg-content2 border-2 border-content1',
-            }}
-            label={t('settings.language')}
-            labelPlacement="outside-left"
-            selectedKeys={[language]}
-            selectionMode="single"
-            size="sm"
-            variant="faded"
-            onSelectionChange={async (value) => {
-              await i18n.changeLanguage(value.currentKey as string, () => {
-                setLanguage((value.currentKey as string) || 'en-US');
-              });
-            }}
-          >
-            {languages.map((t) => (
-              <SelectItem key={t.key}>{t.label}</SelectItem>
-            ))}
-          </Select>
+          <div className="flex w-full items-center justify-between">
+            <Label>{t('settings.theme')}</Label>
+            <Select value={theme} onValueChange={(value) => setTheme(value as THEME)}>
+              <SelectTrigger aria-label={t('settings.theme')} className="max-w-[250px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {themes.map((t) => (
+                  <SelectItem key={t.key} value={t.key}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex w-full items-center justify-between">
+            <Label>{t('settings.language')}</Label>
+            <Select
+              value={language}
+              onValueChange={async (value) => {
+                await i18n.changeLanguage(value, () => {
+                  setLanguage(value || 'en-US');
+                });
+              }}
+            >
+              <SelectTrigger aria-label={t('settings.language')} className="max-w-[250px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {languages.map((t) => (
+                  <SelectItem key={t.key} value={t.key}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
               <Label htmlFor="switch-prompt-before-exit">{t('settings.prompt_on_exit')}</Label>

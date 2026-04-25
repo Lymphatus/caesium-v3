@@ -1,5 +1,6 @@
-import { Select, SelectItem } from '@heroui/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import { TIFF_COMPRESSION_METHOD, TIFF_DEFLATE_LEVEL } from '@/types.ts';
@@ -26,27 +27,24 @@ function TiffOptions() {
 
   return (
     <div className="flex flex-col gap-2">
-      <Select
-        disallowEmptySelection
-        classNames={{
-          label: 'text-md',
-          trigger: 'shadow-none',
-          popoverContent: 'bg-content2 border-2 border-content1',
-        }}
-        label={t('compression_options.tiff.compression_method')}
-        labelPlacement="outside"
-        selectedKeys={[tiffOptions.method]}
-        selectionMode="single"
-        size="sm"
-        variant="faded"
-        onSelectionChange={(value) =>
-          setTiffOptions({ method: (value.currentKey as TIFF_COMPRESSION_METHOD) || TIFF_COMPRESSION_METHOD.DEFLATE })
-        }
-      >
-        {compressionMethods.map((cm) => (
-          <SelectItem key={cm.key}>{cm.label}</SelectItem>
-        ))}
-      </Select>
+      <div className="flex flex-col gap-1">
+        <Label>{t('compression_options.tiff.compression_method')}</Label>
+        <Select
+          value={tiffOptions.method}
+          onValueChange={(value) => setTiffOptions({ method: value as TIFF_COMPRESSION_METHOD })}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {compressionMethods.map((cm) => (
+              <SelectItem key={cm.key} value={cm.key}>
+                {cm.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       <div className="flex flex-col gap-1">
         <span className="text-left text-sm">{t('compression_options.tiff.deflate_level')}</span>

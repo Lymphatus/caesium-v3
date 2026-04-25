@@ -1,4 +1,4 @@
-import { Select, SelectItem } from '@heroui/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
@@ -44,27 +44,24 @@ function JpegOptions() {
         value={[jpegOptions.quality]}
         onValueChange={([value]) => setJpegOptions({ quality: value })}
       />
-      <Select
-        disallowEmptySelection
-        classNames={{
-          label: 'text-md',
-          trigger: 'shadow-none',
-          popoverContent: 'bg-content2 border-2 border-content1',
-        }}
-        label={t('compression_options.chroma_subsampling')}
-        labelPlacement="outside"
-        selectedKeys={[jpegOptions.chromaSubsampling]}
-        selectionMode="single"
-        size="sm"
-        variant="faded"
-        onSelectionChange={(value) =>
-          setJpegOptions({ chromaSubsampling: (value.currentKey as CHROMA_SUBSAMPLING) || CHROMA_SUBSAMPLING.AUTO })
-        }
-      >
-        {chromaSubsamplings.map((cs) => (
-          <SelectItem key={cs.key}>{cs.label}</SelectItem>
-        ))}
-      </Select>
+      <div className="flex w-full flex-col gap-1">
+        <Label>{t('compression_options.chroma_subsampling')}</Label>
+        <Select
+          value={jpegOptions.chromaSubsampling}
+          onValueChange={(value) => setJpegOptions({ chromaSubsampling: value as CHROMA_SUBSAMPLING })}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {chromaSubsamplings.map((cs) => (
+              <SelectItem key={cs.key} value={cs.key}>
+                {cs.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col">
           <Label htmlFor="switch-jpeg-progressive">{t('compression_options.progressive')}</Label>

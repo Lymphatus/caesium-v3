@@ -1,4 +1,4 @@
-import { Select, SelectItem, SharedSelection } from '@heroui/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { NumberInput } from '@/components/ui/number-input';
@@ -48,13 +48,8 @@ function CompressionOptions() {
     compressionMode,
   } = useCompressionOptionsStore();
 
-  const handleChange = (value: SharedSelection) => {
-    if (value === 'all') {
-      setMaxSizeUnit(1024);
-      return;
-    }
-
-    setMaxSizeUnit(parseInt(value.currentKey || '1024'));
+  const handleChange = (value: string) => {
+    setMaxSizeUnit(parseInt(value || '1024'));
   };
 
   const maxSizeUnits = [
@@ -171,25 +166,17 @@ function CompressionOptions() {
                   value={maxSize}
                   onValueChange={(v) => setMaxSize(v)}
                 />
-                <Select
-                  disallowEmptySelection
-                  aria-label={'units'}
-                  className="max-w-[100px]"
-                  classNames={{
-                    label: 'hidden',
-                    trigger: 'shadow-none',
-                    popoverContent: 'bg-content2 border-2 border-content1',
-                  }}
-                  label={''}
-                  selectedKeys={[maxSizeUnit.toString()]}
-                  selectionMode="single"
-                  size="sm"
-                  variant="faded"
-                  onSelectionChange={(v) => handleChange(v)}
-                >
-                  {maxSizeUnits.map((unit) => (
-                    <SelectItem key={unit.key}>{unit.label}</SelectItem>
-                  ))}
+                <Select value={maxSizeUnit.toString()} onValueChange={handleChange}>
+                  <SelectTrigger aria-label="units" className="max-w-[100px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {maxSizeUnits.map((unit) => (
+                      <SelectItem key={unit.key} value={unit.key.toString()}>
+                        {unit.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
             </div>

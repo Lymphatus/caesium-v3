@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '@/stores/settings.store.ts';
 import { DIRECT_IMPORT_ACTION, POST_COMPRESSION_ACTION } from '@/types.ts';
-import { Select, SelectItem } from '@heroui/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 import { TriangleAlert } from 'lucide-react';
 
 function AdvancedSettings() {
@@ -40,64 +41,48 @@ function AdvancedSettings() {
   return (
     <div className="h-full">
       <div className="flex size-full flex-col gap-4">
-        <Select
-          disallowEmptySelection
-          aria-label={t('settings.direct_import_action')}
-          classNames={{
-            base: 'justify-between',
-            mainWrapper: 'max-w-[250px]',
-            label: 'text-md',
-            trigger: 'shadow-none',
-            popoverContent: 'bg-content2 border-2 border-content1',
-          }}
-          label={
-            <div className="flex flex-col">
-              <span>{t('settings.direct_import_action')}</span>
-              <span className="text-default-500 text-sm">{t('settings.direct_import_action_help')}</span>
-            </div>
-          }
-          labelPlacement="outside-left"
-          selectedKeys={[directImportAction]}
-          selectionMode="single"
-          size="sm"
-          variant="faded"
-          onSelectionChange={(value) =>
-            setDirectImportAction((value.currentKey as DIRECT_IMPORT_ACTION) || DIRECT_IMPORT_ACTION.IMPORT)
-          }
-        >
-          {directImportActions.map((t) => (
-            <SelectItem key={t.key}>{t.label}</SelectItem>
-          ))}
-        </Select>
-        <Select
-          disallowEmptySelection
-          aria-label={t('settings.post_compression_action')}
-          classNames={{
-            base: 'justify-between',
-            mainWrapper: 'max-w-[250px]',
-            label: 'text-md',
-            trigger: 'shadow-none',
-            popoverContent: 'bg-content2 border-2 border-content1',
-          }}
-          label={
-            <div className="flex flex-col">
-              <span>{t('settings.post_compression_action')}</span>
-              <span className="text-default-500 text-sm">{t('settings.post_compression_action_help')}</span>
-            </div>
-          }
-          labelPlacement="outside-left"
-          selectedKeys={[postCompressionAction]}
-          selectionMode="single"
-          size="sm"
-          variant="faded"
-          onSelectionChange={(value) =>
-            setPostCompressionAction((value.currentKey as POST_COMPRESSION_ACTION) || POST_COMPRESSION_ACTION.NONE)
-          }
-        >
-          {postCompressionActions.map((t) => (
-            <SelectItem key={t.key}>{t.label}</SelectItem>
-          ))}
-        </Select>
+        <div className="flex w-full items-center justify-between gap-2">
+          <div className="flex flex-col">
+            <Label>{t('settings.direct_import_action')}</Label>
+            <span className="text-muted-foreground text-sm">{t('settings.direct_import_action_help')}</span>
+          </div>
+          <Select
+            value={directImportAction}
+            onValueChange={(value) => setDirectImportAction(value as DIRECT_IMPORT_ACTION)}
+          >
+            <SelectTrigger aria-label={t('settings.direct_import_action')} className="max-w-[250px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {directImportActions.map((t) => (
+                <SelectItem key={t.key} value={t.key}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex w-full items-center justify-between gap-2">
+          <div className="flex flex-col">
+            <Label>{t('settings.post_compression_action')}</Label>
+            <span className="text-muted-foreground text-sm">{t('settings.post_compression_action_help')}</span>
+          </div>
+          <Select
+            value={postCompressionAction}
+            onValueChange={(value) => setPostCompressionAction(value as POST_COMPRESSION_ACTION)}
+          >
+            <SelectTrigger aria-label={t('settings.post_compression_action')} className="max-w-[250px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {postCompressionActions.map((t) => (
+                <SelectItem key={t.key} value={t.key}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex w-full items-center justify-between gap-2">
           <div className="flex flex-col">
             <span className="flex items-center gap-1">

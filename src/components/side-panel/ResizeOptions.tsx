@@ -1,5 +1,5 @@
 import { RESIZE_MODE } from '@/types.ts';
-import { Select, SelectItem } from '@heroui/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -90,25 +90,21 @@ function ResizeOptions() {
   return (
     <div className="size-full overflow-auto">
       <div className="flex flex-col gap-2 text-sm">
-        <Select
-          disallowEmptySelection
-          classNames={{
-            label: 'text-md',
-            trigger: 'shadow-none',
-            popoverContent: 'bg-content2 border-2 border-content1',
-          }}
-          label={t('compression_options.resize_options.resize_mode')}
-          labelPlacement="outside"
-          selectedKeys={[resizeMode]}
-          selectionMode="single"
-          size="sm"
-          variant="faded"
-          onSelectionChange={(value) => setResizeMode((value.currentKey as RESIZE_MODE) || RESIZE_MODE.NONE)}
-        >
-          {resizeModes.map((r) => (
-            <SelectItem key={r.key}>{r.label}</SelectItem>
-          ))}
-        </Select>
+        <div className="flex flex-col gap-1">
+          <Label>{t('compression_options.resize_options.resize_mode')}</Label>
+          <Select value={resizeMode} onValueChange={(value) => setResizeMode(value as RESIZE_MODE)}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {resizeModes.map((r) => (
+                <SelectItem key={r.key} value={r.key}>
+                  {r.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         {showResizeControls && (
           <>
             {showPixelDimensionsInputs && (

@@ -1,4 +1,4 @@
-import { Select, SelectItem } from '@heroui/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -152,31 +152,22 @@ function OutputOptions() {
             ></Switch>
           </div>
           <Select
-            disallowEmptySelection
-            aria-label={t('compression_options.output_options.move_original')}
-            classNames={{
-              label: 'text-md',
-              trigger: 'shadow-none',
-              description: 'text-left',
-              popoverContent: 'bg-content2 border-2 border-content1',
-              helperWrapper: 'px-0',
-            }}
-            description={moveOriginalFileWarning}
-            isDisabled={!moveOriginalFile}
-            label={''}
-            labelPlacement="outside"
-            selectedKeys={[moveOriginalFileType]}
-            selectionMode="single"
-            size="sm"
-            variant="faded"
-            onSelectionChange={(value) =>
-              setMoveOriginalFileType((value.currentKey as MOVE_ORIGINAL_FILE) || MOVE_ORIGINAL_FILE.TRASH)
-            }
+            disabled={!moveOriginalFile}
+            value={moveOriginalFileType}
+            onValueChange={(value) => setMoveOriginalFileType(value as MOVE_ORIGINAL_FILE)}
           >
-            {moveOriginalFileTypes.map((t) => (
-              <SelectItem key={t.key}>{t.label}</SelectItem>
-            ))}
+            <SelectTrigger aria-label={t('compression_options.output_options.move_original')} className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {moveOriginalFileTypes.map((t) => (
+                <SelectItem key={t.key} value={t.key}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
+          {moveOriginalFileWarning}
         </div>
         <Separator />
         <div className="flex flex-col gap-1">
@@ -217,26 +208,21 @@ function OutputOptions() {
           </div>
         </div>
         <Separator />
-        <Select
-          disallowEmptySelection
-          aria-label={t('compression_options.output_options.output_format')}
-          classNames={{
-            label: 'text-md',
-            trigger: 'shadow-none',
-            popoverContent: 'bg-content2 border-2 border-content1',
-          }}
-          label={t('compression_options.output_options.output_format')}
-          labelPlacement="outside"
-          selectedKeys={[outputFormat]}
-          selectionMode="single"
-          size="sm"
-          variant="faded"
-          onSelectionChange={(value) => setOutputFormat((value.currentKey as OUTPUT_FORMAT) || OUTPUT_FORMAT.ORIGINAL)}
-        >
-          {outputFormats.map((t) => (
-            <SelectItem key={t.key}>{t.label}</SelectItem>
-          ))}
-        </Select>
+        <div className="flex flex-col gap-1">
+          <Label>{t('compression_options.output_options.output_format')}</Label>
+          <Select value={outputFormat} onValueChange={(value) => setOutputFormat(value as OUTPUT_FORMAT)}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {outputFormats.map((t) => (
+                <SelectItem key={t.key} value={t.key}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         <div className="flex flex-col gap-1">
           <Label htmlFor="input-suffix">{t('compression_options.output_options.suffix')}</Label>

@@ -9,9 +9,6 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Select,
-  SelectItem,
-  SharedSelection,
   Table,
   TableBody,
   TableCell,
@@ -33,6 +30,7 @@ import { Button } from '../ui/button';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 import { NumberInput } from '../ui/number-input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
@@ -61,20 +59,12 @@ function AdvancedImportDialog() {
     };
   }, []);
 
-  const handleSizeFilterPatternChange = (value: SharedSelection) => {
-    if (value === 'all') {
-      return setSizeFilterPattern(FILE_SIZE_FILTER_PATTERN.LESS_THAN);
-    }
-
-    return setSizeFilterPattern(value.currentKey as FILE_SIZE_FILTER_PATTERN);
+  const handleSizeFilterPatternChange = (value: string) => {
+    setSizeFilterPattern(value as FILE_SIZE_FILTER_PATTERN);
   };
 
-  const handleSizeFilterUnitChange = (value: SharedSelection) => {
-    if (value === 'all') {
-      return setSizeFilterUnit(FILE_SIZE_UNIT.BYTE);
-    }
-
-    return setSizeFilterUnit(parseInt(value.currentKey || '1') as FILE_SIZE_UNIT);
+  const handleSizeFilterUnitChange = (value: string) => {
+    setSizeFilterUnit(parseInt(value || '1') as FILE_SIZE_UNIT);
   };
 
   const openFileDialog = async (mode: 'file' | 'folder') => {
@@ -223,29 +213,24 @@ function AdvancedImportDialog() {
               </div>
               <div className="flex items-center gap-2">
                 <Select
-                  disallowEmptySelection
-                  aria-label={t('compression_options.output_options.output_format')}
-                  classNames={{
-                    trigger: 'shadow-none',
-                    popoverContent: 'bg-content2 border-2 border-content1',
-                  }}
-                  isDisabled={!sizeFilter || isValidationInProgress}
-                  label={''}
-                  selectedKeys={[sizeFilterPattern]}
-                  selectionMode="single"
-                  size="sm"
-                  variant="faded"
-                  onSelectionChange={handleSizeFilterPatternChange}
+                  disabled={!sizeFilter || isValidationInProgress}
+                  value={sizeFilterPattern}
+                  onValueChange={handleSizeFilterPatternChange}
                 >
-                  <SelectItem key={FILE_SIZE_FILTER_PATTERN.LESS_THAN}>
-                    {t('advanced_import_dialog.less_than')}
-                  </SelectItem>
-                  <SelectItem key={FILE_SIZE_FILTER_PATTERN.EQUAL_TO}>
-                    {t('advanced_import_dialog.equal_to')}
-                  </SelectItem>
-                  <SelectItem key={FILE_SIZE_FILTER_PATTERN.GREATER_THAN}>
-                    {t('advanced_import_dialog.greater_than')}
-                  </SelectItem>
+                  <SelectTrigger aria-label={t('compression_options.output_options.output_format')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={FILE_SIZE_FILTER_PATTERN.LESS_THAN}>
+                      {t('advanced_import_dialog.less_than')}
+                    </SelectItem>
+                    <SelectItem value={FILE_SIZE_FILTER_PATTERN.EQUAL_TO}>
+                      {t('advanced_import_dialog.equal_to')}
+                    </SelectItem>
+                    <SelectItem value={FILE_SIZE_FILTER_PATTERN.GREATER_THAN}>
+                      {t('advanced_import_dialog.greater_than')}
+                    </SelectItem>
+                  </SelectContent>
                 </Select>
                 <NumberInput
                   hideStepper
@@ -256,23 +241,20 @@ function AdvancedImportDialog() {
                   onValueChange={(v) => setSizeFilterValue(v)}
                 />
                 <Select
-                  disallowEmptySelection
-                  aria-label={t('compression_options.output_options.output_format')}
-                  classNames={{
-                    trigger: 'shadow-none',
-                    popoverContent: 'bg-content2 border-2 border-content1',
-                  }}
-                  isDisabled={!sizeFilter || isValidationInProgress}
-                  label={''}
-                  selectedKeys={[sizeFilterUnit.toString()]}
-                  selectionMode="single"
-                  size="sm"
-                  variant="faded"
-                  onSelectionChange={handleSizeFilterUnitChange}
+                  disabled={!sizeFilter || isValidationInProgress}
+                  value={sizeFilterUnit.toString()}
+                  onValueChange={handleSizeFilterUnitChange}
                 >
-                  {sizeUnits.map((unit) => (
-                    <SelectItem key={unit.key}>{unit.label}</SelectItem>
-                  ))}
+                  <SelectTrigger aria-label={t('compression_options.output_options.output_format')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sizeUnits.map((unit) => (
+                      <SelectItem key={unit.key} value={unit.key.toString()}>
+                        {unit.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
             </div>
