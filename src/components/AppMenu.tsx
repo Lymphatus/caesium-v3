@@ -1,6 +1,12 @@
-import { DropdownItem, DropdownMenu } from '@heroui/react';
+import {
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
+import useFileListStore from '@/stores/file-list.store.ts';
 import { Heart, Import, Info, RefreshCcw } from 'lucide-react';
 
 function AppMenu() {
@@ -12,85 +18,56 @@ function AppMenu() {
     setShowPreviewPanel,
     setAutoPreview,
     setShowLabelsInToolbar,
-    getAppMenuSelectedItems,
     setAboutDialogOpen,
     setCheckForUpdatesDialogOpen,
-    getAppMenuDisabledItems,
     setAdvancedImportDialogOpen,
   } = useUIStore();
+  const { isCompressing } = useFileListStore();
 
   return (
-    <DropdownMenu
-      aria-label="menu"
-      disabledKeys={getAppMenuDisabledItems()}
-      selectedKeys={getAppMenuSelectedItems()}
-      selectionMode="multiple"
-    >
-      <DropdownItem
-        key="advancedImport"
-        hideSelectedIcon
-        showDivider
-        startContent={<Import className="size-4" />}
-        onPress={() => setAdvancedImportDialogOpen(true)}
-      >
+    <DropdownMenuContent>
+      <DropdownMenuItem disabled={isCompressing} onSelect={() => setAdvancedImportDialogOpen(true)}>
+        <Import className="size-4" />
         {t('actions.advanced_import')}
-      </DropdownItem>
-      <DropdownItem
-        key="showPreview"
-        disableAnimation
-        closeOnSelect={false}
-        startContent={<div className="size-4" />}
-        onPress={() => setShowPreviewPanel(!showPreviewPanel)}
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuCheckboxItem
+        checked={showPreviewPanel}
+        onCheckedChange={setShowPreviewPanel}
+        onSelect={(e) => e.preventDefault()}
       >
         {t('actions.show_previews')}
-      </DropdownItem>
-      <DropdownItem
-        key="autoPreview"
-        disableAnimation
-        closeOnSelect={false}
-        startContent={<div className="size-4" />}
-        onPress={() => setAutoPreview(!autoPreview)}
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem
+        checked={autoPreview}
+        onCheckedChange={setAutoPreview}
+        onSelect={(e) => e.preventDefault()}
       >
         {t('actions.auto_preview')}
-      </DropdownItem>
-      <DropdownItem
-        key="showToolbarLabels"
-        disableAnimation
-        showDivider
-        closeOnSelect={false}
-        startContent={<div className="size-4" />}
-        onPress={() => setShowLabelsInToolbar(!showLabelsInToolbar)}
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem
+        checked={showLabelsInToolbar}
+        onCheckedChange={setShowLabelsInToolbar}
+        onSelect={(e) => e.preventDefault()}
       >
         {t('actions.show_toolbar_labels')}
-      </DropdownItem>
-      <DropdownItem
-        key="donate"
-        hideSelectedIcon
-        href="https://saerasoft.com/caesium/donate"
-        startContent={<Heart className="size-4 text-pink-500" />}
-        target="_blank"
-      >
-        {t('actions.donate')}
-      </DropdownItem>
-      <DropdownItem
-        key="checkForUpdates"
-        hideSelectedIcon
-        startContent={<RefreshCcw className="size-4" />}
-        onPress={() => {
-          setCheckForUpdatesDialogOpen(true);
-        }}
-      >
+      </DropdownMenuCheckboxItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem asChild>
+        <a href="https://saerasoft.com/caesium/donate" rel="noopener noreferrer" target="_blank">
+          <Heart className="size-4 text-pink-500" />
+          {t('actions.donate')}
+        </a>
+      </DropdownMenuItem>
+      <DropdownMenuItem disabled={isCompressing} onSelect={() => setCheckForUpdatesDialogOpen(true)}>
+        <RefreshCcw className="size-4" />
         {t('actions.check_for_updates')}
-      </DropdownItem>
-      <DropdownItem
-        key="about"
-        hideSelectedIcon
-        startContent={<Info className="size-4" />}
-        onPress={() => setAboutDialogOpen(true)}
-      >
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={() => setAboutDialogOpen(true)}>
+        <Info className="size-4" />
         {t('actions.about')}
-      </DropdownItem>
-    </DropdownMenu>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
   );
 }
 

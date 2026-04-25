@@ -5,7 +5,6 @@ import { SIDE_PANEL_TAB } from '@/types.ts';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { path } from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
-import useFileListStore from '@/stores/file-list.store.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
 
 interface SplitPanels {
@@ -47,9 +46,6 @@ interface UIOptions {
   setCheckForUpdatesDialogOpen: (open: boolean) => void;
   setAdvancedImportDialogOpen: (open: boolean) => void;
   setCompressionProgressDialogMinimized: (minimized: boolean) => void;
-
-  getAppMenuSelectedItems: () => string[];
-  getAppMenuDisabledItems: () => string[];
 }
 
 let configPath = 'settings.json';
@@ -82,7 +78,7 @@ const defaultOptions = {
 
 const useUIStore = create<UIOptions>()(
   subscribeWithSelector(
-    immer((set, get) => ({
+    immer((set) => ({
       ...defaultOptions,
       ...preferences,
       setSplitPanels: (options: Partial<SplitPanels>) =>
@@ -169,23 +165,6 @@ const useUIStore = create<UIOptions>()(
         set((state) => {
           state.compressionProgressDialogMinimized = minimized;
         });
-      },
-
-      getAppMenuSelectedItems: () => {
-        const selectedItems = [];
-        if (get().showPreviewPanel) selectedItems.push('showPreview');
-        if (get().autoPreview) selectedItems.push('autoPreview');
-        if (get().showLabelsInToolbar) selectedItems.push('showToolbarLabels');
-        return selectedItems;
-      },
-
-      getAppMenuDisabledItems: () => {
-        const disabledItems = [];
-        if (useFileListStore.getState().isCompressing) {
-          disabledItems.push('advancedImport');
-          disabledItems.push('checkForUpdates');
-        }
-        return disabledItems;
       },
     })),
   ),

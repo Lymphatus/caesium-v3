@@ -1,8 +1,4 @@
 import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
   Input,
   Modal,
   ModalBody,
@@ -31,6 +27,12 @@ import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 import { NumberInput } from '../ui/number-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
@@ -147,31 +149,33 @@ function AdvancedImportDialog() {
             </div>
 
             <div className="flex w-full justify-start gap-2">
-              <Dropdown isDisabled={isValidationInProgress}>
-                <DropdownTrigger>
-                  <Button size="icon-sm" title={t('')} variant="outline">
-                    <Plus></Plus>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button disabled={isValidationInProgress} size="icon-sm" variant="outline">
+                    <Plus />
                   </Button>
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Import actions">
-                  <DropdownItem
-                    key="add_files"
-                    description={t('advanced_import_dialog.add_files_description')}
-                    startContent={<FilePlus></FilePlus>}
-                    onPress={() => openFileDialog('file')}
-                  >
-                    {t('advanced_import_dialog.add_files')}
-                  </DropdownItem>
-                  <DropdownItem
-                    key="add_folder"
-                    description={t('advanced_import_dialog.add_folders_description')}
-                    startContent={<FolderPlus></FolderPlus>}
-                    onPress={() => openFileDialog('folder')}
-                  >
-                    {t('advanced_import_dialog.add_folders')}
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onSelect={() => openFileDialog('file')}>
+                    <FilePlus />
+                    <div className="flex flex-col">
+                      <span>{t('advanced_import_dialog.add_files')}</span>
+                      <span className="text-muted-foreground text-xs">
+                        {t('advanced_import_dialog.add_files_description')}
+                      </span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => openFileDialog('folder')}>
+                    <FolderPlus />
+                    <div className="flex flex-col">
+                      <span>{t('advanced_import_dialog.add_folders')}</span>
+                      <span className="text-muted-foreground text-xs">
+                        {t('advanced_import_dialog.add_folders_description')}
+                      </span>
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Button
                 disabled={selectedItems.length === 0 || isValidationInProgress}
                 size="icon-sm"

@@ -2,7 +2,7 @@ import { Ellipsis, FolderPlus, ImagePlus, Play, Settings } from 'lucide-react';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store.ts';
-import { Dropdown, DropdownTrigger } from '@heroui/react';
+import { DropdownMenu, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import AppMenu from '@/components/AppMenu.tsx';
 import FileListFilter from '@/components/file-list/FileListFilter.tsx';
@@ -55,18 +55,14 @@ function Toolbar() {
           <Settings></Settings>
           {showLabelsInToolbar && <span>{t('actions.settings')}</span>}
         </Button>
-        <Dropdown
-          classNames={{
-            content: 'bg-default-50',
-          }}
-        >
-          <DropdownTrigger>
-            <Button size="icon-sm" title={t('actions.menu')} variant="ghost" onClick={() => {}}>
-              <Ellipsis></Ellipsis>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="icon-sm" title={t('actions.menu')} variant="ghost">
+              <Ellipsis />
             </Button>
-          </DropdownTrigger>
-          <AppMenu></AppMenu>
-        </Dropdown>
+          </DropdownMenuTrigger>
+          <AppMenu />
+        </DropdownMenu>
       </div>
     </div>
   );
