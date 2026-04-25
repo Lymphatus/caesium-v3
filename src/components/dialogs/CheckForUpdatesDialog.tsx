@@ -111,7 +111,7 @@ function CheckForUpdatesDialog() {
   } else if (updateStatus === UpdateStatus.ERROR) {
     message = (
       <span className="flex items-center gap-1">
-        <CircleAlert className="text-danger size-4"></CircleAlert>
+        <CircleAlert className="text-destructive size-4"></CircleAlert>
         {t('errors.generic_retry')}
       </span>
     );
@@ -157,13 +157,13 @@ function CheckForUpdatesDialog() {
               }
             />
           </div>
-          <span className="text-danger text-sm" hidden={!error}>
+          <span className="text-destructive text-sm" hidden={!error}>
             {error}
           </span>
           {update && update.body && (
             <div className="flex flex-col gap-2">
               <span className="text-sm">{t('changelog')}</span>
-              <div className="bg-default/40 text-default-700 text-small inline-block max-h-40 min-h-20 w-full overflow-auto rounded-sm px-2 py-1 font-mono font-normal whitespace-nowrap">
+              <div className="bg-muted/40 text-foreground inline-block max-h-40 min-h-20 w-full overflow-auto rounded-sm px-2 py-1 font-mono text-sm font-normal whitespace-nowrap">
                 <pre className="text-sm">{update?.body}</pre>
               </div>
             </div>

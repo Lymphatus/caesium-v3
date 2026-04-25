@@ -13,7 +13,7 @@ function ImportSettings() {
         <div className="flex w-full items-center justify-between">
           <div className="flex flex-col">
             <Label htmlFor="switch-import-subfolder-on-input">{t('settings.scan_subfolders_on_import')}</Label>
-            <span className="text-default-500 text-sm">{t('settings.scan_subfolders_on_import_help')}</span>
+            <span className="text-muted-foreground text-sm">{t('settings.scan_subfolders_on_import_help')}</span>
           </div>
           <Switch
             checked={importSubfolderOnInput}

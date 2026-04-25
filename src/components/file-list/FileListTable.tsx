@@ -27,7 +27,7 @@ function StatusIcon({ cImage }: { cImage: CImage }) {
   if (cImage.status === IMAGE_STATUS.SUCCESS) {
     return <CircleCheck className="text-success size-4" />;
   } else if (cImage.status === IMAGE_STATUS.ERROR) {
-    return <CircleX className="text-danger size-4" />;
+    return <CircleX className="text-destructive size-4" />;
   } else if (cImage.status === IMAGE_STATUS.WARNING) {
     return <CircleAlert className="text-warning size-4" />;
   } else if (cImage.status === IMAGE_STATUS.COMPRESSING) {
@@ -118,7 +118,7 @@ function FileListTable() {
         </TableHeader>
         <TableBody>
           {fileList.map((cImage) => (
-            <TableRow key={cImage.id} className={cImage.id === currentPreviewedCImage?.id ? 'bg-default-100' : ''}>
+            <TableRow key={cImage.id} className={cImage.id === currentPreviewedCImage?.id ? 'bg-muted' : ''}>
               <TableCell>
                 <div className="flex items-center justify-center">
                   <StatusIcon cImage={cImage}></StatusIcon>
@@ -126,7 +126,7 @@ function FileListTable() {
               </TableCell>
               <TableCell>
                 <span className="text-nowrap">
-                  <small className="text-default-400">{getSubpart(baseFolder, cImage.path, cImage.name)}</small>
+                  <small className="text-muted-foreground">{getSubpart(baseFolder, cImage.path, cImage.name)}</small>
                   <span>{cImage.name}</span>
                 </span>
               </TableCell>
@@ -135,7 +135,7 @@ function FileListTable() {
                   <span
                     className={
                       cImage.compressed_size && cImage.compressed_size !== cImage.size
-                        ? 'text-default-400 text-nowrap line-through'
+                        ? 'text-muted-foreground text-nowrap line-through'
                         : 'text-nowrap'
                     }
                   >
@@ -153,7 +153,7 @@ function FileListTable() {
                       cImage.compressed_width !== 0 &&
                       cImage.compressed_height !== 0 &&
                       (cImage.compressed_width !== cImage.width || cImage.compressed_height !== cImage.height)
-                        ? 'text-default-400 text-nowrap line-through'
+                        ? 'text-muted-foreground text-nowrap line-through'
                         : 'text-nowrap'
                     }
                   >{`${cImage.width}x${cImage.height}`}</span>

@@ -24,9 +24,9 @@ function ListPanel() {
 
   return (
     <div className="size-full">
-      <div className="bg-content1 flex size-full flex-col rounded">
+      <div className="bg-card flex size-full flex-col rounded">
         <FileListTable></FileListTable>
-        <div className="bg-content2 flex min-h-10 items-center justify-between rounded-b p-2">
+        <div className="bg-muted flex min-h-10 items-center justify-between rounded-b p-2">
           <div className="flex flex-1 justify-start gap-2">
             <Button
               disabled={selectedItems.length === 0 || isCompressing}

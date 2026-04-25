@@ -26,7 +26,7 @@ const appVersion = await app.getVersion();
 
 const copyIcon = <Copy className="size-4" />;
 const copySuccessIcon = <Check className="text-success size-4" />;
-const copyErrorIcon = <X className="text-danger size-4" />;
+const copyErrorIcon = <X className="text-destructive size-4" />;
 
 function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
   const { t } = useTranslation();
@@ -86,7 +86,7 @@ function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
         <DialogHeader>
           <DialogTitle>{t('usage_stats')}</DialogTitle>
         </DialogHeader>
-        <div className="bg-default/40 text-default-700 text-small inline-block h-fit max-h-40 w-full overflow-auto rounded-none px-2 py-1 font-mono font-normal whitespace-nowrap">
+        <div className="bg-muted/40 text-foreground inline-block h-fit max-h-40 w-full overflow-auto rounded-none px-2 py-1 font-mono text-sm font-normal whitespace-nowrap">
           <pre>{formattedUsageStats}</pre>
         </div>
         <p className="text-sm">{t('settings.send_usage_statistics_disclaimer')}</p>

@@ -91,7 +91,7 @@ function PreviewPanel() {
   }, []);
 
   return (
-    <div className="bg-default-50 relative size-full rounded-sm">
+    <div className="bg-card relative size-full rounded-sm">
       <TransformWrapper
         centerOnInit
         centerZoomedOut
@@ -116,7 +116,7 @@ function PreviewPanel() {
           return (
             <div
               ref={wrapperRef}
-              className="bg-default-50 flex size-full flex-col items-center justify-between rounded-t-sm rounded-b-sm"
+              className="bg-card flex size-full flex-col items-center justify-between rounded-t-sm rounded-b-sm"
             >
               {isLoading && (
                 <Spinner
@@ -134,7 +134,7 @@ function PreviewPanel() {
                 </div>
               </TransformComponent>
 
-              <div className="bg-content1 flex h-10 w-full items-center justify-between rounded-b-sm p-1">
+              <div className="bg-card flex h-10 w-full items-center justify-between rounded-b-sm p-1">
                 <div className="flex items-center gap-2">
                   {currentPreviewedCImage != null && (
                     <>

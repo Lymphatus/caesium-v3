@@ -104,7 +104,7 @@ function GeneralSettings() {
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
               <Label htmlFor="switch-skip-messages-and-dialogs">{t('settings.skip_dialogs')}</Label>
-              <span className="text-default-500 text-sm">{t('settings.skip_dialogs_help')}</span>
+              <span className="text-muted-foreground text-sm">{t('settings.skip_dialogs_help')}</span>
             </div>
             <Switch
               checked={skipMessagesAndDialogs}

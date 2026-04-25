@@ -14,7 +14,7 @@ function Toolbar() {
   const { t } = useTranslation();
 
   return (
-    <div className="bg-content1 flex h-[40px] w-full items-center justify-between p-2">
+    <div className="bg-card flex h-[40px] w-full items-center justify-between p-2">
       <div className="flex h-full items-center gap-2">
         <Button
           disabled={isCompressing}
