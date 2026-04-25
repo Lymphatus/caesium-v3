@@ -1,4 +1,4 @@
-import { NumberInput } from '@heroui/react';
+import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -16,19 +16,14 @@ function PngOptions() {
         <Label>{t('quality')}</Label>
         <NumberInput
           aria-label={t('quality')}
-          className="max-w-20"
-          classNames={{
-            inputWrapper: 'p-1 h-8 shadow-none',
-            input: 'text-right',
-          }}
-          isDisabled={pngOptions.optimize}
-          maxValue={100}
-          minValue={0}
+          className="max-w-32"
+          disabled={pngOptions.optimize}
+          max={100}
+          min={0}
           size="sm"
           value={pngOptions.quality}
-          variant="faded"
           onValueChange={(value) => setPngOptions({ quality: value })}
-        ></NumberInput>
+        />
       </div>
       <Slider
         disabled={pngOptions.optimize}
@@ -43,19 +38,14 @@ function PngOptions() {
         <Label>{t('compression_options.optimization_level')}</Label>
         <NumberInput
           aria-label={t('compression_options.optimization_level')}
-          className="max-w-20"
-          classNames={{
-            inputWrapper: 'p-1 h-8 shadow-none',
-            input: 'text-right',
-          }}
-          isDisabled={!pngOptions.optimize}
-          maxValue={6}
-          minValue={1}
+          className="max-w-32"
+          disabled={!pngOptions.optimize}
+          max={6}
+          min={1}
           size="sm"
           value={pngOptions.optimizationLevel}
-          variant="faded"
           onValueChange={(value) => setPngOptions({ optimizationLevel: value })}
-        ></NumberInput>
+        />
       </div>
       <Slider
         disabled={!pngOptions.optimize}

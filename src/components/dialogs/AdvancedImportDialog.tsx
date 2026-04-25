@@ -9,7 +9,6 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  NumberInput,
   Select,
   SelectItem,
   SharedSelection,
@@ -33,6 +32,7 @@ import { invokeBackend } from '@/utils/invoker.tsx';
 import { Button } from '../ui/button';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
+import { NumberInput } from '../ui/number-input';
 
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
@@ -221,68 +221,60 @@ function AdvancedImportDialog() {
                   onCheckedChange={setSizeFilter}
                 />
               </div>
-              <NumberInput
-                hideStepper
-                aria-label="Size filter"
-                classNames={{
-                  inputWrapper: 'shadow-none px-0',
-                  label: 'text-sm ml-[-1px]',
-                }}
-                endContent={
-                  <Select
-                    disallowEmptySelection
-                    aria-label={t('compression_options.output_options.output_format')}
-                    classNames={{
-                      trigger: 'shadow-none rounded-none rounded-r-sm ml-[2px]',
-                      popoverContent: 'bg-content2 border-2 border-content1',
-                    }}
-                    label={''}
-                    selectedKeys={[sizeFilterUnit.toString()]}
-                    selectionMode="single"
-                    size="sm"
-                    variant="faded"
-                    onSelectionChange={handleSizeFilterUnitChange}
-                  >
-                    {sizeUnits.map((unit) => (
-                      <SelectItem key={unit.key}>{unit.label}</SelectItem>
-                    ))}
-                  </Select>
-                }
-                isDisabled={!sizeFilter || isValidationInProgress}
-                label={t('')}
-                labelPlacement="outside"
-                size="sm"
-                startContent={
-                  <Select
-                    disallowEmptySelection
-                    aria-label={t('compression_options.output_options.output_format')}
-                    classNames={{
-                      trigger: 'shadow-none rounded-none rounded-l-sm ml-[-1px]',
-                      popoverContent: 'bg-content2 border-2 border-content1',
-                    }}
-                    label={''}
-                    selectedKeys={[sizeFilterPattern]}
-                    selectionMode="single"
-                    size="sm"
-                    variant="faded"
-                    onSelectionChange={handleSizeFilterPatternChange}
-                  >
-                    <SelectItem key={FILE_SIZE_FILTER_PATTERN.LESS_THAN}>
-                      {t('advanced_import_dialog.less_than')}
-                    </SelectItem>
-                    <SelectItem key={FILE_SIZE_FILTER_PATTERN.EQUAL_TO}>
-                      {t('advanced_import_dialog.equal_to')}
-                    </SelectItem>
-                    <SelectItem key={FILE_SIZE_FILTER_PATTERN.GREATER_THAN}>
-                      {t('advanced_import_dialog.greater_than')}
-                    </SelectItem>
-                  </Select>
-                }
-                type="number"
-                value={sizeFilterValue}
-                variant="faded"
-                onValueChange={(v) => setSizeFilterValue(v)}
-              />
+              <div className="flex items-center gap-2">
+                <Select
+                  disallowEmptySelection
+                  aria-label={t('compression_options.output_options.output_format')}
+                  classNames={{
+                    trigger: 'shadow-none',
+                    popoverContent: 'bg-content2 border-2 border-content1',
+                  }}
+                  isDisabled={!sizeFilter || isValidationInProgress}
+                  label={''}
+                  selectedKeys={[sizeFilterPattern]}
+                  selectionMode="single"
+                  size="sm"
+                  variant="faded"
+                  onSelectionChange={handleSizeFilterPatternChange}
+                >
+                  <SelectItem key={FILE_SIZE_FILTER_PATTERN.LESS_THAN}>
+                    {t('advanced_import_dialog.less_than')}
+                  </SelectItem>
+                  <SelectItem key={FILE_SIZE_FILTER_PATTERN.EQUAL_TO}>
+                    {t('advanced_import_dialog.equal_to')}
+                  </SelectItem>
+                  <SelectItem key={FILE_SIZE_FILTER_PATTERN.GREATER_THAN}>
+                    {t('advanced_import_dialog.greater_than')}
+                  </SelectItem>
+                </Select>
+                <NumberInput
+                  hideStepper
+                  aria-label="Size filter"
+                  disabled={!sizeFilter || isValidationInProgress}
+                  size="sm"
+                  value={sizeFilterValue}
+                  onValueChange={(v) => setSizeFilterValue(v)}
+                />
+                <Select
+                  disallowEmptySelection
+                  aria-label={t('compression_options.output_options.output_format')}
+                  classNames={{
+                    trigger: 'shadow-none',
+                    popoverContent: 'bg-content2 border-2 border-content1',
+                  }}
+                  isDisabled={!sizeFilter || isValidationInProgress}
+                  label={''}
+                  selectedKeys={[sizeFilterUnit.toString()]}
+                  selectionMode="single"
+                  size="sm"
+                  variant="faded"
+                  onSelectionChange={handleSizeFilterUnitChange}
+                >
+                  {sizeUnits.map((unit) => (
+                    <SelectItem key={unit.key}>{unit.label}</SelectItem>
+                  ))}
+                </Select>
+              </div>
             </div>
 
             <Input

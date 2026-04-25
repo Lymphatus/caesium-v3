@@ -1,4 +1,5 @@
-import { Accordion, AccordionItem, NumberInput, Select, SelectItem, SharedSelection, Tab, Tabs } from '@heroui/react';
+import { Accordion, AccordionItem, Select, SelectItem, SharedSelection, Tab, Tabs } from '@heroui/react';
+import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
@@ -164,12 +165,24 @@ function CompressionOptions() {
             </div>
           </Tab>
           <Tab key="size" title={t('size')}>
-            <NumberInput
-              endContent={
+            <div className="flex flex-col gap-1">
+              <Label>{t('compression_options.max_output_size')}</Label>
+              <div className="flex items-center gap-2">
+                <NumberInput
+                  aria-label={t('compression_options.max_output_size')}
+                  className="flex-1"
+                  max={999}
+                  min={1}
+                  placeholder="500"
+                  size="sm"
+                  step={1}
+                  value={maxSize}
+                  onValueChange={(v) => setMaxSize(v)}
+                />
                 <Select
                   disallowEmptySelection
                   aria-label={'units'}
-                  className="max-w-[100px] p-1"
+                  className="max-w-[100px]"
                   classNames={{
                     label: 'hidden',
                     trigger: 'shadow-none',
@@ -186,18 +199,8 @@ function CompressionOptions() {
                     <SelectItem key={unit.key}>{unit.label}</SelectItem>
                   ))}
                 </Select>
-              }
-              label={t('compression_options.max_output_size')}
-              labelPlacement="outside"
-              maxValue={999}
-              minValue={1}
-              placeholder="500"
-              size="sm"
-              step={1}
-              value={maxSize}
-              variant="faded"
-              onValueChange={(v) => setMaxSize(v)}
-            />
+              </div>
+            </div>
           </Tab>
         </Tabs>
       </div>

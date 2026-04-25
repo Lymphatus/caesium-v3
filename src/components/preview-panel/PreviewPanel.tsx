@@ -5,7 +5,7 @@ import {
   TransformWrapper,
   useTransformComponent,
 } from 'react-zoom-pan-pinch';
-import { NumberInput } from '@heroui/react';
+import { NumberInput } from '@/components/ui/number-input';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
@@ -37,26 +37,16 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
     return (
       <>
         <NumberInput
-          disableAnimation
           hideStepper
           aria-label="zoom"
           className="max-w-20"
-          classNames={{
-            inputWrapper: 'p-1 h-8 shadow-none',
-            input: 'text-right',
-          }}
-          endContent={
-            <div className="pointer-events-none flex items-center">
-              <span className="text-default-400 text-small">%</span>
-            </div>
-          }
-          maxValue={300}
-          minValue={1}
+          endAdornment="%"
+          max={300}
+          min={1}
           size="sm"
           value={zoomLevel}
-          variant="faded"
           onValueChange={(value) => setZoomLevel(value, state)}
-        ></NumberInput>
+        />
         <Button size="icon-xs" title={i18next.t('zoom_out')} variant="outline" onClick={() => zoomOut(0.1)}>
           <Minus></Minus>
         </Button>

@@ -1,4 +1,4 @@
-import { NumberInput } from '@heroui/react';
+import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -16,19 +16,14 @@ function WebpOptions() {
         <Label>{t('quality')}</Label>
         <NumberInput
           aria-label={t('quality')}
-          className="max-w-20"
-          classNames={{
-            inputWrapper: 'p-1 h-8 shadow-none',
-            input: 'text-right',
-          }}
-          isDisabled={webpOptions.lossless}
-          maxValue={100}
-          minValue={0}
+          className="max-w-32"
+          disabled={webpOptions.lossless}
+          max={100}
+          min={0}
           size="sm"
           value={webpOptions.quality}
-          variant="faded"
           onValueChange={(value) => setWebpOptions({ quality: value })}
-        ></NumberInput>
+        />
       </div>
       <Slider
         disabled={webpOptions.lossless}

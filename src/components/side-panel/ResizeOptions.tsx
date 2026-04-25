@@ -1,5 +1,6 @@
 import { RESIZE_MODE } from '@/types.ts';
-import { NumberInput, Select, SelectItem } from '@heroui/react';
+import { Select, SelectItem } from '@heroui/react';
+import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from 'react-i18next';
@@ -112,150 +113,85 @@ function ResizeOptions() {
           <>
             {showPixelDimensionsInputs && (
               <div className="flex w-full items-center justify-between gap-2">
-                <NumberInput
-                  disableAnimation
-                  aria-label={t('width')}
-                  className="min-w-32"
-                  classNames={{
-                    inputWrapper: 'p-1 h-8 shadow-none',
-                    input: 'text-right',
-                  }}
-                  endContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">px</span>
-                    </div>
-                  }
-                  formatOptions={{
-                    useGrouping: false,
-                  }}
-                  isDisabled={resizeMode === RESIZE_MODE.HEIGHT}
-                  label={t('width')}
-                  labelPlacement="outside"
-                  maxValue={99999}
-                  minValue={1}
-                  size="sm"
-                  value={width}
-                  variant="faded"
-                  onValueChange={(value) => setWidth(value)}
-                ></NumberInput>
-                <NumberInput
-                  disableAnimation
-                  aria-label={t('height')}
-                  className="min-w-32"
-                  classNames={{
-                    inputWrapper: 'p-1 h-8 shadow-none',
-                    input: 'text-right',
-                  }}
-                  endContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">px</span>
-                    </div>
-                  }
-                  formatOptions={{
-                    useGrouping: false,
-                  }}
-                  isDisabled={resizeMode === RESIZE_MODE.WIDTH}
-                  label={t('height')}
-                  labelPlacement="outside"
-                  maxValue={99999}
-                  minValue={1}
-                  size="sm"
-                  value={height}
-                  variant="faded"
-                  onValueChange={(value) => setHeight(value)}
-                ></NumberInput>
+                <div className="flex flex-1 flex-col gap-1">
+                  <Label>{t('width')}</Label>
+                  <NumberInput
+                    aria-label={t('width')}
+                    disabled={resizeMode === RESIZE_MODE.HEIGHT}
+                    endAdornment="px"
+                    max={99999}
+                    min={1}
+                    size="sm"
+                    value={width}
+                    onValueChange={(value) => setWidth(value)}
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-1">
+                  <Label>{t('height')}</Label>
+                  <NumberInput
+                    aria-label={t('height')}
+                    disabled={resizeMode === RESIZE_MODE.WIDTH}
+                    endAdornment="px"
+                    max={99999}
+                    min={1}
+                    size="sm"
+                    value={height}
+                    onValueChange={(value) => setHeight(value)}
+                  />
+                </div>
               </div>
             )}
             {showPercentageInputs && (
               <div className="flex w-full items-center justify-between gap-2">
-                <NumberInput
-                  disableAnimation
-                  aria-label={t('width')}
-                  className="min-w-32"
-                  classNames={{
-                    inputWrapper: 'p-1 h-8 shadow-none',
-                    input: 'text-right',
-                  }}
-                  endContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">%</span>
-                    </div>
-                  }
-                  formatOptions={{
-                    useGrouping: false,
-                  }}
-                  label={t('width')}
-                  labelPlacement="outside"
-                  maxValue={doNotEnlarge ? 100 : 999}
-                  minValue={1}
-                  size="sm"
-                  value={widthPercentage}
-                  variant="faded"
-                  onValueChange={(value) => {
-                    setWidthPercentage(value);
-                    if (keepAspectRatio) {
-                      setHeightPercentage(value);
-                    }
-                  }}
-                ></NumberInput>
-                <NumberInput
-                  disableAnimation
-                  aria-label={t('height')}
-                  className="min-w-32"
-                  classNames={{
-                    inputWrapper: 'p-1 h-8 shadow-none',
-                    input: 'text-right',
-                  }}
-                  endContent={
-                    <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">%</span>
-                    </div>
-                  }
-                  formatOptions={{
-                    useGrouping: false,
-                  }}
-                  label={t('height')}
-                  labelPlacement="outside"
-                  maxValue={doNotEnlarge ? 100 : 999}
-                  minValue={1}
-                  size="sm"
-                  value={heightPercentage}
-                  variant="faded"
-                  onValueChange={(value) => {
-                    setHeightPercentage(value);
-                    if (keepAspectRatio) {
+                <div className="flex flex-1 flex-col gap-1">
+                  <Label>{t('width')}</Label>
+                  <NumberInput
+                    aria-label={t('width')}
+                    endAdornment="%"
+                    max={doNotEnlarge ? 100 : 999}
+                    min={1}
+                    size="sm"
+                    value={widthPercentage}
+                    onValueChange={(value) => {
                       setWidthPercentage(value);
-                    }
-                  }}
-                ></NumberInput>
+                      if (keepAspectRatio) {
+                        setHeightPercentage(value);
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex flex-1 flex-col gap-1">
+                  <Label>{t('height')}</Label>
+                  <NumberInput
+                    aria-label={t('height')}
+                    endAdornment="%"
+                    max={doNotEnlarge ? 100 : 999}
+                    min={1}
+                    size="sm"
+                    value={heightPercentage}
+                    onValueChange={(value) => {
+                      setHeightPercentage(value);
+                      if (keepAspectRatio) {
+                        setWidthPercentage(value);
+                      }
+                    }}
+                  />
+                </div>
               </div>
             )}
             {showDimensionInput && (
-              <NumberInput
-                disableAnimation
-                aria-label={dimensionLabel}
-                className="min-w-32"
-                classNames={{
-                  inputWrapper: 'p-1 h-8 shadow-none',
-                  input: 'text-right',
-                }}
-                endContent={
-                  <div className="pointer-events-none flex items-center">
-                    <span className="text-default-400 text-small">px</span>
-                  </div>
-                }
-                formatOptions={{
-                  useGrouping: false,
-                }}
-                label={dimensionLabel}
-                labelPlacement="outside"
-                maxValue={99999}
-                minValue={1}
-                size="sm"
-                value={dimension}
-                variant="faded"
-                onValueChange={(value) => setDimension(value)}
-              ></NumberInput>
+              <div className="flex flex-col gap-1">
+                <Label>{dimensionLabel}</Label>
+                <NumberInput
+                  aria-label={dimensionLabel}
+                  endAdornment="px"
+                  max={99999}
+                  min={1}
+                  size="sm"
+                  value={dimension}
+                  onValueChange={(value) => setDimension(value)}
+                />
+              </div>
             )}
             <div className="flex w-full items-center justify-between">
               <div className="flex flex-col">

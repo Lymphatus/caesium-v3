@@ -1,8 +1,8 @@
-import { NumberInput } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import { NumberInput } from '@/components/ui/number-input';
 
 function GifOptions() {
   const { t } = useTranslation();
@@ -15,18 +15,13 @@ function GifOptions() {
         <Label>{t('quality')}</Label>
         <NumberInput
           aria-label={t('quality')}
-          className="max-w-20"
-          classNames={{
-            inputWrapper: 'p-1 h-8 shadow-none',
-            input: 'text-right',
-          }}
-          maxValue={100}
-          minValue={0}
+          className="max-w-32"
+          max={100}
+          min={0}
           size="sm"
           value={gifOptions.quality}
-          variant="faded"
           onValueChange={(value) => setGifOptions({ quality: value })}
-        ></NumberInput>
+        />
       </div>
       <Slider
         max={100}
