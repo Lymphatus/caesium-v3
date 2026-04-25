@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import useUIStore from '@/stores/ui.store.ts';
 import { check, DownloadEvent, Update } from '@tauri-apps/plugin-updater';
@@ -129,52 +129,47 @@ function CheckForUpdatesDialog() {
   }
 
   return (
-    <Modal
-      isDismissable
-      backdrop="blur"
-      classNames={{
-        backdrop: 'bg-content3/50',
+    <Dialog
+      open={checkForUpdatesDialogOpen}
+      onOpenChange={(open) => {
+        if (!open) setCheckForUpdatesDialogOpen(false);
       }}
-      isOpen={checkForUpdatesDialogOpen}
-      shadow="none"
-      size="sm"
-      onClose={() => setCheckForUpdatesDialogOpen(false)}
     >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1"></ModalHeader>
-        <ModalBody>
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-              <div className="flex justify-between text-xs">
-                {message}
-                {updateStatus === UpdateStatus.DOWNLOADING && (
-                  <span>{Math.round((bytesDownloaded / bytesTotal) * 100) || 0}%</span>
-                )}
-              </div>
-              <Progress
-                value={
-                  updateStatus === UpdateStatus.CHECKING
-                    ? undefined
-                    : bytesTotal > 0
-                      ? (bytesDownloaded / bytesTotal) * 100
-                      : 0
-                }
-              />
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="sr-only">{t('check_for_updates')}</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <div className="flex justify-between text-xs">
+              {message}
+              {updateStatus === UpdateStatus.DOWNLOADING && (
+                <span>{Math.round((bytesDownloaded / bytesTotal) * 100) || 0}%</span>
+              )}
             </div>
-            <span className="text-danger text-sm" hidden={!error}>
-              {error}
-            </span>
-            {update && update.body && (
-              <div className="flex flex-col gap-2">
-                <span className="text-sm">{t('changelog')}</span>
-                <div className="bg-default/40 text-default-700 text-small inline-block max-h-40 min-h-20 w-full overflow-auto rounded-sm px-2 py-1 font-mono font-normal whitespace-nowrap">
-                  <pre className="text-sm">{update?.body}</pre>
-                </div>
-              </div>
-            )}
+            <Progress
+              value={
+                updateStatus === UpdateStatus.CHECKING
+                  ? undefined
+                  : bytesTotal > 0
+                    ? (bytesDownloaded / bytesTotal) * 100
+                    : 0
+              }
+            />
           </div>
-        </ModalBody>
-        <ModalFooter>
+          <span className="text-danger text-sm" hidden={!error}>
+            {error}
+          </span>
+          {update && update.body && (
+            <div className="flex flex-col gap-2">
+              <span className="text-sm">{t('changelog')}</span>
+              <div className="bg-default/40 text-default-700 text-small inline-block max-h-40 min-h-20 w-full overflow-auto rounded-sm px-2 py-1 font-mono font-normal whitespace-nowrap">
+                <pre className="text-sm">{update?.body}</pre>
+              </div>
+            </div>
+          )}
+        </div>
+        <DialogFooter>
           <div className="flex w-full items-center justify-between gap-2">
             <div>
               <Button variant="secondary" onClick={() => setCheckForUpdatesDialogOpen(false)}>
@@ -183,9 +178,9 @@ function CheckForUpdatesDialog() {
             </div>
             <div className="flex gap-2">{updateButton}</div>
           </div>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

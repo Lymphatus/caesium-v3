@@ -1,17 +1,4 @@
-import {
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@heroui/react';
+import { Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import { Separator } from '@/components/ui/separator';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
@@ -100,188 +88,186 @@ function AdvancedImportDialog() {
   ));
 
   return (
-    <Modal
-      backdrop="blur"
-      classNames={{
-        backdrop: 'bg-content3/50',
+    <Dialog
+      open={advancedImportDialogOpen}
+      onOpenChange={(open) => {
+        if (!open) setAdvancedImportDialogOpen(false);
       }}
-      isDismissable={false}
-      isOpen={advancedImportDialogOpen}
-      shadow="none"
-      size="xl"
-      onClose={() => setAdvancedImportDialogOpen(false)}
     >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">{t('advanced_import_dialog.title')}</ModalHeader>
-        <ModalBody>
-          <div className="flex flex-col items-center justify-center gap-2 text-center">
-            <div className="relative block h-[300px] w-full overflow-auto">
-              <Table
-                fullWidth
-                isHeaderSticky
-                removeWrapper
-                aria-label="File list"
-                checkboxesProps={{ disableAnimation: true }}
-                className="rounded-t-sm"
-                classNames={{
-                  base: 'h-full justify-between overflow-auto bg-background',
-                  th: 'h-8 first:rounded-b-none first:rounded-t-none last:rounded-b-none last:rounded-t-none [&:first-child]:w-[32px]',
-                  td: 'text-nowrap',
-                }}
-                layout="auto"
-                radius="sm"
-                selectedKeys={selectedItems}
-                selectionMode="multiple"
-                shadow="none"
-                onSelectionChange={(v) => {
-                  if (v === 'all') {
-                    setSelectedItems([...importList]);
-                    return;
-                  }
-                  setSelectedItems([...(v as unknown as string[])]);
-                }}
-              >
-                <TableHeader>
-                  <TableColumn width={'100%'}>{t('advanced_import_dialog.path')}</TableColumn>
-                </TableHeader>
-                <TableBody>{rows}</TableBody>
-              </Table>
-            </div>
-
-            <div className="flex w-full justify-start gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button disabled={isValidationInProgress} size="icon-sm" variant="outline">
-                    <Plus />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onSelect={() => openFileDialog('file')}>
-                    <FilePlus />
-                    <div className="flex flex-col">
-                      <span>{t('advanced_import_dialog.add_files')}</span>
-                      <span className="text-muted-foreground text-xs">
-                        {t('advanced_import_dialog.add_files_description')}
-                      </span>
-                    </div>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={() => openFileDialog('folder')}>
-                    <FolderPlus />
-                    <div className="flex flex-col">
-                      <span>{t('advanced_import_dialog.add_folders')}</span>
-                      <span className="text-muted-foreground text-xs">
-                        {t('advanced_import_dialog.add_folders_description')}
-                      </span>
-                    </div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Button
-                disabled={selectedItems.length === 0 || isValidationInProgress}
-                size="icon-sm"
-                title={t('actions.remove')}
-                variant="destructive"
-                onClick={() => {
-                  const newList = [...importList].filter((item) => !selectedItems.includes(item));
-                  setSelectedItems([]);
-                  setImportList(new Set<string>(newList));
-                }}
-              >
-                <X></X>
-              </Button>
-            </div>
-            <Separator />
-            <div className="flex w-full items-center justify-between">
-              <div className="flex flex-col text-sm">
-                <Label htmlFor="switch-scan-subfolders">{t('settings.scan_subfolders_on_import')}</Label>
-              </div>
-              <Switch
-                checked={scanSubfolders}
-                disabled={isValidationInProgress}
-                id="switch-scan-subfolders"
-                onCheckedChange={setScanSubfolders}
-              />
-            </div>
-
-            <div className="flex w-full flex-col items-center justify-between gap-1">
-              <div className="flex w-full items-center justify-between">
-                <div className="flex flex-col text-sm">
-                  <Label htmlFor="switch-size-filter">{t('advanced_import_dialog.size_filter')}</Label>
-                </div>
-                <Switch
-                  checked={sizeFilter}
-                  disabled={isValidationInProgress}
-                  id="switch-size-filter"
-                  onCheckedChange={setSizeFilter}
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <Select
-                  disabled={!sizeFilter || isValidationInProgress}
-                  value={sizeFilterPattern}
-                  onValueChange={handleSizeFilterPatternChange}
-                >
-                  <SelectTrigger aria-label={t('compression_options.output_options.output_format')}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={FILE_SIZE_FILTER_PATTERN.LESS_THAN}>
-                      {t('advanced_import_dialog.less_than')}
-                    </SelectItem>
-                    <SelectItem value={FILE_SIZE_FILTER_PATTERN.EQUAL_TO}>
-                      {t('advanced_import_dialog.equal_to')}
-                    </SelectItem>
-                    <SelectItem value={FILE_SIZE_FILTER_PATTERN.GREATER_THAN}>
-                      {t('advanced_import_dialog.greater_than')}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <NumberInput
-                  hideStepper
-                  aria-label="Size filter"
-                  disabled={!sizeFilter || isValidationInProgress}
-                  size="sm"
-                  value={sizeFilterValue}
-                  onValueChange={(v) => setSizeFilterValue(v)}
-                />
-                <Select
-                  disabled={!sizeFilter || isValidationInProgress}
-                  value={sizeFilterUnit.toString()}
-                  onValueChange={handleSizeFilterUnitChange}
-                >
-                  <SelectTrigger aria-label={t('compression_options.output_options.output_format')}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sizeUnits.map((unit) => (
-                      <SelectItem key={unit.key} value={unit.key.toString()}>
-                        {unit.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <Input
-              isClearable
+      <DialogContent
+        className="sm:max-w-xl"
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>{t('advanced_import_dialog.title')}</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col items-center justify-center gap-2 text-center">
+          <div className="relative block h-[300px] w-full overflow-auto">
+            <Table
+              fullWidth
+              isHeaderSticky
+              removeWrapper
+              aria-label="File list"
+              checkboxesProps={{ disableAnimation: true }}
+              className="rounded-t-sm"
               classNames={{
-                inputWrapper: 'shadow-none',
-                label: 'text-sm ml-[-1px]',
+                base: 'h-full justify-between overflow-auto bg-background',
+                th: 'h-8 first:rounded-b-none first:rounded-t-none last:rounded-b-none last:rounded-t-none [&:first-child]:w-[32px]',
+                td: 'text-nowrap',
               }}
-              isDisabled={isValidationInProgress}
-              label={t('advanced_import_dialog.filename_pattern')}
-              labelPlacement="outside"
-              placeholder=".*\.jpg|.*\.png"
-              size="sm"
-              value={filenamePattern}
-              variant="faded"
-              onValueChange={(v) => setFilenamePattern(v)}
+              layout="auto"
+              radius="sm"
+              selectedKeys={selectedItems}
+              selectionMode="multiple"
+              shadow="none"
+              onSelectionChange={(v) => {
+                if (v === 'all') {
+                  setSelectedItems([...importList]);
+                  return;
+                }
+                setSelectedItems([...(v as unknown as string[])]);
+              }}
+            >
+              <TableHeader>
+                <TableColumn width={'100%'}>{t('advanced_import_dialog.path')}</TableColumn>
+              </TableHeader>
+              <TableBody>{rows}</TableBody>
+            </Table>
+          </div>
+
+          <div className="flex w-full justify-start gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button disabled={isValidationInProgress} size="icon-sm" variant="outline">
+                  <Plus />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onSelect={() => openFileDialog('file')}>
+                  <FilePlus />
+                  <div className="flex flex-col">
+                    <span>{t('advanced_import_dialog.add_files')}</span>
+                    <span className="text-muted-foreground text-xs">
+                      {t('advanced_import_dialog.add_files_description')}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => openFileDialog('folder')}>
+                  <FolderPlus />
+                  <div className="flex flex-col">
+                    <span>{t('advanced_import_dialog.add_folders')}</span>
+                    <span className="text-muted-foreground text-xs">
+                      {t('advanced_import_dialog.add_folders_description')}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button
+              disabled={selectedItems.length === 0 || isValidationInProgress}
+              size="icon-sm"
+              title={t('actions.remove')}
+              variant="destructive"
+              onClick={() => {
+                const newList = [...importList].filter((item) => !selectedItems.includes(item));
+                setSelectedItems([]);
+                setImportList(new Set<string>(newList));
+              }}
+            >
+              <X></X>
+            </Button>
+          </div>
+          <Separator />
+          <div className="flex w-full items-center justify-between">
+            <div className="flex flex-col text-sm">
+              <Label htmlFor="switch-scan-subfolders">{t('settings.scan_subfolders_on_import')}</Label>
+            </div>
+            <Switch
+              checked={scanSubfolders}
+              disabled={isValidationInProgress}
+              id="switch-scan-subfolders"
+              onCheckedChange={setScanSubfolders}
             />
           </div>
-        </ModalBody>
 
-        <ModalFooter>
+          <div className="flex w-full flex-col items-center justify-between gap-1">
+            <div className="flex w-full items-center justify-between">
+              <div className="flex flex-col text-sm">
+                <Label htmlFor="switch-size-filter">{t('advanced_import_dialog.size_filter')}</Label>
+              </div>
+              <Switch
+                checked={sizeFilter}
+                disabled={isValidationInProgress}
+                id="switch-size-filter"
+                onCheckedChange={setSizeFilter}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Select
+                disabled={!sizeFilter || isValidationInProgress}
+                value={sizeFilterPattern}
+                onValueChange={handleSizeFilterPatternChange}
+              >
+                <SelectTrigger aria-label={t('compression_options.output_options.output_format')}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={FILE_SIZE_FILTER_PATTERN.LESS_THAN}>
+                    {t('advanced_import_dialog.less_than')}
+                  </SelectItem>
+                  <SelectItem value={FILE_SIZE_FILTER_PATTERN.EQUAL_TO}>
+                    {t('advanced_import_dialog.equal_to')}
+                  </SelectItem>
+                  <SelectItem value={FILE_SIZE_FILTER_PATTERN.GREATER_THAN}>
+                    {t('advanced_import_dialog.greater_than')}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <NumberInput
+                hideStepper
+                aria-label="Size filter"
+                disabled={!sizeFilter || isValidationInProgress}
+                size="sm"
+                value={sizeFilterValue}
+                onValueChange={(v) => setSizeFilterValue(v)}
+              />
+              <Select
+                disabled={!sizeFilter || isValidationInProgress}
+                value={sizeFilterUnit.toString()}
+                onValueChange={handleSizeFilterUnitChange}
+              >
+                <SelectTrigger aria-label={t('compression_options.output_options.output_format')}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {sizeUnits.map((unit) => (
+                    <SelectItem key={unit.key} value={unit.key.toString()}>
+                      {unit.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <Input
+            isClearable
+            classNames={{
+              inputWrapper: 'shadow-none',
+              label: 'text-sm ml-[-1px]',
+            }}
+            isDisabled={isValidationInProgress}
+            label={t('advanced_import_dialog.filename_pattern')}
+            labelPlacement="outside"
+            placeholder=".*\.jpg|.*\.png"
+            size="sm"
+            value={filenamePattern}
+            variant="faded"
+            onValueChange={(v) => setFilenamePattern(v)}
+          />
+        </div>
+        <DialogFooter>
           <div className="flex w-full justify-end gap-2">
             <Button
               disabled={importList.size === 0}
@@ -319,9 +305,9 @@ function AdvancedImportDialog() {
               {t('cancel')}
             </Button>
           </div>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

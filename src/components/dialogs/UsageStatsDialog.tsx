@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useTranslation } from 'react-i18next';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
@@ -76,26 +76,21 @@ function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
     }
   };
   return (
-    <Modal
-      isDismissable
-      backdrop="blur"
-      classNames={{
-        backdrop: 'bg-content3/50',
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
       }}
-      isOpen={isOpen}
-      shadow="none"
-      size="xl"
-      onClose={onClose}
     >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">{t('usage_stats')}</ModalHeader>
-        <ModalBody>
-          <div className="bg-default/40 text-default-700 text-small inline-block h-fit max-h-40 w-full overflow-auto rounded-none px-2 py-1 font-mono font-normal whitespace-nowrap">
-            <pre className="">{formattedUsageStats}</pre>
-          </div>
-          <p className="text-sm">{t('settings.send_usage_statistics_disclaimer')}</p>
-        </ModalBody>
-        <ModalFooter>
+      <DialogContent className="sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle>{t('usage_stats')}</DialogTitle>
+        </DialogHeader>
+        <div className="bg-default/40 text-default-700 text-small inline-block h-fit max-h-40 w-full overflow-auto rounded-none px-2 py-1 font-mono font-normal whitespace-nowrap">
+          <pre>{formattedUsageStats}</pre>
+        </div>
+        <p className="text-sm">{t('settings.send_usage_statistics_disclaimer')}</p>
+        <DialogFooter>
           <div className="flex w-full justify-between gap-2">
             <Button variant="ghost" onClick={onCopyPressed}>
               {copyStatusIcon()}
@@ -105,9 +100,9 @@ function UsageStatsDialog({ isOpen, onClose }: UsageStatsDialogProps) {
               {t('close')}
             </Button>
           </div>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

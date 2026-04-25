@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ReactNode } from 'react';
 
 type AskDialogProps = {
@@ -11,23 +11,20 @@ type AskDialogProps = {
 
 function AskDialog({ title, message, buttons, isOpen, onClosed }: AskDialogProps) {
   return (
-    <Modal
-      isDismissable
-      backdrop="blur"
-      classNames={{
-        backdrop: 'bg-content3/50',
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClosed?.();
       }}
-      isOpen={isOpen}
-      shadow="none"
-      size="sm"
-      onClose={onClosed}
     >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-        <ModalBody>{message}</ModalBody>
-        <ModalFooter>{buttons}</ModalFooter>
-      </ModalContent>
-    </Modal>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <div>{message}</div>
+        <DialogFooter>{buttons}</DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
