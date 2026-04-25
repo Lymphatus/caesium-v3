@@ -1,5 +1,6 @@
-import { Select, SelectItem, SharedSelection, Tab, Tabs } from '@heroui/react';
+import { Select, SelectItem, SharedSelection } from '@heroui/react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { NumberInput } from '@/components/ui/number-input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -11,7 +12,6 @@ import WebpOptions from '@/components/side-panel/compression-options/WebpOptions
 import TiffOptions from '@/components/side-panel/compression-options/TiffOptions.tsx';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import GifOptions from '@/components/side-panel/compression-options/GifOptions.tsx';
-import { Key } from 'react';
 import { COMPRESSION_MODE, FILE_SIZE_UNIT } from '@/types.ts';
 
 enum ACCORDION_KEY {
@@ -93,8 +93,8 @@ function CompressionOptions() {
     setTiffAccordionOpen(values.includes(ACCORDION_KEY.TIFF));
   };
 
-  const handleCompressionModeChange = (key: Key) => {
-    if (key === 'size') {
+  const handleCompressionModeChange = (value: string) => {
+    if (value === 'size') {
       setCompressionMode(COMPRESSION_MODE.SIZE);
       return;
     }
@@ -104,14 +104,16 @@ function CompressionOptions() {
 
   return (
     <div className="size-full overflow-auto">
-      <div className="p-2 text-sm">
+      <div className="text-sm">
         <Tabs
-          fullWidth
-          selectedKey={compressionMode === COMPRESSION_MODE.SIZE ? 'size' : 'quality'}
-          size="sm"
-          onSelectionChange={handleCompressionModeChange}
+          value={compressionMode === COMPRESSION_MODE.SIZE ? 'size' : 'quality'}
+          onValueChange={handleCompressionModeChange}
         >
-          <Tab key="quality" title={t('quality')}>
+          <TabsList className="w-full">
+            <TabsTrigger value="quality">{t('quality')}</TabsTrigger>
+            <TabsTrigger value="size">{t('size')}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="quality">
             <div className="flex flex-col gap-2">
               <Accordion defaultValue={defaultAccordionOpen} type="multiple" onValueChange={handleAccordionOpen}>
                 <AccordionItem value={ACCORDION_KEY.JPEG}>
@@ -153,8 +155,8 @@ function CompressionOptions() {
                 <Switch checked={keepMetadata} id="switch-keep-metadata" onCheckedChange={setKeepMetadata}></Switch>
               </div>
             </div>
-          </Tab>
-          <Tab key="size" title={t('size')}>
+          </TabsContent>
+          <TabsContent value="size">
             <div className="flex flex-col gap-1">
               <Label>{t('compression_options.max_output_size')}</Label>
               <div className="flex items-center gap-2">
@@ -191,7 +193,7 @@ function CompressionOptions() {
                 </Select>
               </div>
             </div>
-          </Tab>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

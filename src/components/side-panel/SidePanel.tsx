@@ -1,11 +1,10 @@
-import { Tab, Tabs } from '@heroui/react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Folder, Scaling, SlidersHorizontal } from 'lucide-react';
 import CompressionOptions from '@/components/side-panel/CompressionOptions.tsx';
 import { useTranslation } from 'react-i18next';
 import OutputOptions from '@/components/side-panel/OutputOptions.tsx';
 import { SIDE_PANEL_TAB } from '@/types.ts';
 import useUIStore from '@/stores/ui.store.ts';
-import { Key } from 'react';
 import ResizeOptions from '@/components/side-panel/ResizeOptions.tsx';
 import useFileListStore from '@/stores/file-list.store.ts';
 
@@ -16,57 +15,35 @@ function SidePanel() {
   const { isCompressing } = useFileListStore();
   return (
     <div className="size-full">
-      <div className="bg-default-50 size-full overflow-x-auto overflow-y-hidden rounded">
+      <div className="bg-default-50 size-full overflow-x-auto overflow-y-hidden rounded p-2">
         <Tabs
-          classNames={{
-            tabList: 'w-full p-0.5 h-[32px] rounded-b-none',
-            tabWrapper: 'h-full',
-            panel: 'w-full h-[calc(100%_-_32px)] p-0',
-            base: 'w-full',
-          }}
-          //isDisabled={isCompressing}
-          // placement="end"
-          selectedKey={currentSelectedTab}
-          size="sm"
-          onSelectionChange={(key: Key) => setCurrentSelectedTab(key as SIDE_PANEL_TAB)}
-          // variant="bordered"
+          className="size-full"
+          value={currentSelectedTab}
+          onValueChange={(value) => setCurrentSelectedTab(value as SIDE_PANEL_TAB)}
         >
-          <Tab
-            key={SIDE_PANEL_TAB.COMPRESSION}
-            className={isCompressing ? 'opacity-disabled pointer-events-none' : ''} //TODO should be done in an attribute
-            title={
-              <div className="flex items-center gap-1">
-                <SlidersHorizontal className="size-4"></SlidersHorizontal>
-                <span className="text-xs font-semibold">{t('compression_options.compression')}</span>
-              </div>
-            }
-          >
-            <CompressionOptions></CompressionOptions>
-          </Tab>
-          <Tab
-            key={SIDE_PANEL_TAB.RESIZE}
-            className={isCompressing ? 'opacity-disabled pointer-events-none' : ''} //TODO should be done in an attribute
-            title={
-              <div className="flex items-center gap-2">
-                <Scaling className="size-4"></Scaling>
-                <span className="text-xs font-semibold">{t('compression_options.resize')}</span>
-              </div>
-            }
-          >
-            <ResizeOptions></ResizeOptions>
-          </Tab>
-          <Tab
-            key={SIDE_PANEL_TAB.OUTPUT}
-            className={isCompressing ? 'opacity-disabled pointer-events-none' : ''} //TODO should be done in an attribute
-            title={
-              <div className="flex items-center gap-2">
-                <Folder className="size-4"></Folder>
-                <span className="text-xs font-semibold">{t('compression_options.output')}</span>
-              </div>
-            }
-          >
-            <OutputOptions></OutputOptions>
-          </Tab>
+          <TabsList className="w-full">
+            <TabsTrigger disabled={isCompressing} value={SIDE_PANEL_TAB.COMPRESSION}>
+              <SlidersHorizontal className="size-4" />
+              <span className="text-xs font-semibold">{t('compression_options.compression')}</span>
+            </TabsTrigger>
+            <TabsTrigger disabled={isCompressing} value={SIDE_PANEL_TAB.RESIZE}>
+              <Scaling className="size-4" />
+              <span className="text-xs font-semibold">{t('compression_options.resize')}</span>
+            </TabsTrigger>
+            <TabsTrigger disabled={isCompressing} value={SIDE_PANEL_TAB.OUTPUT}>
+              <Folder className="size-4" />
+              <span className="text-xs font-semibold">{t('compression_options.output')}</span>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value={SIDE_PANEL_TAB.COMPRESSION}>
+            <CompressionOptions />
+          </TabsContent>
+          <TabsContent value={SIDE_PANEL_TAB.RESIZE}>
+            <ResizeOptions />
+          </TabsContent>
+          <TabsContent value={SIDE_PANEL_TAB.OUTPUT}>
+            <OutputOptions />
+          </TabsContent>
         </Tabs>
       </div>
     </div>

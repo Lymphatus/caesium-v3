@@ -89,7 +89,7 @@ function ResizeOptions() {
 
   return (
     <div className="size-full overflow-auto">
-      <div className="flex flex-col gap-2 p-2 text-sm">
+      <div className="flex flex-col gap-2 text-sm">
         <Select
           disallowEmptySelection
           classNames={{

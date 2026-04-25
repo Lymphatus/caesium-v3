@@ -68,7 +68,7 @@ function OutputOptions() {
 
   return (
     <div className="size-full overflow-auto">
-      <div className="flex flex-col gap-2 p-2 text-sm">
+      <div className="flex flex-col gap-2 text-sm">
         <div className="flex w-full flex-col gap-1">
           <Label htmlFor="input-output-folder">{t('compression_options.output_folder')}</Label>
           <div className="flex items-center gap-1">
