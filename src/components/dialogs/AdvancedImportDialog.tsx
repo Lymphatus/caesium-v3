@@ -1,4 +1,4 @@
-import { Input } from '@heroui/react';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
@@ -262,21 +262,16 @@ function AdvancedImportDialog() {
             </div>
           </div>
 
-          <Input
-            isClearable
-            classNames={{
-              inputWrapper: 'shadow-none',
-              label: 'text-sm ml-[-1px]',
-            }}
-            isDisabled={isValidationInProgress}
-            label={t('advanced_import_dialog.filename_pattern')}
-            labelPlacement="outside"
-            placeholder=".*\.jpg|.*\.png"
-            size="sm"
-            value={filenamePattern}
-            variant="faded"
-            onValueChange={(v) => setFilenamePattern(v)}
-          />
+          <div className="flex w-full flex-col gap-1">
+            <Label htmlFor="input-filename-pattern">{t('advanced_import_dialog.filename_pattern')}</Label>
+            <Input
+              disabled={isValidationInProgress}
+              id="input-filename-pattern"
+              placeholder=".*\.jpg|.*\.png"
+              value={filenamePattern}
+              onChange={(e) => setFilenamePattern(e.target.value)}
+            />
+          </div>
         </div>
         <DialogFooter>
           <div className="flex w-full justify-end gap-2">
