@@ -1,17 +1,27 @@
 import * as React from 'react';
 
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
-    <div className="relative size-full overflow-auto" data-slot="table-container">
+    <ScrollArea
+      className="size-full [&>[data-slot=scroll-area-scrollbar][data-orientation=vertical]]:!top-10 [&>[data-slot=scroll-area-scrollbar][data-orientation=vertical]]:h-[calc(100%-2.5rem)]"
+      data-slot="table-container"
+    >
       <table className={cn('w-full caption-bottom text-sm', className)} data-slot="table" {...props} />
-    </div>
+    </ScrollArea>
   );
 }
 
 function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
-  return <thead className={cn('[&_tr]:border-b', className)} data-slot="table-header" {...props} />;
+  return (
+    <thead
+      className={cn('bg-muted [&_tr]:hover:bg-muted/50 [&_tr]:border-b', className)}
+      data-slot="table-header"
+      {...props}
+    />
+  );
 }
 
 function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
