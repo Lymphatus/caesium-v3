@@ -14,11 +14,11 @@ function Toolbar() {
   const { t } = useTranslation();
 
   return (
-    <div className="bg-card flex h-[40px] w-full items-center justify-between p-2">
+    <div className="flex h-[40px] w-full items-center justify-between p-2">
       <div className="flex h-full items-center gap-2">
         <Button
           disabled={isCompressing}
-          size="sm"
+          size={showLabelsInToolbar ? 'sm' : 'icon-sm'}
           title={t('actions.add_dots')}
           variant="ghost"
           onClick={() => openPickerDialogs('files')}
@@ -28,7 +28,7 @@ function Toolbar() {
         </Button>
         <Button
           disabled={isCompressing}
-          size="sm"
+          size={showLabelsInToolbar ? 'sm' : 'icon-sm'}
           title={t('actions.add_folder_dots')}
           variant="ghost"
           onClick={() => openPickerDialogs('folder')}
@@ -43,7 +43,7 @@ function Toolbar() {
       <div className="flex h-full items-center gap-2">
         <Button
           disabled={fileList.length === 0 || isCompressing}
-          size="sm"
+          size={showLabelsInToolbar ? 'sm' : 'icon-sm'}
           title={t('actions.compress')}
           onClick={() => invokeCompress()}
         >
@@ -51,7 +51,12 @@ function Toolbar() {
           {showLabelsInToolbar && <span>{t('actions.compress')}</span>}
         </Button>
         <Separator orientation="vertical" />
-        <Button size="sm" title={t('actions.settings')} variant="ghost" onClick={() => setSettingsDialogOpen(true)}>
+        <Button
+          size={showLabelsInToolbar ? 'sm' : 'icon-sm'}
+          title={t('actions.settings')}
+          variant="ghost"
+          onClick={() => setSettingsDialogOpen(true)}
+        >
           <Settings></Settings>
           {showLabelsInToolbar && <span>{t('actions.settings')}</span>}
         </Button>

@@ -35,7 +35,7 @@ function Footer() {
     return t('compression_status.compressing_dots');
   };
   return (
-    <div className="bg-card flex h-10 w-full items-center justify-between px-4 text-sm">
+    <div className="flex h-10 w-full items-center justify-between px-4 text-sm">
       <div>
         <div className="text-muted-foreground flex items-center gap-2">
           <span>{t('files_in_list', { total: totalFiles })}</span>

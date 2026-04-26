@@ -117,7 +117,7 @@ function FileListTable() {
       )}
       <Table>
         <TableHeader className="sticky top-0 z-10">
-          <TableRow>
+          <TableRow className="hover:bg-transparent">
             <TableHead className="w-[40px] text-center">
               <Checkbox
                 aria-label="Select all"

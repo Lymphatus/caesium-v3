@@ -17,7 +17,7 @@ function Accordion({ className, ...props }: React.ComponentProps<typeof Accordio
 function AccordionItem({ className, ...props }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
   return (
     <AccordionPrimitive.Item
-      className={cn('data-open:bg-muted/50 not-last:border-b', className)}
+      className={cn('data-open:bg-muted/30 not-last:border-b', className)}
       data-slot="accordion-item"
       {...props}
     />
