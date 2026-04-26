@@ -23,10 +23,10 @@ function ListPanel() {
     invokeBackend<FileListPayload>('clear_list').then((payload: FileListPayload) => updateList(payload));
 
   return (
-    <div className="size-full">
-      <div className="bg-card flex size-full flex-col rounded">
+    <div className="size-full rounded-2xl">
+      <div className="bg-card flex size-full flex-col rounded-2xl">
         <FileListTable></FileListTable>
-        <div className="bg-muted flex min-h-10 items-center justify-between rounded-b p-2">
+        <div className="bg-muted flex min-h-10 items-center justify-between rounded-b-2xl p-2">
           <div className="flex flex-1 justify-start gap-2">
             <Button
               disabled={selectedItems.length === 0 || isCompressing}

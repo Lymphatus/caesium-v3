@@ -116,7 +116,7 @@ function FileListTable() {
         </div>
       )}
       <Table>
-        <TableHeader className="bg-background sticky top-0 z-10">
+        <TableHeader className="sticky top-0 z-10">
           <TableRow>
             <TableHead className="w-[40px] text-center">
               <Checkbox

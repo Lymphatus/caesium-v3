@@ -15,7 +15,7 @@ function SidePanel() {
   const { isCompressing } = useFileListStore();
   return (
     <div className="size-full">
-      <div className="bg-card size-full overflow-y-auto rounded p-2">
+      <div className="bg-card size-full overflow-y-auto rounded-2xl p-2">
         <Tabs value={currentSelectedTab} onValueChange={(value) => setCurrentSelectedTab(value as SIDE_PANEL_TAB)}>
           <TabsList className="w-full">
             <TabsTrigger disabled={isCompressing} value={SIDE_PANEL_TAB.COMPRESSION}>
