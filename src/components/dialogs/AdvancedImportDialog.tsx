@@ -1,4 +1,6 @@
-import { Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import { Input } from '@heroui/react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
@@ -81,11 +83,19 @@ function AdvancedImportDialog() {
     { key: FILE_SIZE_UNIT.MEGABYTE, label: t('size_units.mb') },
   ];
 
-  const rows = [...importList].map((item) => (
-    <TableRow key={item}>
-      <TableCell className="w-full">{item}</TableCell>
-    </TableRow>
-  ));
+  const items = [...importList];
+  const allSelected = items.length > 0 && selectedItems.length === items.length;
+  const someSelected = selectedItems.length > 0 && !allSelected;
+  const toggleAllItems = (checked: boolean | 'indeterminate') => {
+    setSelectedItems(checked === true ? [...items] : []);
+  };
+  const toggleItem = (item: string, checked: boolean | 'indeterminate') => {
+    if (checked === true) {
+      setSelectedItems([...selectedItems, item]);
+    } else {
+      setSelectedItems(selectedItems.filter((s) => s !== item));
+    }
+  };
 
   return (
     <Dialog
@@ -104,35 +114,36 @@ function AdvancedImportDialog() {
         </DialogHeader>
         <div className="flex flex-col items-center justify-center gap-2 text-center">
           <div className="relative block h-[300px] w-full overflow-auto">
-            <Table
-              fullWidth
-              isHeaderSticky
-              removeWrapper
-              aria-label="File list"
-              checkboxesProps={{ disableAnimation: true }}
-              className="rounded-t-sm"
-              classNames={{
-                base: 'h-full justify-between overflow-auto bg-background',
-                th: 'h-8 first:rounded-b-none first:rounded-t-none last:rounded-b-none last:rounded-t-none [&:first-child]:w-[32px]',
-                td: 'text-nowrap',
-              }}
-              layout="auto"
-              radius="sm"
-              selectedKeys={selectedItems}
-              selectionMode="multiple"
-              shadow="none"
-              onSelectionChange={(v) => {
-                if (v === 'all') {
-                  setSelectedItems([...importList]);
-                  return;
-                }
-                setSelectedItems([...(v as unknown as string[])]);
-              }}
-            >
-              <TableHeader>
-                <TableColumn width={'100%'}>{t('advanced_import_dialog.path')}</TableColumn>
+            <Table>
+              <TableHeader className="bg-background sticky top-0 z-10">
+                <TableRow>
+                  <TableHead className="w-[40px] text-center">
+                    <Checkbox
+                      aria-label="Select all"
+                      checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                      onCheckedChange={toggleAllItems}
+                    />
+                  </TableHead>
+                  <TableHead>{t('advanced_import_dialog.path')}</TableHead>
+                </TableRow>
               </TableHeader>
-              <TableBody>{rows}</TableBody>
+              <TableBody>
+                {items.map((item) => {
+                  const isSelected = selectedItems.includes(item);
+                  return (
+                    <TableRow key={item} data-state={isSelected ? 'selected' : undefined}>
+                      <TableCell className="text-center">
+                        <Checkbox
+                          aria-label={`Select ${item}`}
+                          checked={isSelected}
+                          onCheckedChange={(v) => toggleItem(item, v)}
+                        />
+                      </TableCell>
+                      <TableCell className="w-full">{item}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
             </Table>
           </div>
 

@@ -6,10 +6,11 @@ import useSettingsStore from '@/stores/settings.store.ts';
 import useCompressionOptionsStore from '@/stores/compression-options.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import useOutputOptionsStore from '@/stores/output-options.store.ts';
-import { SortDescriptor } from '@heroui/react';
 import { execPostCompressionAction } from '@/services/post-compression-actions.ts';
 import { invokeBackend } from '@/utils/invoker.tsx';
 import useUIStore from '@/stores/ui.store.ts';
+
+export type SortDescriptor = { column: string; direction: 'ascending' | 'descending' };
 
 interface FileListStore {
   fileList: CImage[];
