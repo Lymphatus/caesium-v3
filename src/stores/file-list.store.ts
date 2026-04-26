@@ -110,7 +110,10 @@ const useFileListStore = create<FileListStore>()(
             useFileListStore.getState().setFileList(files);
             useFileListStore.getState().setBaseFolder(base_folder);
             useFileListStore.getState().setTotalFiles(total_files);
-            useFileListStore.getState().setCurrentPage(Math.min(get().currentPage, Math.ceil(total_files / 50)));
+            const totalPages = Math.ceil(total_files / 50);
+            useFileListStore
+              .getState()
+              .setCurrentPage(totalPages === 0 ? 1 : Math.min(Math.max(1, get().currentPage), totalPages));
           },
           invokeCompress: () => {
             if (get().isCompressing) {

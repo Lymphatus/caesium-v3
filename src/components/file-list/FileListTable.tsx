@@ -109,7 +109,7 @@ function FileListTable() {
   };
 
   return (
-    <div className="relative size-full">
+    <div className="relative min-h-0 flex-1">
       {isListLoading && (
         <div className="bg-background/70 absolute z-20 flex size-full items-center justify-center">
           <Spinner className="text-primary size-10" />
