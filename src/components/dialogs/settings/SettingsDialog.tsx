@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import useUIStore from '@/stores/ui.store.ts';
 import { useTranslation } from 'react-i18next';
@@ -23,31 +23,33 @@ function SettingsDialog() {
         <DialogHeader>
           <DialogTitle>{t('settings_title')}</DialogTitle>
         </DialogHeader>
-        <Tabs className="flex flex-row gap-4" defaultValue="general" orientation="vertical">
-          <TabsList className="flex h-auto flex-col">
-            <TabsTrigger className="w-full justify-start" value="general">
-              <Settings2 />
-              <span>{t('settings.general')}</span>
-            </TabsTrigger>
-            <TabsTrigger className="w-full justify-start" value="import">
-              <Import />
-              <span>{t('settings.import')}</span>
-            </TabsTrigger>
-            <TabsTrigger className="w-full justify-start" value="advanced">
-              <Code />
-              <span>{t('settings.advanced')}</span>
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent className="flex-1" value="general">
-            <GeneralSettings />
-          </TabsContent>
-          <TabsContent className="flex-1" value="import">
-            <ImportSettings />
-          </TabsContent>
-          <TabsContent className="flex-1" value="advanced">
-            <AdvancedSettings />
-          </TabsContent>
-        </Tabs>
+        <DialogBody>
+          <Tabs className="flex flex-row gap-4" defaultValue="general" orientation="vertical">
+            <TabsList className="flex h-auto flex-col">
+              <TabsTrigger className="w-full justify-start" value="general">
+                <Settings2 />
+                <span>{t('settings.general')}</span>
+              </TabsTrigger>
+              <TabsTrigger className="w-full justify-start" value="import">
+                <Import />
+                <span>{t('settings.import')}</span>
+              </TabsTrigger>
+              <TabsTrigger className="w-full justify-start" value="advanced">
+                <Code />
+                <span>{t('settings.advanced')}</span>
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent className="flex-1" value="general">
+              <GeneralSettings />
+            </TabsContent>
+            <TabsContent className="flex-1" value="import">
+              <ImportSettings />
+            </TabsContent>
+            <TabsContent className="flex-1" value="advanced">
+              <AdvancedSettings />
+            </TabsContent>
+          </Tabs>
+        </DialogBody>
         <DialogFooter>
           <Button variant="secondary" onClick={() => setSettingsDialogOpen(false)}>
             {t('close')}

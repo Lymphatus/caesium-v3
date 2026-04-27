@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +39,7 @@ function CompressionProgressDialog() {
         <DialogHeader>
           <DialogTitle className="sr-only">{setProgressLabel()}</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col items-center gap-2">
+        <DialogBody className="flex flex-col items-center gap-2">
           <div className="flex w-full items-center justify-between gap-2">
             <div className="flex w-full flex-col gap-1">
               <div className="flex justify-between text-xs">
@@ -63,7 +63,7 @@ function CompressionProgressDialog() {
               {isCompressionPaused ? <Play className="size-4" /> : <Pause className="size-4" />}
             </Button>
           </div>
-        </div>
+        </DialogBody>
         <DialogFooter>
           <div className="flex w-full items-center justify-between gap-2">
             <Button

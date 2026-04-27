@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import useFileListStore from '@/stores/file-list.store.ts';
 import { useTranslation } from 'react-i18next';
@@ -18,13 +18,13 @@ function ImportDialog() {
         <DialogHeader>
           <DialogTitle className="sr-only">{t('importing_dots')}</DialogTitle>
         </DialogHeader>
-        <div className="flex w-full flex-col gap-1 py-4">
+        <DialogBody className="flex w-full flex-col gap-1 py-4">
           <div className="flex justify-between text-xs">
             <span>{importProgress ? t('importing_dots') : t('collecting_dots')}</span>
             {!!importProgress && <span>{Math.round(importProgress)}%</span>}
           </div>
           <Progress value={importProgress || undefined} />
-        </div>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );

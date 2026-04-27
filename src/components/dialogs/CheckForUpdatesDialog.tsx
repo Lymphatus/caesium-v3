@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import useUIStore from '@/stores/ui.store.ts';
 import { check, DownloadEvent, Update } from '@tauri-apps/plugin-updater';
@@ -139,7 +139,7 @@ function CheckForUpdatesDialog() {
         <DialogHeader>
           <DialogTitle className="sr-only">{t('check_for_updates')}</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
+        <DialogBody className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex justify-between text-xs">
               {message}
@@ -168,7 +168,7 @@ function CheckForUpdatesDialog() {
               </div>
             </div>
           )}
-        </div>
+        </DialogBody>
         <DialogFooter>
           <div className="flex w-full items-center justify-between gap-2">
             <div>

@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useTranslation } from 'react-i18next';
 import useUIStore from '@/stores/ui.store';
 import appLogo from '@/assets/images/app-icon.png';
@@ -26,7 +26,7 @@ function AboutDialog() {
         <DialogHeader>
           <DialogTitle className="sr-only">{t('app_name')}</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col items-center justify-center gap-4 text-center">
+        <DialogBody className="flex flex-col items-center justify-center gap-4 text-center">
           <img alt="Caesium Logo" className="mx-auto mb-4 w-32" src={appLogo} />
           <div className="flex flex-col items-center justify-center">
             <div className="text-xl font-bold">{t('app_name')}</div>
@@ -54,7 +54,7 @@ function AboutDialog() {
               saerasoft.com/caesium
             </a>
           </div>
-        </div>
+        </DialogBody>
         <DialogFooter>
           <div className="w-full text-center">
             <small className="text-xs">{t('copyright_note')}</small>

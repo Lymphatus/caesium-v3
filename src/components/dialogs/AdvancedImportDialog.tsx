@@ -22,7 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
@@ -112,7 +112,7 @@ function AdvancedImportDialog() {
         <DialogHeader>
           <DialogTitle>{t('advanced_import_dialog.title')}</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col items-center justify-center gap-2 text-center">
+        <DialogBody className="flex flex-col items-center justify-center gap-2 text-center">
           <div className="relative block h-[300px] w-full overflow-auto">
             <Table>
               <TableHeader className="bg-background sticky top-0 z-10">
@@ -272,7 +272,7 @@ function AdvancedImportDialog() {
               onChange={(e) => setFilenamePattern(e.target.value)}
             />
           </div>
-        </div>
+        </DialogBody>
         <DialogFooter>
           <div className="flex w-full justify-end gap-2">
             <Button

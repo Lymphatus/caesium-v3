@@ -22,6 +22,7 @@ import { SavedLabel } from '@/components/SavedLabel.tsx';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { cn } from '@/lib/utils';
+import { useListLoading } from '@/hooks/useListLoading';
 
 function getSubpart(baseFolder: string | null, fullPath: string, filename: string) {
   if (baseFolder == null) {
@@ -58,21 +59,21 @@ function FileListTable() {
     selectedItems,
     setCurrentSorting,
     currentSorting,
-    setIsListLoading,
     updateList,
     isCompressing,
   } = useFileListStore();
   const { setCurrentPreviewedCImage, invokePreview, currentPreviewedCImage } = usePreviewStore();
   const { t } = useTranslation();
+  const { start: startLoading, stop: stopLoading } = useListLoading();
 
   const handleSort = (column: SortableColumn) => {
     const direction =
       currentSorting.column === column && currentSorting.direction === 'ascending' ? 'descending' : 'ascending';
-    setIsListLoading(true);
+    startLoading();
     setCurrentSorting({ column, direction });
     invokeBackend<FileListPayload>('sort_list', { column, order: direction })
       .then((payload) => updateList(payload))
-      .finally(() => setIsListLoading(false));
+      .finally(stopLoading);
   };
 
   const SortableHead = ({ column, label }: { column: SortableColumn; label: string }) => {
@@ -111,7 +112,7 @@ function FileListTable() {
   return (
     <div className="relative min-h-0 flex-1 overflow-hidden rounded-t-2xl">
       {isListLoading && (
-        <div className="bg-background/70 absolute z-20 flex size-full items-center justify-center">
+        <div className="bg-background/30 absolute z-20 flex size-full items-center justify-center backdrop-blur-sm">
           <Spinner className="text-primary size-10" />
         </div>
       )}
@@ -154,6 +155,7 @@ function FileListTable() {
                   <Checkbox
                     aria-label={`Select ${cImage.name}`}
                     checked={isSelected}
+                    className="align-text-bottom"
                     onCheckedChange={(v) => toggleRow(cImage, v)}
                   />
                 </TableCell>
@@ -209,10 +211,10 @@ function FileListTable() {
                       title={t('actions.remove')}
                       variant="destructive"
                       onClick={() => {
-                        setIsListLoading(true);
+                        startLoading();
                         invokeBackend<FileListPayload>('remove_items_from_list', { keys: [cImage.id] })
                           .then((payload) => updateList(payload))
-                          .finally(() => setIsListLoading(false));
+                          .finally(stopLoading);
                       }}
                     >
                       <X />

@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import AppMenu from '@/components/AppMenu.tsx';
 import FileListFilter from '@/components/file-list/FileListFilter.tsx';
 import { Button } from './ui/button';
+import appLogo from '@/assets/images/app-icon.png';
 
 function Toolbar() {
   const { openPickerDialogs, fileList, invokeCompress, isCompressing } = useFileListStore();
@@ -16,6 +17,9 @@ function Toolbar() {
   return (
     <div className="flex h-[40px] w-full items-center justify-between p-2">
       <div className="flex h-full items-center gap-2">
+        <div>
+          <img alt="Caesium Logo" className="h-[40px] py-2" src={appLogo} />
+        </div>
         <Button
           disabled={isCompressing}
           size={showLabelsInToolbar ? 'sm' : 'icon-sm'}
@@ -37,7 +41,7 @@ function Toolbar() {
           {showLabelsInToolbar && <span>{t('actions.add_folder_dots')}</span>}
         </Button>
       </div>
-      <div className="flex h-full items-center gap-2">
+      <div className="flex h-full max-w-[40%] flex-1 items-center gap-2">
         <FileListFilter></FileListFilter>
       </div>
       <div className="flex h-full items-center gap-2">

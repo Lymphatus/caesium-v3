@@ -7,16 +7,19 @@ import usePreviewStore from '@/stores/preview.store';
 import { Button } from '../ui/button';
 import { invokeBackend } from '@/utils/invoker';
 import { FileListPayload } from '@/types';
+import { useListLoading } from '@/hooks/useListLoading';
 
 function ListPanel() {
   const { t } = useTranslation();
   const { invokePreview } = usePreviewStore();
-  const { selectedItems, isCompressing, updateList, setIsListLoading, fileList } = useFileListStore();
+  const { selectedItems, isCompressing, updateList, fileList } = useFileListStore();
+  const { start: startLoading, stop: stopLoading } = useListLoading();
+
   const onRemoveItemFromListPressed = async () => {
-    setIsListLoading(true);
+    startLoading();
     invokeBackend<FileListPayload>('remove_items_from_list', { keys: selectedItems.map((c) => c.id) })
       .then((payload) => updateList(payload))
-      .finally(() => setIsListLoading(false));
+      .finally(stopLoading);
   };
 
   const onClearPressed = async () =>

@@ -29,7 +29,7 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, 'size'> &
   React.ComponentProps<'a'>;
 
-function PaginationLink({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) {
+function PaginationLink({ className, isActive, size = 'icon-sm', ...props }: PaginationLinkProps) {
   return (
     <Button asChild className={cn(className)} size={size} variant={isActive ? 'outline' : 'ghost'}>
       {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
@@ -40,11 +40,11 @@ function PaginationLink({ className, isActive, size = 'icon', ...props }: Pagina
 
 function PaginationPrevious({
   className,
-  text = 'Previous',
+  text = '',
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
-    <PaginationLink aria-label="Go to previous page" className={cn('ps-2!', className)} size="default" {...props}>
+    <PaginationLink aria-label="Go to previous page" className={cn('px-0 ps-2!', className)} size="default" {...props}>
       <ChevronLeftIcon className="rtl:rotate-180" data-icon="inline-start" />
       <span className="hidden sm:block">{text}</span>
     </PaginationLink>
@@ -53,11 +53,11 @@ function PaginationPrevious({
 
 function PaginationNext({
   className,
-  text = 'Next',
+  text = '',
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
-    <PaginationLink aria-label="Go to next page" className={cn('pe-2!', className)} size="default" {...props}>
+    <PaginationLink aria-label="Go to next page" className={cn('px-0 pe-2!', className)} size="default" {...props}>
       <span className="hidden sm:block">{text}</span>
       <ChevronRightIcon className="rtl:rotate-180" data-icon="inline-end" />
     </PaginationLink>

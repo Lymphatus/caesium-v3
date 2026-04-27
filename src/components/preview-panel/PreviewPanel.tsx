@@ -43,11 +43,11 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           endAdornment="%"
           max={300}
           min={1}
-          size="sm"
+          size="xs"
           value={zoomLevel}
           onValueChange={(value) => setZoomLevel(value, state)}
         />
-        <Button size="icon-xs" title={i18next.t('zoom_out')} variant="outline" onClick={() => zoomOut(0.1)}>
+        <Button size="icon-xs" title={i18next.t('zoom_out')} variant="ghost" onClick={() => zoomOut(0.1)}>
           <Minus></Minus>
         </Button>
         <Slider
@@ -59,7 +59,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           onValueChange={([value]) => setZoomLevel(value, state)}
         />
 
-        <Button size="icon-xs" title={i18next.t('zoom_in')} variant="outline" onClick={() => zoomIn(0.1)}>
+        <Button size="icon-xs" title={i18next.t('zoom_in')} variant="ghost" onClick={() => zoomIn(0.1)}>
           <Plus></Plus>
         </Button>
       </>
@@ -175,7 +175,7 @@ function PreviewPanel() {
                     disabled={!currentPreviewedCImage?.compressed_file_path}
                     size="xs"
                     title={t('swap')}
-                    variant="outline"
+                    variant="ghost"
                     onClick={() => {
                       setVisualizationMode(visualizationMode === 'original' ? 'compressed' : 'original');
                     }}
@@ -187,7 +187,7 @@ function PreviewPanel() {
                     disabled={currentPreviewedCImage == null}
                     size="icon-xs"
                     title={t('fit_container')}
-                    variant="outline"
+                    variant="ghost"
                     onClick={() => {
                       fitContentToWrapper(centerView);
                     }}
@@ -198,7 +198,7 @@ function PreviewPanel() {
                     disabled={currentPreviewedCImage == null}
                     size="icon-xs"
                     title={t('actual_size')}
-                    variant="outline"
+                    variant="ghost"
                     onClick={() => {
                       centerView(1);
                     }}

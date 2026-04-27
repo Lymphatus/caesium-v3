@@ -47,7 +47,7 @@ function DialogContent({
       <DialogOverlay />
       <DialogPrimitive.Content
         className={cn(
-          'bg-popover text-popover-foreground ring-foreground/5 dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed start-1/2 top-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 content-start gap-6 rounded-4xl p-6 text-sm shadow-xl ring-1 duration-100 outline-none sm:max-w-md rtl:translate-x-1/2',
+          'bg-popover text-popover-foreground ring-foreground/5 dark:ring-foreground/10 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 fixed start-1/2 top-1/2 z-50 flex w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-6 rounded-4xl p-6 text-sm shadow-xl ring-1 duration-100 outline-none sm:max-w-md rtl:translate-x-1/2',
           className,
         )}
         data-slot="dialog-content"
@@ -56,7 +56,7 @@ function DialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close asChild data-slot="dialog-close">
-            <Button className="bg-secondary absolute end-4 top-4" size="icon-sm" variant="ghost">
+            <Button className="absolute end-4 top-4" size="icon-sm" variant="ghost">
               <XIcon />
               <span className="sr-only">Close</span>
             </Button>
@@ -69,6 +69,10 @@ function DialogContent({
 
 function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return <div className={cn('flex flex-col gap-1.5', className)} data-slot="dialog-header" {...props} />;
+}
+
+function DialogBody({ className, ...props }: React.ComponentProps<'div'>) {
+  return <div className={cn('min-h-0 flex-1 overflow-auto', className)} data-slot="dialog-body" {...props} />;
 }
 
 function DialogFooter({
@@ -120,6 +124,7 @@ function DialogDescription({ className, ...props }: React.ComponentProps<typeof 
 
 export {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,

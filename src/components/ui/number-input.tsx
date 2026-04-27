@@ -12,7 +12,7 @@ interface NumberInputProps extends Omit<React.ComponentProps<'input'>, 'value' |
   step?: number;
   hideStepper?: boolean;
   endAdornment?: React.ReactNode;
-  size?: 'default' | 'sm';
+  size?: 'default' | 'sm' | 'xs';
 }
 
 function clamp(n: number, min?: number, max?: number) {
@@ -53,7 +53,7 @@ function NumberInput({
   const atMin = min !== undefined && value !== undefined && value <= min;
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn('relative', size === 'xs' ? 'h-6' : size === 'sm' ? 'h-8' : 'h-9', className)}>
       <Input
         className={cn(
           '[appearance:textfield] text-right [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
@@ -76,16 +76,21 @@ function NumberInput({
           className={cn(
             'text-muted-foreground absolute inset-y-0 flex items-center text-sm',
             !hideStepper ? 'right-9' : 'right-3',
+            size === 'xs' ? 'text-xs' : size === 'sm' ? 'text-sm' : 'text-base',
           )}
         >
           {endAdornment}
         </div>
       )}
       {!hideStepper && (
-        <div className="absolute inset-y-0 right-1 flex flex-col items-center justify-between gap-0.5 px-2 py-1">
+        <div
+          className={cn(
+            'absolute inset-y-0 right-1 flex flex-col items-center justify-between gap-0.5 px-2',
+            size === 'xs' ? 'py-px' : size === 'sm' ? 'py-0.5' : 'py-1',
+          )}
+        >
           <Button
             className="size-3 p-1"
-            // className="text-muted-foreground hover:text-foreground hover:bg-accent flex size-5 items-center justify-center rounded-sm disabled:opacity-50"
             disabled={disabled || atMax}
             size="xs"
             tabIndex={-1}
@@ -97,7 +102,6 @@ function NumberInput({
           </Button>
           <Button
             className="size-3 p-1"
-            // className="text-muted-foreground hover:text-foreground hover:bg-accent flex size-5 items-center justify-center rounded-sm disabled:opacity-50"
             disabled={disabled || atMin}
             size="xs"
             tabIndex={-1}

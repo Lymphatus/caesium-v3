@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ReactNode } from 'react';
 
 type AskDialogProps = {
@@ -21,7 +21,7 @@ function AskDialog({ title, message, buttons, isOpen, onClosed }: AskDialogProps
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <div>{message}</div>
+        <DialogBody>{message}</DialogBody>
         <DialogFooter>{buttons}</DialogFooter>
       </DialogContent>
     </Dialog>
