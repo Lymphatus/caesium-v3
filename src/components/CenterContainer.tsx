@@ -8,7 +8,7 @@ function CenterContainer() {
   const { splitPanels, setSplitPanels, showPreviewPanel } = useUIStore();
 
   return (
-    <div className="center-container px-1">
+    <div className="center-container px-2">
       <PanelGroup
         direction="horizontal"
         onLayout={(size) => setSplitPanels({ center: splitPanels.center, main: size })}

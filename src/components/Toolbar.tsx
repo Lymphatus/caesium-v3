@@ -15,10 +15,10 @@ function Toolbar() {
   const { t } = useTranslation();
 
   return (
-    <div className="flex h-[40px] w-full items-center justify-between p-2">
+    <div className="flex h-[44px] w-full items-center justify-between p-2">
       <div className="flex h-full items-center gap-2">
         <div>
-          <img alt="Caesium Logo" className="h-[40px] py-2" src={appLogo} />
+          <img alt="Caesium Logo" className="h-[44px] py-2" src={appLogo} />
         </div>
         <Button
           disabled={isCompressing}

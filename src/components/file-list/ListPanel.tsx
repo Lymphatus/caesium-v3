@@ -27,13 +27,13 @@ function ListPanel() {
 
   return (
     <div className="size-full rounded-2xl">
-      <div className="bg-card flex size-full flex-col rounded-2xl">
+      <div className="flex size-full flex-col rounded-2xl">
         <FileListTable></FileListTable>
-        <div className="bg-muted flex min-h-10 items-center justify-between rounded-b-2xl p-2">
+        <div className="bg-card flex items-center justify-between rounded-b-2xl px-1.5 py-0.5">
           <div className="flex flex-1 justify-start gap-2">
             <Button
               disabled={selectedItems.length === 0 || isCompressing}
-              size="sm"
+              size="xs"
               title={t('actions.remove')}
               variant="destructive"
               onClick={onRemoveItemFromListPressed}
@@ -43,7 +43,7 @@ function ListPanel() {
             </Button>
             <Button
               disabled={fileList.length === 0 || isCompressing}
-              size="sm"
+              size="xs"
               title={t('actions.clear')}
               variant="destructive"
               onClick={onClearPressed}
@@ -58,8 +58,8 @@ function ListPanel() {
           <div className="flex flex-1 justify-end">
             <Button
               disabled={selectedItems.length === 0 || isCompressing}
-              size="sm"
-              variant="outline"
+              size="xs"
+              variant="ghost"
               onClick={() => invokePreview(selectedItems.map((c) => c.id))}
             >
               <Search></Search>

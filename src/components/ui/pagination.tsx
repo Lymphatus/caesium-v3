@@ -29,7 +29,7 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, 'size'> &
   React.ComponentProps<'a'>;
 
-function PaginationLink({ className, isActive, size = 'icon-sm', ...props }: PaginationLinkProps) {
+function PaginationLink({ className, isActive, size = 'icon-xs', ...props }: PaginationLinkProps) {
   return (
     <Button asChild className={cn(className)} size={size} variant={isActive ? 'outline' : 'ghost'}>
       {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
@@ -38,27 +38,17 @@ function PaginationLink({ className, isActive, size = 'icon-sm', ...props }: Pag
   );
 }
 
-function PaginationPrevious({
-  className,
-  text = '',
-  ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
-    <PaginationLink aria-label="Go to previous page" className={cn('px-0 ps-2!', className)} size="default" {...props}>
+    <PaginationLink aria-label="Go to previous page" className={cn('px-0 ps-2!', className)} size="icon-sm" {...props}>
       <ChevronLeftIcon className="rtl:rotate-180" data-icon="inline-start" />
-      <span className="hidden sm:block">{text}</span>
     </PaginationLink>
   );
 }
 
-function PaginationNext({
-  className,
-  text = '',
-  ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+function PaginationNext({ className, ...props }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
-    <PaginationLink aria-label="Go to next page" className={cn('px-0 pe-2!', className)} size="default" {...props}>
-      <span className="hidden sm:block">{text}</span>
+    <PaginationLink aria-label="Go to next page" className={cn('px-0 pe-2!', className)} size="icon-sm" {...props}>
       <ChevronRightIcon className="rtl:rotate-180" data-icon="inline-end" />
     </PaginationLink>
   );
@@ -68,7 +58,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<'span'
   return (
     <span
       aria-hidden
-      className={cn("flex size-9 items-center justify-center [&_svg:not([class*='size-'])]:size-4", className)}
+      className={cn("flex items-center justify-center [&_svg:not([class*='size-'])]:size-4", className)}
       data-slot="pagination-ellipsis"
       {...props}
     >
