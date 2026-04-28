@@ -23,7 +23,7 @@ function ImportDialog() {
             <span>{importProgress ? t('importing_dots') : t('collecting_dots')}</span>
             {!!importProgress && <span>{Math.round(importProgress)}%</span>}
           </div>
-          <Progress value={importProgress || undefined} />
+          <Progress disableAnimations value={importProgress || undefined} />
         </DialogBody>
       </DialogContent>
     </Dialog>
