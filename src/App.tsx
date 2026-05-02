@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Toolbar from '@/components/Toolbar.tsx';
 import Footer from '@/components/Footer.tsx';
 import ImportDialog from '@/components/dialogs/ImportDialog.tsx';
@@ -55,123 +55,166 @@ function App() {
     }
   };
 
-  let closeRequestedListener: Promise<UnlistenFn> | null = null;
+  const closeRequestedUnlistenRef = useRef<UnlistenFn | null>(null);
+
+  const registerCloseRequestedListener = () => {
+    getCurrentWindow()
+      .once(TauriEvent.WINDOW_CLOSE_REQUESTED, closeEventCallback)
+      .then((unlisten) => {
+        closeRequestedUnlistenRef.current = unlisten;
+      })
+      .catch((e) => {
+        void error(`Failed to register close-requested listener: ${e}`);
+      });
+  };
 
   useEffect(() => {
-    const themeChangedListener = listen(TauriEvent.WINDOW_THEME_CHANGED, (event) => {
-      const eventTheme = event.payload as Theme;
-      if (theme !== THEME.SYSTEM) {
-        return;
-      }
+    const unlistenFns: UnlistenFn[] = [];
+    let cancelled = false;
 
-      if (eventTheme === 'dark') {
-        setDocumentTheme(THEME.DARK);
-      } else if (eventTheme === 'light') {
-        setDocumentTheme(THEME.LIGHT);
-      }
-    });
+    const register = (p: Promise<UnlistenFn>) => {
+      p.then((fn) => {
+        if (cancelled) {
+          fn();
+        } else {
+          unlistenFns.push(fn);
+        }
+      }).catch((e) => {
+        void error(`Failed to register listener: ${e}`);
+      });
+    };
 
-    const dragDropListener = listen<{ paths: string[]; position: { x: number; y: number } }>(
-      TauriEvent.DRAG_DROP,
-      (event) => {
+    register(
+      listen(TauriEvent.WINDOW_THEME_CHANGED, (event) => {
+        const eventTheme = event.payload as Theme;
+        if (theme !== THEME.SYSTEM) {
+          return;
+        }
+
+        if (eventTheme === 'dark') {
+          setDocumentTheme(THEME.DARK);
+        } else if (eventTheme === 'light') {
+          setDocumentTheme(THEME.LIGHT);
+        }
+      }),
+    );
+
+    register(
+      listen<{ paths: string[]; position: { x: number; y: number } }>(TauriEvent.DRAG_DROP, (event) => {
         const filePaths = event.payload.paths;
         setIsDragging(false);
 
         void invokeBackend('add_from_drop', { filesOrFolders: filePaths, recursive: importSubfolderOnInput });
-      },
+      }),
     );
 
-    const dragOverListener = listen(TauriEvent.DRAG_OVER, () => {
-      setIsDragging(true);
-    });
+    register(
+      listen(TauriEvent.DRAG_OVER, () => {
+        setIsDragging(true);
+      }),
+    );
 
-    const dragLeaveListener = listen('tauri://drag-leave', () => {
-      setIsDragging(false);
-    });
+    register(
+      listen('tauri://drag-leave', () => {
+        setIsDragging(false);
+      }),
+    );
 
-    const importFinishedListener = listen<{ original_list_length: number; new_list_length: number }>(
-      'fileImporter:importFinished',
-      (event) => {
+    register(
+      listen<{ original_list_length: number; new_list_length: number }>('fileImporter:importFinished', (event) => {
         setIsImporting(false);
         toast.success('Import finished', {
           description: `Imported ${event.payload.new_list_length - event.payload.original_list_length} files`,
         });
-      },
+      }),
     );
 
-    const getListListener = listen<FileListPayload>('fileList:getList', (event) => {
-      updateList(event.payload);
-    });
+    register(
+      listen<FileListPayload>('fileList:getList', (event) => {
+        updateList(event.payload);
+      }),
+    );
 
-    const importStartedListener = listen('fileImporter:importStarted', () => {
-      setImportProgress(0);
-      setIsImporting(true);
-    });
+    register(
+      listen('fileImporter:importStarted', () => {
+        setImportProgress(0);
+        setIsImporting(true);
+      }),
+    );
 
-    const importProgressListener = listen<{ progress: number; total: number }>(
-      'fileImporter:importProgress',
-      (event) => {
+    register(
+      listen<{ progress: number; total: number }>('fileImporter:importProgress', (event) => {
         const { progress } = event.payload;
         setImportProgress(progress);
-      },
+      }),
     );
 
-    const updateCImageListener = listen<{ status: number; cimage: CImage }>('fileList:updateCImage', async (event) => {
-      const { cimage } = event.payload;
-      updateFile(cimage.id, cimage);
-      if (getCurrentPreviewedCImage()?.id === cimage.id) {
-        usePreviewStore.setState({ currentPreviewedCImage: cimage });
-      }
-    });
+    register(
+      listen<{ status: number; cimage: CImage }>('fileList:updateCImage', async (event) => {
+        const { cimage } = event.payload;
+        updateFile(cimage.id, cimage);
+        if (getCurrentPreviewedCImage()?.id === cimage.id) {
+          usePreviewStore.setState({ currentPreviewedCImage: cimage });
+        }
+      }),
+    );
 
-    const updateCompressionProgressListener = listen<number>('fileList:compressionProgress', async (event) => {
-      setCompressionProgress(event.payload);
-    });
+    register(
+      listen<number>('fileList:compressionProgress', async (event) => {
+        setCompressionProgress(event.payload);
+      }),
+    );
 
-    const compressionFinishedListener = listen<CompressionFinished>('fileList:compressionFinished', (event) => {
-      finishCompression();
-      void showNotification({
-        title: t('compression_report.compression_finished'),
-        body: t('compression_report.saved_long', {
-          saved: prettyBytes(event.payload.original_size - event.payload.compressed_size),
-          savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
-        }),
-      });
-      toast.success(t('compression_report.compression_finished'), {
-        description: (
-          <div className="flex flex-col gap-1">
-            <span>
-              {t('compression_report.total_files', { total: event.payload.total_images })} (
-              {t('compression_report.compressed', { compressed: event.payload.total_success })} |{' '}
-              {t('compression_report.skipped', { skipped: event.payload.total_skipped })} |{' '}
-              {t('compression_report.errors', { errors: event.payload.total_errors })})
-            </span>
-            <span>
-              {t('compression_report.original_size', { originalSize: prettyBytes(event.payload.original_size) })}
-            </span>
-            <span>
-              {t('compression_report.compressed_size', { compressedSize: prettyBytes(event.payload.compressed_size) })}
-            </span>
-            <span>
-              {t('compression_report.saved', {
-                saved: prettyBytes(event.payload.original_size - event.payload.compressed_size),
-                savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
-              })}
-            </span>
-            <span>{t('compression_report.total_time', { totalTime: event.payload.total_time })} ms</span>
-          </div>
-        ),
-        duration: 5000,
-      });
-      void saveCompressionReport(event.payload);
-    });
+    register(
+      listen<CompressionFinished>('fileList:compressionFinished', (event) => {
+        finishCompression();
+        void showNotification({
+          title: t('compression_report.compression_finished'),
+          body: t('compression_report.saved_long', {
+            saved: prettyBytes(event.payload.original_size - event.payload.compressed_size),
+            savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
+          }),
+        });
+        toast.success(t('compression_report.compression_finished'), {
+          description: (
+            <div className="flex flex-col gap-1">
+              <span>
+                {t('compression_report.total_files', { total: event.payload.total_images })} (
+                {t('compression_report.compressed', { compressed: event.payload.total_success })} |{' '}
+                {t('compression_report.skipped', { skipped: event.payload.total_skipped })} |{' '}
+                {t('compression_report.errors', { errors: event.payload.total_errors })})
+              </span>
+              <span>
+                {t('compression_report.original_size', { originalSize: prettyBytes(event.payload.original_size) })}
+              </span>
+              <span>
+                {t('compression_report.compressed_size', {
+                  compressedSize: prettyBytes(event.payload.compressed_size),
+                })}
+              </span>
+              <span>
+                {t('compression_report.saved', {
+                  saved: prettyBytes(event.payload.original_size - event.payload.compressed_size),
+                  savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
+                })}
+              </span>
+              <span>{t('compression_report.total_time', { totalTime: event.payload.total_time })} ms</span>
+            </div>
+          ),
+          duration: 5000,
+        });
+        void saveCompressionReport(event.payload);
+      }),
+    );
 
-    closeRequestedListener = getCurrentWindow().once(TauriEvent.WINDOW_CLOSE_REQUESTED, closeEventCallback);
+    register(
+      listen('fileList:compressionPaused', () => {
+        setIsCompressionPaused(true);
+        setIsCompressionCancelling(false);
+      }),
+    );
 
-    const compressionPausedListener = listen('fileList:compressionPaused', () => {
-      setIsCompressionPaused(true);
-      setIsCompressionCancelling(false);
-    });
+    registerCloseRequestedListener();
 
     invokeBackend<FileListPayload>('change_page', { page: currentPage }).then((payload) => updateList(payload));
 
@@ -192,23 +235,10 @@ function App() {
     }
 
     return () => {
-      Promise.all([
-        importFinishedListener,
-        getListListener,
-        importStartedListener,
-        importProgressListener,
-        updateCImageListener,
-        closeRequestedListener,
-        updateCompressionProgressListener,
-        compressionFinishedListener,
-        dragDropListener,
-        dragOverListener,
-        dragLeaveListener,
-        compressionPausedListener,
-        themeChangedListener,
-      ]).then((cleanupFns) => {
-        cleanupFns.forEach((cleanupFn) => cleanupFn?.());
-      });
+      cancelled = true;
+      for (const fn of unlistenFns) fn();
+      closeRequestedUnlistenRef.current?.();
+      closeRequestedUnlistenRef.current = null;
     };
   }, []);
 
@@ -227,7 +257,7 @@ function App() {
       <CompressionProgressDialog></CompressionProgressDialog>
       <PromptOnExitDialog
         onCancel={() => {
-          closeRequestedListener = getCurrentWindow().once(TauriEvent.WINDOW_CLOSE_REQUESTED, closeEventCallback);
+          registerCloseRequestedListener();
           setPromptExitDialogOpen(false);
         }}
         onConfirm={async () => {
