@@ -12,7 +12,7 @@ import { useListLoading } from '@/hooks/useListLoading';
 function ListPanel() {
   const { t } = useTranslation();
   const { invokePreview } = usePreviewStore();
-  const { selectedItems, isCompressing, updateList, fileList } = useFileListStore();
+  const { selectedItems, isCompressing, updateList, totalFiles } = useFileListStore();
   const { start: startLoading, stop: stopLoading } = useListLoading();
 
   const onRemoveItemFromListPressed = async () => {
@@ -42,7 +42,7 @@ function ListPanel() {
               <span>{t('actions.remove')}</span>
             </Button>
             <Button
-              disabled={fileList.length === 0 || isCompressing}
+              disabled={totalFiles === 0 || isCompressing}
               size="xs"
               title={t('actions.clear')}
               variant="destructive"

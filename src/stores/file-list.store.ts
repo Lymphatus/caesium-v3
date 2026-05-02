@@ -24,7 +24,7 @@ interface FileListStore {
   isCompressing: boolean;
   isCompressionPaused: boolean;
   isCompressionCancelling: boolean;
-  compressionProgress: number;
+  compressionProgress: { current: number; total: number };
   currentSorting: SortDescriptor;
 
   totalPages: () => number;
@@ -41,7 +41,7 @@ interface FileListStore {
   setIsCompressing: (isCompressing: boolean) => void;
   setIsCompressionPaused: (isCompressionPaused: boolean) => void;
   setIsCompressionCancelling: (isCompressionCancelling: boolean) => void;
-  setCompressionProgress: (progress: number) => void;
+  setCompressionProgress: (progress: { current: number; total: number }) => void;
   updateFile: (id: string, updatedData: Partial<CImage>) => void;
   setCurrentSorting: (sorting: SortDescriptor) => void;
 
@@ -70,7 +70,7 @@ const useFileListStore = create<FileListStore>()(
           isCompressing: false,
           isCompressionPaused: false,
           isCompressionCancelling: false,
-          compressionProgress: 0,
+          compressionProgress: { current: 0, total: 0 },
           currentSorting: { column: 'filename', direction: 'ascending' },
 
           totalPages: () => Math.ceil(get().totalFiles / 50),
@@ -94,7 +94,8 @@ const useFileListStore = create<FileListStore>()(
           setIsCompressing: (isCompressing: boolean) => set({ isCompressing }),
           setIsCompressionCancelling: (isCompressionCancelling: boolean) => set({ isCompressionCancelling }),
           setIsCompressionPaused: (isCompressionPaused: boolean) => set({ isCompressionPaused }),
-          setCompressionProgress: (progress: number) => set({ compressionProgress: progress }),
+          setCompressionProgress: (progress: { current: number; total: number }) =>
+            set({ compressionProgress: progress }),
           setCurrentSorting: (sorting: SortDescriptor) => set({ currentSorting: sorting }),
           filterList: async (query: string) => {
             set({ isListLoading: true });
@@ -107,6 +108,7 @@ const useFileListStore = create<FileListStore>()(
           },
           updateList: (payload: FileListPayload) => {
             const { files, base_folder, total_files } = payload;
+            console.log(total_files);
             useFileListStore.getState().setFileList(files);
             useFileListStore.getState().setBaseFolder(base_folder);
             useFileListStore.getState().setTotalFiles(total_files);
@@ -171,7 +173,7 @@ const useFileListStore = create<FileListStore>()(
           finishCompression: async () => {
             set({
               isCompressing: false,
-              compressionProgress: 0,
+              compressionProgress: { current: 0, total: 0 },
               isCompressionPaused: false,
               isCompressionCancelling: false,
             });

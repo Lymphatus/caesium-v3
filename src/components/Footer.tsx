@@ -57,10 +57,16 @@ function Footer() {
               <div className="flex w-full items-center gap-1">
                 <Progress
                   aria-label="compressionProgress"
-                  value={isCompressionCancelling ? undefined : (compressionProgress / totalFiles) * 100}
+                  value={
+                    isCompressionCancelling
+                      ? undefined
+                      : (compressionProgress.current / compressionProgress.total) * 100
+                  }
                 />
-                {!isCompressionCancelling && totalFiles > 0 && (
-                  <span className="text-xs">{Math.round((compressionProgress / totalFiles) * 100)}%</span>
+                {!isCompressionCancelling && compressionProgress.total > 0 && (
+                  <span className="text-xs">
+                    {Math.round((compressionProgress.current / compressionProgress.total) * 100)}%
+                  </span>
                 )}
               </div>
             </Button>

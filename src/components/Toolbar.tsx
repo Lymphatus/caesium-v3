@@ -10,7 +10,7 @@ import { Button } from './ui/button';
 import appLogo from '@/assets/images/app-icon.png';
 
 function Toolbar() {
-  const { openPickerDialogs, fileList, invokeCompress, isCompressing } = useFileListStore();
+  const { openPickerDialogs, totalFiles, invokeCompress, isCompressing } = useFileListStore();
   const { setSettingsDialogOpen, showLabelsInToolbar } = useUIStore();
   const { t } = useTranslation();
 
@@ -46,7 +46,7 @@ function Toolbar() {
       </div>
       <div className="flex h-full items-center gap-2">
         <Button
-          disabled={fileList.length === 0 || isCompressing}
+          disabled={totalFiles === 0 || isCompressing}
           size={showLabelsInToolbar ? 'sm' : 'icon-sm'}
           title={t('actions.compress')}
           onClick={() => invokeCompress()}

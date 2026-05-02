@@ -1,6 +1,6 @@
 use crate::compressor::{
-    compress_cimage, preview_cimage, CompressionResult, CompressionStatus, CompressionSummary,
-    OptionsPayload,
+    compress_cimage, preview_cimage, CompressionProgress, CompressionResult, CompressionStatus,
+    CompressionSummary, OptionsPayload,
 };
 use crate::errors::CommandError;
 use crate::{AppData, CImage, ImageStatus};
@@ -73,7 +73,13 @@ pub async fn compress(
         .num_threads(max_threads)
         .build()?;
 
-    app.emit("fileList:compressionProgress", 0)?;
+    app.emit(
+        "fileList:compressionProgress",
+        CompressionProgress {
+            current: 0,
+            total: 0,
+        },
+    )?;
 
     //TODO avoid cloning everything if performance will suffer
     let state = app.state::<Mutex<AppData>>();
@@ -174,9 +180,13 @@ pub async fn compress(
             state.file_list.replace(result.clone().cimage);
             app.emit("fileList:updateCImage", result).unwrap(); //TODO
             progress.fetch_add(1, Ordering::Relaxed);
+
             app.emit(
                 "fileList:compressionProgress",
-                progress.load(Ordering::Relaxed),
+                CompressionProgress {
+                    current: progress.load(Ordering::Relaxed),
+                    total: total_images.load(Ordering::Relaxed),
+                },
             )
             .unwrap(); //TODO
 

@@ -103,6 +103,12 @@ pub struct CompressionResult {
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct CompressionProgress {
+    pub current: usize,
+    pub total: usize,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 pub struct CompressionSummary {
     pub total_images: usize,
     pub total_success: usize,

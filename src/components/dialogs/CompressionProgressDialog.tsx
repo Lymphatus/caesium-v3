@@ -13,7 +13,6 @@ function CompressionProgressDialog() {
     compressionProgress,
     isCompressionCancelling,
     isCompressionPaused,
-    totalFiles,
     invokePauseCompression,
     invokeCancelCompression,
     invokeResumeCompression,
@@ -47,13 +46,15 @@ function CompressionProgressDialog() {
             <div className="flex w-full flex-col gap-2">
               <div className="flex justify-between text-xs">
                 <span>{setProgressLabel()}</span>
-                {!isCompressionCancelling && totalFiles > 0 && (
-                  <span>{Math.round((compressionProgress / totalFiles) * 100)}%</span>
+                {!isCompressionCancelling && compressionProgress.total > 0 && (
+                  <span>{Math.round((compressionProgress.current / compressionProgress.total) * 100)}%</span>
                 )}
               </div>
               <Progress
                 aria-label={setProgressLabel()}
-                value={isCompressionCancelling ? undefined : (compressionProgress / totalFiles) * 100}
+                value={
+                  isCompressionCancelling ? undefined : (compressionProgress.current / compressionProgress.total) * 100
+                }
               />
             </div>
             <Button

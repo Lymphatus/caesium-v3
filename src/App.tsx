@@ -160,7 +160,7 @@ function App() {
     );
 
     register(
-      listen<number>('fileList:compressionProgress', async (event) => {
+      listen<{ current: number; total: number }>('fileList:compressionProgress', async (event) => {
         setCompressionProgress(event.payload);
       }),
     );
