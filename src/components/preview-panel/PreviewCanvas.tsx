@@ -93,7 +93,6 @@ function PreviewCanvas() {
       return;
     }
 
-    console.log(workerRef);
     const originalCanvas = canvasRef.current;
     const compressedCanvas = compressedCanvasRef.current;
     if (!originalCanvas || !compressedCanvas) {
