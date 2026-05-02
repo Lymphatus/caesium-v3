@@ -164,7 +164,7 @@ function FileListTable() {
                     <StatusIcon cImage={cImage} />
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-left">
                   <span className="text-nowrap">
                     <small className="text-muted-foreground">{getSubpart(baseFolder, cImage.path, cImage.name)}</small>
                     <span>{cImage.name}</span>

@@ -1,11 +1,13 @@
 import { ListPlus } from 'lucide-react';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 interface DragDropOverlayProps {
   isDragging: boolean;
 }
 
 function DragDropOverlay({ isDragging }: DragDropOverlayProps) {
+  const { t } = useTranslation();
+
   return (
     <div
       className="bg-background/50 absolute top-0 left-0 z-20 flex size-full items-center justify-center backdrop-blur-sm"
