@@ -1,5 +1,6 @@
 import {
   ReactZoomPanPinchHandlers,
+  ReactZoomPanPinchRef,
   ReactZoomPanPinchState,
   TransformComponent,
   TransformWrapper,
@@ -71,7 +72,14 @@ function PreviewPanel() {
   const { currentPreviewedCImage, isLoading, visualizationMode, setVisualizationMode } = usePreviewStore();
   const wrapperRef: RefObject<HTMLDivElement | null> = useRef(null);
   const contentRef: RefObject<HTMLDivElement | null> = useRef(null);
+  const transformRef = useRef<ReactZoomPanPinchRef>(null);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!currentPreviewedCImage || !transformRef.current) return;
+    const { scale } = transformRef.current.instance.getContext().state;
+    transformRef.current.centerView(scale);
+  }, [currentPreviewedCImage]);
 
   const fitContentToWrapper = useCallback((centerView: (scale: number) => void) => {
     if (wrapperRef.current && contentRef.current) {
@@ -93,6 +101,7 @@ function PreviewPanel() {
   return (
     <div className="bg-card relative size-full rounded-2xl">
       <TransformWrapper
+        ref={transformRef}
         centerOnInit
         centerZoomedOut
         disablePadding
@@ -105,14 +114,7 @@ function PreviewPanel() {
         }}
         zoomAnimation={{ disabled: true }}
       >
-        {({ zoomIn, zoomOut, centerView, instance }) => {
-          useEffect(() => {
-            const currentScale = instance.getContext();
-            if (currentPreviewedCImage) {
-              centerView(currentScale.state.scale); // TODO can get ugly with different image sizes
-            }
-          }, [currentPreviewedCImage]);
-
+        {({ zoomIn, zoomOut, centerView }) => {
           return (
             <div ref={wrapperRef} className="bg-card flex size-full flex-col items-center justify-between rounded-2xl">
               {isLoading && (
