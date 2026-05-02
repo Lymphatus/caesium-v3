@@ -20,7 +20,7 @@ function Progress({
     >
       <ProgressPrimitive.Indicator
         className={cn(
-          'bg-primary h-full w-full flex-1',
+          'bg-primary h-full w-full flex-1 rounded-full',
           !disableAnimations && 'transition-all',
           'data-[state=indeterminate]:w-1/3 data-[state=indeterminate]:animate-[progress-indeterminate_1.5s_ease-in-out_infinite]',
         )}

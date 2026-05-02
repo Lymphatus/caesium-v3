@@ -10,10 +10,10 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 name = "caesium_image_compressor_lib"
 
 [build-dependencies]
-tauri-build = {version = "2", features = []}
+tauri-build = {version = "2", features = [] }
 
 [dependencies]
-base16ct = {version = "0.3", features = ["alloc"]}
+base16ct = {version = "0.3", features = ["alloc"] }
 file-format = "0.28.0"
 imagesize = "0.14"
 indexmap = "2.11"
@@ -23,12 +23,12 @@ log = "0.4"
 open = "5.3"
 rayon = "1.11"
 regex = "1.11.2"
-serde = {version = "1", features = ["derive"]}
+serde = {version = "1", features = ["derive"] }
 serde_json = "1"
 serde_repr = "0.1"
 sha2 = "0.10"
 system_shutdown = "4"
-tauri = {version = "2", features = ["protocol-asset"]}
+tauri = {version = "2", features = ["protocol-asset"] }
 tauri-plugin-dialog = "2.4"
 tauri-plugin-fs = "2"
 tauri-plugin-log = "2"

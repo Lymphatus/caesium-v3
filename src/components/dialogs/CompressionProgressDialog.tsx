@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Pause, Play, X } from 'lucide-react';
 import useUIStore from '@/stores/ui.store.ts';
 import { Button } from '../ui/button';
+import { VisuallyHidden } from 'radix-ui';
 
 function CompressionProgressDialog() {
   const {
@@ -36,12 +37,14 @@ function CompressionProgressDialog() {
         onEscapeKeyDown={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle className="sr-only">{setProgressLabel()}</DialogTitle>
-        </DialogHeader>
+        <VisuallyHidden.Root>
+          <DialogHeader>
+            <DialogTitle className="sr-only">{setProgressLabel()}</DialogTitle>
+          </DialogHeader>
+        </VisuallyHidden.Root>
         <DialogBody className="flex flex-col items-center gap-2">
           <div className="flex w-full items-center justify-between gap-2">
-            <div className="flex w-full flex-col gap-1">
+            <div className="flex w-full flex-col gap-2">
               <div className="flex justify-between text-xs">
                 <span>{setProgressLabel()}</span>
                 {!isCompressionCancelling && totalFiles > 0 && (
@@ -57,7 +60,7 @@ function CompressionProgressDialog() {
               disabled={isCompressionCancelling}
               size="icon-sm"
               title={isCompressionPaused ? t('resume') : t('pause')}
-              variant="outline"
+              variant="ghost"
               onClick={isCompressionPaused ? invokeResumeCompression : invokePauseCompression}
             >
               {isCompressionPaused ? <Play className="size-4" /> : <Pause className="size-4" />}

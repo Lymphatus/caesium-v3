@@ -113,9 +113,9 @@ function AdvancedImportDialog() {
           <DialogTitle>{t('advanced_import_dialog.title')}</DialogTitle>
         </DialogHeader>
         <DialogBody className="flex flex-col items-center justify-center gap-2 text-center">
-          <div className="relative block h-[300px] w-full overflow-auto">
+          <div className="bg-background relative block h-[300px] w-full overflow-auto rounded-2xl">
             <Table>
-              <TableHeader className="bg-background sticky top-0 z-10">
+              <TableHeader className="bg-muted sticky top-0 z-10">
                 <TableRow>
                   <TableHead className="w-[40px] text-center">
                     <Checkbox
@@ -214,7 +214,7 @@ function AdvancedImportDialog() {
                 onCheckedChange={setSizeFilter}
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center gap-2">
               <Select
                 disabled={!sizeFilter || isValidationInProgress}
                 value={sizeFilterPattern}
@@ -238,6 +238,7 @@ function AdvancedImportDialog() {
               <NumberInput
                 hideStepper
                 aria-label="Size filter"
+                className="flex-1"
                 disabled={!sizeFilter || isValidationInProgress}
                 size="sm"
                 value={sizeFilterValue}

@@ -67,7 +67,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
 function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
   return (
     <td
-      className={cn('p-3 align-middle text-sm whitespace-nowrap [&:has([role=checkbox])]:pe-0', className)}
+      className={cn('p-2 align-middle text-sm whitespace-nowrap [&:has([role=checkbox])]:pe-0', className)}
       data-slot="table-cell"
       {...props}
     />

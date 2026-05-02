@@ -195,7 +195,7 @@ function FileListTable() {
                   <span className="text-nowrap">{cImage.info}</span>
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center justify-between gap-1">
+                  <div className="flex items-center justify-end gap-1">
                     <Button
                       disabled={cImage.status === IMAGE_STATUS.COMPRESSING || isCompressing}
                       size="icon-xs"

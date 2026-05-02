@@ -131,7 +131,7 @@ function PreviewPanel() {
                 </div>
               </TransformComponent>
 
-              <div className="bg-card flex h-10 w-full items-center justify-between rounded-b-2xl p-1.5 py-1">
+              <div className="flex h-10 w-full items-center justify-between rounded-b-2xl p-1.5 py-1">
                 <div className="flex items-center gap-2">
                   {currentPreviewedCImage != null && (
                     <>

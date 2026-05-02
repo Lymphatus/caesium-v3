@@ -139,8 +139,9 @@ function CheckForUpdatesDialog() {
         <DialogHeader>
           <DialogTitle className="sr-only">{t('check_for_updates')}</DialogTitle>
         </DialogHeader>
-        <DialogBody className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
+
+        <DialogBody className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             <div className="flex justify-between text-xs">
               {message}
               {updateStatus === UpdateStatus.DOWNLOADING && (
@@ -157,7 +158,7 @@ function CheckForUpdatesDialog() {
               }
             />
           </div>
-          <span className="text-destructive text-sm" hidden={!error}>
+          <span className="text-destructive text-sm" hidden={!error || !import.meta.env.DEV}>
             {error}
           </span>
           {update && update.body && (
@@ -170,14 +171,7 @@ function CheckForUpdatesDialog() {
           )}
         </DialogBody>
         <DialogFooter>
-          <div className="flex w-full items-center justify-between gap-2">
-            <div>
-              <Button variant="secondary" onClick={() => setCheckForUpdatesDialogOpen(false)}>
-                {t('cancel')}
-              </Button>
-            </div>
-            <div className="flex gap-2">{updateButton}</div>
-          </div>
+          <div className="flex gap-2">{updateButton}</div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
