@@ -33,11 +33,10 @@ const setImageToCanvas = (
   context.drawImage(image, 0, 0, canvas.width, canvas.height);
 };
 
-const worker = new Worker(new URL('@/workers/image-loader.ts', import.meta.url));
-
 function PreviewCanvas() {
   const canvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
   const compressedCanvasRef: RefObject<HTMLCanvasElement | null> = useRef(null);
+  const workerRef = useRef<Worker | null>(null);
 
   const { currentPreviewedCImage, visualizationMode, setIsLoading, setVisualizationMode } = usePreviewStore();
   const { showPreviewPanel } = useUIStore();
@@ -62,6 +61,9 @@ function PreviewCanvas() {
   };
 
   useEffect(() => {
+    if (!workerRef.current) {
+      workerRef.current = new Worker(new URL('@/workers/image-loader.ts', import.meta.url));
+    }
     if (!showPreviewPanel) {
       return;
     }
@@ -77,10 +79,11 @@ function PreviewCanvas() {
       );
       setIsLoading(false); // TODO if we are loading original and preview, this is out of sync
     };
-    worker.addEventListener('message', listener);
+    workerRef.current?.addEventListener('message', listener);
 
     return () => {
-      worker.removeEventListener('message', listener);
+      workerRef.current?.terminate();
+      workerRef.current = null;
       cleanupCanvases(null, null);
     };
   }, []);
@@ -90,6 +93,7 @@ function PreviewCanvas() {
       return;
     }
 
+    console.log(workerRef);
     const originalCanvas = canvasRef.current;
     const compressedCanvas = compressedCanvasRef.current;
     if (!originalCanvas || !compressedCanvas) {
@@ -114,7 +118,7 @@ function PreviewCanvas() {
           type: 'compressed',
         };
 
-        worker.postMessage(messagePayload);
+        workerRef.current?.postMessage(messagePayload);
       }
       const messagePayload: ImageLoaderRequest = {
         mimeType: currentPreviewedCImage.mime_type,
@@ -122,7 +126,7 @@ function PreviewCanvas() {
         type: 'original',
       };
 
-      worker.postMessage(messagePayload);
+      workerRef.current?.postMessage(messagePayload);
     }
 
     return () => {
