@@ -148,12 +148,21 @@ const useFileListStore = create<FileListStore>()(
             }),
           invokePauseCompression: async () => {
             set({ isCompressionCancelling: true });
-            await invokeBackend('pause_compression');
-            //set({ isCompressionPaused: true, isCompressionCancelling: false });
+            try {
+              await invokeBackend('pause_compression');
+            } catch (e) {
+              console.error('Failed to pause compression', e);
+              set({ isCompressionCancelling: false });
+            }
           },
           invokeCancelCompression: async () => {
             set({ isCompressionCancelling: true, isCompressionPaused: false });
-            await invokeBackend('cancel_compression');
+            try {
+              await invokeBackend('cancel_compression');
+            } catch (e) {
+              console.error('Failed to cancel compression', e);
+              set({ isCompressionCancelling: false });
+            }
           },
           invokeResumeCompression: async () => {
             await invokeBackend('resume_compression');
