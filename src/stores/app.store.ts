@@ -3,7 +3,6 @@ import { load } from '@tauri-apps/plugin-store';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { path } from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
-import { v4 as uuidv4 } from 'uuid';
 import { invokeBackend } from '@/utils/invoker.tsx';
 import { Update } from '@tauri-apps/plugin-updater';
 
@@ -25,7 +24,7 @@ const settings = await load(configPath);
 const preferences = (await settings.get('app')) || {};
 
 const defaultOptions = {
-  uuid: uuidv4(),
+  uuid: crypto.randomUUID(),
   appUpdate: null,
 };
 
