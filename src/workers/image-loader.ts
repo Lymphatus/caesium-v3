@@ -1,6 +1,8 @@
 // noinspection TypeScriptUMDGlobal
 
-import { ImageLoaderRequest, ImageLoaderResponse } from '@/types.ts';
+// Cannot use import statement in a web worker, so we use type imports instead. Vite 8 would give an error if we tried to use import here.
+type ImageLoaderRequest = import('@/types.ts').ImageLoaderRequest;
+type ImageLoaderResponse = import('@/types.ts').ImageLoaderResponse;
 
 self.onmessage = async function (event) {
   const eventData = event.data as ImageLoaderRequest;
