@@ -50,11 +50,17 @@ function StatusIcon({ cImage }: { cImage: CImage }) {
 
 type SortableColumn = 'filename' | 'size' | 'resolution' | 'saved';
 
-const SortableHead = (
-  currentSorting: SortDescriptor,
-  onSort: (column: SortableColumn) => void,
-  { column, label }: { column: SortableColumn; label: string },
-) => {
+const SortableHead = ({
+  column,
+  label,
+  currentSorting,
+  onSort,
+}: {
+  column: SortableColumn;
+  label: string;
+  currentSorting: SortDescriptor;
+  onSort: (column: SortableColumn) => void;
+}) => {
   const isSorted = currentSorting.column === column;
   return (
     <TableHead>
