@@ -32,7 +32,6 @@ type PaginationLinkProps = {
 function PaginationLink({ className, isActive, size = 'icon-xs', ...props }: PaginationLinkProps) {
   return (
     <Button asChild className={cn(className)} size={size} variant={isActive ? 'outline' : 'ghost'}>
-      {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
       <a aria-current={isActive ? 'page' : undefined} data-active={isActive} data-slot="pagination-link" {...props} />
     </Button>
   );

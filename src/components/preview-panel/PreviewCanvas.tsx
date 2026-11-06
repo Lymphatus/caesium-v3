@@ -112,9 +112,8 @@ function PreviewCanvas() {
       cleanupCanvases(originalCanvas, compressedCanvas);
 
       const imageURL = convertFileSrc(currentPreviewedCImage.path);
-      let compressedImageURL = '';
       if (currentPreviewedCImage?.compressed_file_path) {
-        compressedImageURL = convertFileSrc(currentPreviewedCImage.compressed_file_path);
+        const compressedImageURL = convertFileSrc(currentPreviewedCImage.compressed_file_path);
 
         const messagePayload: ImageLoaderRequest = {
           mimeType: currentPreviewedCImage.mime_type, // TODO if compressed, use compressed mime type
