@@ -5,6 +5,7 @@ import usePreviewStore from '@/stores/preview.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import { error } from '@tauri-apps/plugin-log';
+import { useControls } from 'react-zoom-pan-pinch';
 
 const setImageToCanvas = (
   canvas: HTMLCanvasElement | null,
@@ -40,6 +41,8 @@ function PreviewCanvas() {
 
   const { currentPreviewedCImage, visualizationMode, setIsLoading, setVisualizationMode } = usePreviewStore();
   const { showPreviewPanel } = useUIStore();
+
+  const { centerView } = useControls();
 
   const cleanupCanvases = (originalCanvas: HTMLCanvasElement | null, compressedCanvas: HTMLCanvasElement | null) => {
     if (originalCanvas === null) {
@@ -77,6 +80,8 @@ function PreviewCanvas() {
         useResizeOptionsStore.getState().resizeMode,
         data.type,
       );
+
+      centerView?.(undefined, 0);
       setIsLoading(false); // TODO if we are loading original and preview, this is out of sync
     };
     workerRef.current?.addEventListener('message', listener);

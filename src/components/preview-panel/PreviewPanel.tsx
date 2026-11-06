@@ -1,7 +1,7 @@
 import {
+  ReactZoomPanPinchContextState,
   ReactZoomPanPinchHandlers,
   ReactZoomPanPinchRef,
-  ReactZoomPanPinchState,
   TransformComponent,
   TransformWrapper,
   useTransformComponent,
@@ -12,7 +12,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { ArrowLeftRight, Fullscreen, Maximize, Minus, Plus } from 'lucide-react';
-import { RefObject, useCallback, useEffect, useRef } from 'react';
+import { RefObject, useCallback, useRef } from 'react';
 import prettyBytes from 'pretty-bytes';
 import usePreviewStore from '@/stores/preview.store.ts';
 import { useTranslation } from 'react-i18next';
@@ -21,19 +21,21 @@ import PreviewCanvas from '@/components/preview-panel/PreviewCanvas.tsx';
 import { SavedLabel } from '@/components/SavedLabel.tsx';
 import { Button } from '../ui/button';
 
-const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 'zoomIn' | 'zoomOut'>) => {
-  const setZoomLevel = (value: number | number[], state: ReactZoomPanPinchState) => {
+const TransformControls = ({
+  zoomIn,
+  zoomOut,
+  zoomToPoint,
+}: Pick<ReactZoomPanPinchHandlers, 'zoomIn' | 'zoomOut' | 'zoomToPoint'>) => {
+  const setZoomLevel = (value: number | number[], { instance }: ReactZoomPanPinchContextState) => {
     const newScale = (Array.isArray(value) ? value[0] : value) / 100;
-    const zoomDiff = newScale - state.previousScale;
-    const factor = Math.abs(zoomDiff);
-    if (zoomDiff < 0) {
-      zoomOut(factor, undefined, 'linear');
-    } else {
-      zoomIn(factor, undefined, 'linear');
-    }
+    const wrapperRect = instance.wrapperComponent?.getBoundingClientRect();
+    if (wrapperRect == null) return;
+    const wrapperX = wrapperRect.x + wrapperRect.width / 2;
+    const wrapperY = wrapperRect.y + wrapperRect.height / 2;
+    zoomToPoint(newScale, wrapperX, wrapperY, 0, 'linear');
   };
 
-  return useTransformComponent(({ state }) => {
+  return useTransformComponent(({ state, instance }: ReactZoomPanPinchContextState) => {
     const zoomLevel: number = Math.round(state.scale * 100);
     return (
       <>
@@ -46,7 +48,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           min={1}
           size="xs"
           value={zoomLevel}
-          onValueChange={(value) => setZoomLevel(value, state)}
+          onValueChange={(value) => setZoomLevel(value, { state, instance })}
         />
         <Button size="icon-xs" title={i18next.t('zoom_out')} variant="ghost" onClick={() => zoomOut(0.1)}>
           <Minus></Minus>
@@ -57,7 +59,7 @@ const TransformControls = ({ zoomIn, zoomOut }: Pick<ReactZoomPanPinchHandlers, 
           max={300}
           min={1}
           value={[zoomLevel]}
-          onValueChange={([value]) => setZoomLevel(value, state)}
+          onValueChange={([value]) => setZoomLevel(value, { state, instance })}
         />
 
         <Button size="icon-xs" title={i18next.t('zoom_in')} variant="ghost" onClick={() => zoomIn(0.1)}>
@@ -74,12 +76,6 @@ function PreviewPanel() {
   const contentRef: RefObject<HTMLDivElement | null> = useRef(null);
   const transformRef = useRef<ReactZoomPanPinchRef>(null);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (!currentPreviewedCImage || !transformRef.current) return;
-    const { scale } = transformRef.current.instance.getContext().state;
-    transformRef.current.centerView(scale);
-  }, [currentPreviewedCImage]);
 
   const fitContentToWrapper = useCallback((centerView: (scale: number) => void) => {
     if (wrapperRef.current && contentRef.current) {
@@ -114,7 +110,7 @@ function PreviewPanel() {
         }}
         zoomAnimation={{ disabled: true }}
       >
-        {({ zoomIn, zoomOut, centerView }) => {
+        {({ zoomIn, zoomOut, centerView, zoomToPoint }) => {
           return (
             <div ref={wrapperRef} className="bg-card flex size-full flex-col items-center justify-between rounded-2xl">
               {isLoading && (
@@ -207,7 +203,7 @@ function PreviewPanel() {
                   >
                     <Maximize></Maximize>
                   </Button>
-                  <TransformControls zoomIn={zoomIn} zoomOut={zoomOut}></TransformControls>
+                  <TransformControls zoomIn={zoomIn} zoomOut={zoomOut} zoomToPoint={zoomToPoint}></TransformControls>
                 </div>
               </div>
             </div>
