@@ -108,7 +108,6 @@ const useFileListStore = create<FileListStore>()(
           },
           updateList: (payload: FileListPayload) => {
             const { files, base_folder, total_files } = payload;
-            console.log(total_files);
             useFileListStore.getState().setFileList(files);
             useFileListStore.getState().setBaseFolder(base_folder);
             useFileListStore.getState().setTotalFiles(total_files);
