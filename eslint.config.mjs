@@ -1,61 +1,39 @@
-import tsParser from '@typescript-eslint/parser';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
+import eslintReact from '@eslint-react/eslint-plugin';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import perfectionist from 'eslint-plugin-perfectionist';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import tseslint from 'typescript-eslint';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
-
-export default [
+export default tseslint.config(
   {
     ignores: ['**/node_modules', '**/dist', 'src/workers/UTIF.js'],
   },
-  ...compat.extends(
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:jsx-a11y/recommended',
-    'plugin:prettier/recommended',
-  ),
+  js.configs.recommended,
+  tseslint.configs.recommended,
+  eslintReact.configs['recommended-typescript'],
+  jsxA11y.flatConfigs.recommended,
   {
-    languageOptions: {
-      parser: tsParser,
-      ecmaVersion: 2020,
-      sourceType: 'module',
-
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
+    plugins: {
+      perfectionist,
     },
-
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
-
     rules: {
-      'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      'prettier/prettier': 'error',
-      'react/jsx-sort-props': [
-        2,
+      // Reserved props first, then shorthand, then the rest, callbacks last.
+      'perfectionist/sort-jsx-props': [
+        'error',
         {
-          callbacksLast: true,
-          shorthandFirst: true,
+          type: 'alphabetical',
           ignoreCase: true,
-          reservedFirst: true,
-          noSortAlphabetically: false,
+          customGroups: [
+            { groupName: 'reserved', elementNamePattern: '^(key|ref|dangerouslySetInnerHTML)$' },
+            { groupName: 'callback', elementNamePattern: '^on[A-Z]' },
+          ],
+          groups: ['reserved', 'shorthand-prop', 'unknown', 'callback'],
         },
       ],
     },
   },
-];
+  // Must stay last: turns off formatting rules from the presets above.
+  prettierRecommended,
+);
