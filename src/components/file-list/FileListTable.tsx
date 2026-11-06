@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import useFileListStore from '@/stores/file-list.store.ts';
+import useFileListStore, { SortDescriptor } from '@/stores/file-list.store.ts';
 import {
   ChevronDown,
   ChevronsUpDown,
@@ -50,6 +50,24 @@ function StatusIcon({ cImage }: { cImage: CImage }) {
 
 type SortableColumn = 'filename' | 'size' | 'resolution' | 'saved';
 
+const SortableHead = (
+  currentSorting: SortDescriptor,
+  onSort: (column: SortableColumn) => void,
+  { column, label }: { column: SortableColumn; label: string },
+) => {
+  const isSorted = currentSorting.column === column;
+  return (
+    <TableHead>
+      <button className="hover:text-foreground flex items-center gap-1" type="button" onClick={() => onSort(column)}>
+        {label}
+        {!isSorted && <ChevronsUpDown className="size-3 opacity-50" />}
+        {isSorted && currentSorting.direction === 'ascending' && <ChevronUp className="size-3" />}
+        {isSorted && currentSorting.direction === 'descending' && <ChevronDown className="size-3" />}
+      </button>
+    </TableHead>
+  );
+};
+
 function FileListTable() {
   const {
     fileList,
@@ -74,24 +92,6 @@ function FileListTable() {
     invokeBackend<FileListPayload>('sort_list', { column, order: direction })
       .then((payload) => updateList(payload))
       .finally(stopLoading);
-  };
-
-  const SortableHead = ({ column, label }: { column: SortableColumn; label: string }) => {
-    const isSorted = currentSorting.column === column;
-    return (
-      <TableHead>
-        <button
-          className="hover:text-foreground flex items-center gap-1"
-          type="button"
-          onClick={() => handleSort(column)}
-        >
-          {label}
-          {!isSorted && <ChevronsUpDown className="size-3 opacity-50" />}
-          {isSorted && currentSorting.direction === 'ascending' && <ChevronUp className="size-3" />}
-          {isSorted && currentSorting.direction === 'descending' && <ChevronDown className="size-3" />}
-        </button>
-      </TableHead>
-    );
   };
 
   const allSelected = fileList.length > 0 && selectedItems.length === fileList.length;
@@ -127,10 +127,30 @@ function FileListTable() {
               />
             </TableHead>
             <TableHead className="w-[40px] text-center" />
-            <SortableHead column="filename" label={t('file_list.filename')} />
-            <SortableHead column="size" label={t('file_list.size')} />
-            <SortableHead column="resolution" label={t('file_list.resolution')} />
-            <SortableHead column="saved" label={t('file_list.saved')} />
+            <SortableHead
+              column="filename"
+              currentSorting={currentSorting}
+              label={t('file_list.filename')}
+              onSort={handleSort}
+            />
+            <SortableHead
+              column="size"
+              currentSorting={currentSorting}
+              label={t('file_list.size')}
+              onSort={handleSort}
+            />
+            <SortableHead
+              column="resolution"
+              currentSorting={currentSorting}
+              label={t('file_list.resolution')}
+              onSort={handleSort}
+            />
+            <SortableHead
+              column="saved"
+              currentSorting={currentSorting}
+              label={t('file_list.saved')}
+              onSort={handleSort}
+            />
             <TableHead>{t('file_list.additional_info')}</TableHead>
             <TableHead className="w-[80px]">{t('file_list.actions')}</TableHead>
           </TableRow>
