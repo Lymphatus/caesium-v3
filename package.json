@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "check": "tsc --noEmit",
+    "check": "tsc --noEmit && tsc -p tsconfig.node.json --noEmit",
     "lint": "eslint src/**/*.{js,ts,tsx} --no-warn-ignored",
     "lint:fix": "eslint src/**/*.{js,ts,tsx} --no-warn-ignored --fix",
     "format": "prettier --write src/**/*.{js,ts,tsx}"
@@ -68,7 +68,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "typescript": "~5.9.3",
+    "typescript": "~6.0.3",
     "vite": "^8.3.6"
   }
 }

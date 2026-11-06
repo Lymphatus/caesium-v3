@@ -11,7 +11,7 @@ export default defineConfig(async () => ({
 
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(import.meta.dirname, './src'),
     },
   },
 
@@ -34,17 +34,6 @@ export default defineConfig(async () => ({
     watch: {
       // 3. tell vite to ignore watching `api`
       ignored: ['**/api/**'],
-    },
-  },
-  compilerOptions: {
-    baseUrl: '.',
-    paths: {
-      '@/*': ['./src/*'],
-    },
-  },
-  esbuild: {
-    supported: {
-      'top-level-await': true,
     },
   },
 }));
