@@ -1,6 +1,5 @@
 import js from '@eslint/js';
 import eslintReact from '@eslint-react/eslint-plugin';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
 import perfectionist from 'eslint-plugin-perfectionist';
 import prettierRecommended from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
@@ -12,7 +11,6 @@ export default tseslint.config(
   js.configs.recommended,
   tseslint.configs.recommended,
   eslintReact.configs['recommended-typescript'],
-  jsxA11y.flatConfigs.recommended,
   {
     plugins: {
       perfectionist,
