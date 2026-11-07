@@ -139,7 +139,7 @@
     --chart-3: var(--purple-500);
     --chart-4: var(--purple-600);
     --chart-5: var(--purple-700);
-    --radius: 0.625rem;
+    --radius: 0.375rem;
     --sidebar: var(--neutral-0);
     --sidebar-foreground: var(--neutral-900);
     --sidebar-primary: var(--purple-500);
