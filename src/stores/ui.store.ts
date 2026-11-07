@@ -6,14 +6,15 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import { path } from '@tauri-apps/api';
 import { platform } from '@tauri-apps/plugin-os';
 import { invokeBackend } from '@/utils/invoker.tsx';
+import type { Layout } from 'react-resizable-panels';
 
-interface SplitPanels {
-  main: number[];
-  center: number[];
+interface PanelsLayout {
+  main: Layout;
+  center: Layout;
 }
 
 interface UIOptions {
-  splitPanels: SplitPanels;
+  panelsLayout: PanelsLayout;
   jpegAccordionOpen: boolean;
   pngAccordionOpen: boolean;
   gifAccordionOpen: boolean;
@@ -30,7 +31,7 @@ interface UIOptions {
   advancedImportDialogOpen: boolean;
   compressionProgressDialogMinimized: boolean;
 
-  setSplitPanels: (options: Partial<SplitPanels>) => void;
+  setPanelsLayout: (options: Partial<PanelsLayout>) => void;
   setJpegAccordionOpen: (open: boolean) => void;
   setPngAccordionOpen: (open: boolean) => void;
   setGifAccordionOpen: (open: boolean) => void;
@@ -58,7 +59,7 @@ const settings = await load(configPath);
 const preferences = (await settings.get('ui')) || {};
 
 const defaultOptions = {
-  splitPanels: { main: [70, 30], center: [60, 40] },
+  panelsLayout: { main: { content: 70, side: 30 }, center: { list: 60, preview: 40 } },
   jpegAccordionOpen: true,
   pngAccordionOpen: true,
   gifAccordionOpen: true,
@@ -81,9 +82,9 @@ const useUIStore = create<UIOptions>()(
     immer((set) => ({
       ...defaultOptions,
       ...preferences,
-      setSplitPanels: (options: Partial<SplitPanels>) =>
+      setPanelsLayout: (options: Partial<PanelsLayout>) =>
         set((state) => {
-          Object.assign(state.splitPanels, options);
+          Object.assign(state.panelsLayout, options);
         }),
 
       setJpegAccordionOpen: (open: boolean) => {
@@ -172,7 +173,7 @@ const useUIStore = create<UIOptions>()(
 
 useUIStore.subscribe(async (state) => {
   const dataToSave = {
-    splitPanels: state.splitPanels,
+    panelsLayout: state.panelsLayout,
     jpegAccordionOpen: state.jpegAccordionOpen,
     pngAccordionOpen: state.pngAccordionOpen,
     gifAccordionOpen: state.gifAccordionOpen,

@@ -1,39 +1,44 @@
 import ListPanel from '@/components/file-list/ListPanel.tsx';
 import PreviewPanel from '@/components/preview-panel/PreviewPanel.tsx';
 import SidePanel from '@/components/side-panel/SidePanel.tsx';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import useUIStore from '@/stores/ui.store.ts';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from './ui/resizable';
 
 function CenterContainer() {
-  const { splitPanels, setSplitPanels, showPreviewPanel } = useUIStore();
+  const { panelsLayout, setPanelsLayout, showPreviewPanel } = useUIStore();
 
   return (
     <div className="center-container px-2">
-      <PanelGroup
-        direction="horizontal"
-        onLayout={(size) => setSplitPanels({ center: splitPanels.center, main: size })}
+      <ResizablePanelGroup
+        id="main"
+        orientation="horizontal"
+        onLayoutChanged={(size) => setPanelsLayout({ main: size })}
       >
-        <Panel defaultSize={splitPanels.main[0]} maxSize={80} minSize={20}>
-          <PanelGroup
-            direction="vertical"
-            onLayout={(size) => setSplitPanels({ center: size, main: splitPanels.main })}
+        <ResizablePanel defaultSize={panelsLayout.main.content + '%'} id="content" maxSize="80%" minSize="20%">
+          <ResizablePanelGroup
+            id="center"
+            orientation="vertical"
+            onLayoutChanged={(size) => {
+              if (!showPreviewPanel) return;
+              setPanelsLayout({ center: size });
+            }}
           >
-            <Panel defaultSize={splitPanels.center[0]} maxSize={80} minSize={20}>
+            <ResizablePanel defaultSize={panelsLayout.center.list + '%'} id="list" maxSize="80%" minSize="20%">
               <ListPanel></ListPanel>
-            </Panel>
-            {showPreviewPanel && <PanelResizeHandle className="hover:bg-primary h-1 rounded bg-transparent" />}
+            </ResizablePanel>
+            {showPreviewPanel && <ResizableHandle />}
             {showPreviewPanel && (
-              <Panel defaultSize={splitPanels.center[1]} maxSize={80} minSize={20}>
+              <ResizablePanel defaultSize={panelsLayout.center.preview + '%'} id="preview" maxSize="80%" minSize="20%">
                 <PreviewPanel></PreviewPanel>
-              </Panel>
+              </ResizablePanel>
             )}
-          </PanelGroup>
-        </Panel>
-        <PanelResizeHandle className="hover:bg-primary w-1 rounded bg-transparent" />
-        <Panel defaultSize={splitPanels.main[1]} maxSize={80} minSize={20}>
+          </ResizablePanelGroup>
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel defaultSize={panelsLayout.main.side + '%'} id="side" maxSize="80%" minSize="20%">
           <SidePanel></SidePanel>
-        </Panel>
-      </PanelGroup>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }
