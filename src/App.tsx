@@ -9,11 +9,10 @@ import { CImage, CompressionFinished, FileListPayload, THEME } from '@/types.ts'
 import { toast } from 'sonner';
 import SettingsDialog from '@/components/dialogs/settings/SettingsDialog.tsx';
 import usePreviewStore from '@/stores/preview.store.ts';
-import AboutDialog from './components/dialogs/AboutDialog';
+import AboutDialog from '@/components/dialogs/AboutDialog';
 import { getCurrentWindow, Theme } from '@tauri-apps/api/window';
 import useSettingsStore from '@/stores/settings.store.ts';
 import useUIStore from '@/stores/ui.store.ts';
-import { useTranslation } from 'react-i18next';
 import CheckForUpdatesDialog from '@/components/dialogs/CheckForUpdatesDialog.tsx';
 import prettyBytes from 'pretty-bytes';
 import DragDropOverlay from '@/components/DragDropOverlay.tsx';
@@ -26,6 +25,7 @@ import { error, info } from '@tauri-apps/plugin-log';
 import CompressionProgressDialog from '@/components/dialogs/CompressionProgressDialog.tsx';
 import { showNotification } from '@/utils/notification-manager.ts';
 import PromptOnExitDialog from '@/components/dialogs/PromptOnExitDialog.tsx';
+import i18n from '@/i18n';
 
 function App() {
   const {
@@ -42,8 +42,7 @@ function App() {
 
   const { getCurrentPreviewedCImage } = usePreviewStore();
   const { setPromptExitDialogOpen } = useUIStore();
-  const { importSubfolderOnInput, theme, checkUpdatesAtStartup } = useSettingsStore();
-  const { t } = useTranslation();
+  const { checkUpdatesAtStartup } = useSettingsStore();
   const { setAppUpdate } = useAppStore();
   const [isDragging, setIsDragging] = useState(false);
 
@@ -87,7 +86,7 @@ function App() {
     register(
       listen(TauriEvent.WINDOW_THEME_CHANGED, (event) => {
         const eventTheme = event.payload as Theme;
-        if (theme !== THEME.SYSTEM) {
+        if (useSettingsStore.getState().theme !== THEME.SYSTEM) {
           return;
         }
 
@@ -104,7 +103,10 @@ function App() {
         const filePaths = event.payload.paths;
         setIsDragging(false);
 
-        void invokeBackend('add_from_drop', { filesOrFolders: filePaths, recursive: importSubfolderOnInput });
+        void invokeBackend('add_from_drop', {
+          filesOrFolders: filePaths,
+          recursive: useSettingsStore.getState().importSubfolderOnInput,
+        });
       }),
     );
 
@@ -169,36 +171,36 @@ function App() {
       listen<CompressionFinished>('fileList:compressionFinished', (event) => {
         finishCompression();
         void showNotification({
-          title: t('compression_report.compression_finished'),
-          body: t('compression_report.saved_long', {
+          title: i18n.t('compression_report.compression_finished'),
+          body: i18n.t('compression_report.saved_long', {
             saved: prettyBytes(event.payload.original_size - event.payload.compressed_size),
             savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
           }),
         });
-        toast.success(t('compression_report.compression_finished'), {
+        toast.success(i18n.t('compression_report.compression_finished'), {
           description: (
             <div className="flex flex-col gap-1">
               <span>
-                {t('compression_report.total_files', { total: event.payload.total_images })} (
-                {t('compression_report.compressed', { compressed: event.payload.total_success })} |{' '}
-                {t('compression_report.skipped', { skipped: event.payload.total_skipped })} |{' '}
-                {t('compression_report.errors', { errors: event.payload.total_errors })})
+                {i18n.t('compression_report.total_files', { total: event.payload.total_images })} (
+                {i18n.t('compression_report.compressed', { compressed: event.payload.total_success })} |{' '}
+                {i18n.t('compression_report.skipped', { skipped: event.payload.total_skipped })} |{' '}
+                {i18n.t('compression_report.errors', { errors: event.payload.total_errors })})
               </span>
               <span>
-                {t('compression_report.original_size', { originalSize: prettyBytes(event.payload.original_size) })}
+                {i18n.t('compression_report.original_size', { originalSize: prettyBytes(event.payload.original_size) })}
               </span>
               <span>
-                {t('compression_report.compressed_size', {
+                {i18n.t('compression_report.compressed_size', {
                   compressedSize: prettyBytes(event.payload.compressed_size),
                 })}
               </span>
               <span>
-                {t('compression_report.saved', {
+                {i18n.t('compression_report.saved', {
                   saved: prettyBytes(event.payload.original_size - event.payload.compressed_size),
                   savedPercent: getSavedPercentage(event.payload.original_size, event.payload.compressed_size),
                 })}
               </span>
-              <span>{t('compression_report.total_time', { totalTime: event.payload.total_time })} ms</span>
+              <span>{i18n.t('compression_report.total_time', { totalTime: event.payload.total_time })} ms</span>
             </div>
           ),
           duration: 5000,
@@ -240,6 +242,7 @@ function App() {
       closeRequestedUnlistenRef.current?.();
       closeRequestedUnlistenRef.current = null;
     };
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, []);
 
   return (

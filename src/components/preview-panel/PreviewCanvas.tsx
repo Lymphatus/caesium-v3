@@ -2,7 +2,6 @@ import { RefObject, useEffect, useRef } from 'react';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { CImage, ImageLoaderRequest, ImageLoaderResponse, RESIZE_MODE } from '@/types.ts';
 import usePreviewStore from '@/stores/preview.store.ts';
-import useUIStore from '@/stores/ui.store.ts';
 import useResizeOptionsStore from '@/stores/resize-options.store.ts';
 import { error } from '@tauri-apps/plugin-log';
 import { useControls } from 'react-zoom-pan-pinch';
@@ -40,9 +39,10 @@ function PreviewCanvas() {
   const workerRef = useRef<Worker | null>(null);
 
   const { currentPreviewedCImage, visualizationMode, setIsLoading, setVisualizationMode } = usePreviewStore();
-  const { showPreviewPanel } = useUIStore();
 
   const { centerView } = useControls();
+  const centerViewRef = useRef(centerView);
+  centerViewRef.current = centerView;
 
   const cleanupCanvases = (originalCanvas: HTMLCanvasElement | null, compressedCanvas: HTMLCanvasElement | null) => {
     if (originalCanvas === null) {
@@ -67,9 +67,7 @@ function PreviewCanvas() {
     if (!workerRef.current) {
       workerRef.current = new Worker(new URL('@/workers/image-loader.ts', import.meta.url));
     }
-    if (!showPreviewPanel) {
-      return;
-    }
+    const worker = workerRef.current;
     const listener = (e: MessageEvent<ImageLoaderResponse>) => {
       const data = e.data;
       const canvas = data.type === 'compressed' ? compressedCanvasRef.current : canvasRef.current;
@@ -81,23 +79,20 @@ function PreviewCanvas() {
         data.type,
       );
 
-      centerView?.(undefined, 0);
+      centerViewRef.current?.(undefined, 0);
       setIsLoading(false); // TODO if we are loading original and preview, this is out of sync
     };
-    workerRef.current?.addEventListener('message', listener);
+    worker.addEventListener('message', listener);
 
     return () => {
-      workerRef.current?.terminate();
+      worker.removeEventListener('message', listener);
+      worker.terminate();
       workerRef.current = null;
       cleanupCanvases(null, null);
     };
-  }, []);
+  }, [setIsLoading]);
 
   useEffect(() => {
-    if (!showPreviewPanel) {
-      return;
-    }
-
     const originalCanvas = canvasRef.current;
     const compressedCanvas = compressedCanvasRef.current;
     if (!originalCanvas || !compressedCanvas) {
@@ -106,7 +101,10 @@ function PreviewCanvas() {
 
     if (currentPreviewedCImage) {
       setIsLoading(true);
-      if (visualizationMode === 'compressed' && !currentPreviewedCImage?.compressed_file_path) {
+      if (
+        usePreviewStore.getState().visualizationMode === 'compressed' &&
+        !currentPreviewedCImage?.compressed_file_path
+      ) {
         setVisualizationMode('original');
       }
       cleanupCanvases(originalCanvas, compressedCanvas);
@@ -135,7 +133,7 @@ function PreviewCanvas() {
     return () => {
       cleanupCanvases(originalCanvas, compressedCanvas);
     };
-  }, [currentPreviewedCImage]);
+  }, [currentPreviewedCImage, setVisualizationMode, setIsLoading]);
 
   return (
     <>

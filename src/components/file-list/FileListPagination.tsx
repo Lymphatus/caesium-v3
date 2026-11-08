@@ -9,17 +9,17 @@ import {
 } from '@/components/ui/pagination';
 import useFileListStore from '@/stores/file-list.store.ts';
 
-function getPageRange(currentPage: number, totalPages: number): (number | 'ellipsis')[] {
+function getPageRange(currentPage: number, totalPages: number): (number | 'ellipsis-right' | 'ellipsis-left')[] {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
   if (currentPage <= 4) {
-    return [1, 2, 3, 4, 5, 'ellipsis', totalPages];
+    return [1, 2, 3, 4, 5, 'ellipsis-right', totalPages];
   }
   if (currentPage >= totalPages - 3) {
-    return [1, 'ellipsis', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    return [1, 'ellipsis-left', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
   }
-  return [1, 'ellipsis', currentPage - 1, currentPage, currentPage + 1, 'ellipsis', totalPages];
+  return [1, 'ellipsis-left', currentPage - 1, currentPage, currentPage + 1, 'ellipsis-right', totalPages];
 }
 
 function FileListPagination() {
@@ -50,9 +50,9 @@ function FileListPagination() {
             onClick={goTo(currentPage - 1)}
           />
         </PaginationItem>
-        {pages.map((p, i) =>
-          p === 'ellipsis' ? (
-            <PaginationItem key={`ellipsis-${i}`}>
+        {pages.map((p) =>
+          p === 'ellipsis-right' || p === 'ellipsis-left' ? (
+            <PaginationItem key={`ellipsis-${p}`}>
               <PaginationEllipsis />
             </PaginationItem>
           ) : (

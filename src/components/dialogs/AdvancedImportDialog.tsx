@@ -28,7 +28,7 @@ function AdvancedImportDialog() {
   const { advancedImportDialogOpen, setAdvancedImportDialogOpen } = useUIStore();
   const { t } = useTranslation();
 
-  const [importList, setImportList] = useState<Set<string>>(new Set<string>());
+  const [importList, setImportList] = useState(() => new Set<string>());
   const [scanSubfolders, setScanSubfolders] = useState(true);
   const [filenamePattern, setFilenamePattern] = useState('');
   const [sizeFilter, setSizeFilter] = useState(false);
@@ -49,7 +49,7 @@ function AdvancedImportDialog() {
     return () => {
       listValidationFinished.then((cleanupFn) => cleanupFn());
     };
-  }, []);
+  }, [setAdvancedImportDialogOpen]);
 
   const handleSizeFilterPatternChange = (value: string) => {
     setSizeFilterPattern(value as FILE_SIZE_FILTER_PATTERN);
