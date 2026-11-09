@@ -8,7 +8,7 @@ use caesium::{
 use serde_json::to_string;
 use sha2::{Digest, Sha256};
 use std::ffi::OsString;
-use std::fs::{copy, File, FileTimes, Metadata};
+use std::fs::{File, FileTimes, Metadata};
 use std::io::{Read, Write};
 #[cfg(any(windows, doc))]
 use std::os::windows::fs::FileTimesExt;
@@ -225,9 +225,21 @@ pub fn compress_cimage(
     let output_file_size = compressed_image.len() as u64;
     let _output_file_exists = output_full_path.exists();
 
+    let input_metadata = if options.output_options.keep_file_dates_enabled {
+        Some(&PathBuf::from(cimage.path.clone()).metadata().unwrap())
+    } else {
+        None
+    };
+
     if original_file_size < output_file_size && options.output_options.skip_if_output_is_bigger {
-        if PathBuf::from(&cimage.path) != output_full_path {
-            copy(&cimage.path, &output_full_path).unwrap();
+        if Path::new(&cimage.path) != output_full_path {
+            write_output_file(
+                &output_full_path,
+                &fs::read(&cimage.path).unwrap(),
+                input_metadata,
+                options,
+            )
+            .unwrap(); //TODO
         }
 
         return CompressionResult {
@@ -243,16 +255,13 @@ pub fn compress_cimage(
             },
         };
     }
-
-    let mut output_file = File::create(&output_full_path).unwrap(); //TODO
-
-    output_file.write_all(&compressed_image).unwrap(); //TODO
-
-    if options.output_options.keep_file_dates_enabled {
-        let input_metadata = PathBuf::from(cimage.path.clone()).metadata().unwrap(); //TODO
-
-        preserve_file_times(&output_file, &input_metadata, options).unwrap(); //TODO
-    }
+    write_output_file(
+        &output_full_path,
+        &compressed_image,
+        input_metadata,
+        options,
+    )
+    .unwrap(); //TODO
 
     if options.output_options.move_original_file_enabled && !will_overwrite_original {
         if options.output_options.move_original_file_mode == "trash" {
@@ -274,6 +283,38 @@ pub fn compress_cimage(
             ..cimage.clone()
         },
     }
+}
+
+fn write_output_file(
+    output_file_path: &Path,
+    data: &[u8],
+    input_metadata: Option<&fs::Metadata>,
+    options: &OptionsPayload,
+) -> io::Result<()> {
+    let parent_dir = output_file_path.parent().ok_or_else(|| {
+        io::Error::new(
+            io::ErrorKind::InvalidInput,
+            "output file has no parent directory",
+        )
+    })?;
+    let mut temp_file_builder = tempfile::Builder::new();
+    temp_file_builder.prefix(".caesium-");
+    #[cfg(target_family = "unix")]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        temp_file_builder.permissions(std::fs::Permissions::from_mode(0o666));
+    }
+    let mut named_temp_file = temp_file_builder.tempfile_in(parent_dir)?;
+    named_temp_file.write_all(data)?;
+    let output_file = named_temp_file.as_file();
+    if let Some(im) = input_metadata {
+        preserve_file_times(output_file, im, options)?;
+    };
+
+    output_file.sync_all()?;
+    named_temp_file.persist(output_file_path)?;
+
+    Ok(())
 }
 
 // TODO I don't like using the payload here
@@ -630,4 +671,156 @@ fn preserve_file_times(
 
     output_file.set_times(file_times)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{Duration, SystemTime};
+
+    fn options(keep_modified: bool) -> OptionsPayload {
+        serde_json::from_value(serde_json::json!({
+            "compression_options": {
+                "jpeg": { "quality": 80, "chroma_subsampling": "auto", "progressive": true, "optimize": false, "preserve_icc": true },
+                "png": { "quality": 80, "optimization_level": 3, "optimize": false },
+                "gif": { "quality": 80 },
+                "webp": { "quality": 80, "lossless": false },
+                "tiff": { "method": "deflate", "deflate_level": 1 },
+                "compression_mode": 0,
+                "keep_metadata": true,
+                "max_size_value": 500,
+                "max_size_unit": 1024
+            },
+            "resize_options": {
+                "resize_enabled": false, "resize_mode": "none", "keep_aspect_ratio": true, "do_not_enlarge": true,
+                "width": 0, "height": 0, "width_percentage": 100, "height_percentage": 100, "long_edge": 0, "short_edge": 0
+            },
+            "output_options": {
+                "output_folder": "", "same_folder_as_input": false, "keep_folder_structure": false,
+                "skip_if_output_is_bigger": true, "move_original_file_enabled": false, "move_original_file_mode": "trash",
+                "keep_file_dates_enabled": keep_modified, "keep_creation_date": false,
+                "keep_last_modified_date": keep_modified, "keep_last_access_date": false,
+                "output_format": "original", "suffix": ""
+            }
+        }))
+        .expect("valid options payload")
+    }
+
+    fn dir_entries(dir: &Path) -> Vec<OsString> {
+        let mut names: Vec<OsString> = fs::read_dir(dir)
+            .unwrap()
+            .map(|e| e.unwrap().file_name())
+            .collect();
+        names.sort();
+        names
+    }
+
+    #[test]
+    fn write_output_file_creates_new_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let out = dir.path().join("out.jpg");
+
+        write_output_file(&out, b"compressed", None, &options(false)).unwrap();
+
+        assert_eq!(fs::read(&out).unwrap(), b"compressed");
+    }
+
+    #[test]
+    fn write_output_file_replaces_existing_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let out = dir.path().join("same.jpg");
+        fs::write(&out, b"original content that is longer").unwrap();
+
+        write_output_file(&out, b"new", None, &options(false)).unwrap();
+
+        assert_eq!(fs::read(&out).unwrap(), b"new");
+    }
+
+    #[test]
+    fn write_output_file_errors_when_parent_dir_is_missing() {
+        let dir = tempfile::tempdir().unwrap();
+        let out = dir.path().join("missing").join("out.jpg");
+
+        let result = write_output_file(&out, b"data", None, &options(false));
+
+        assert!(result.is_err());
+        assert!(!out.exists());
+    }
+
+    #[test]
+    fn write_output_file_leaves_no_temp_files_on_success() {
+        let dir = tempfile::tempdir().unwrap();
+        let out = dir.path().join("out.jpg");
+
+        write_output_file(&out, b"data", None, &options(false)).unwrap();
+
+        assert_eq!(dir_entries(dir.path()), vec![OsString::from("out.jpg")]);
+    }
+
+    #[test]
+    fn write_output_file_leaves_no_temp_files_when_persist_fails() {
+        let dir = tempfile::tempdir().unwrap();
+        // A directory as destination makes the final rename fail on every platform.
+        let out = dir.path().join("occupied");
+        fs::create_dir(&out).unwrap();
+
+        let result = write_output_file(&out, b"data", None, &options(false));
+
+        assert!(result.is_err());
+        assert!(out.is_dir());
+        assert_eq!(dir_entries(dir.path()), vec![OsString::from("occupied")]);
+    }
+
+    #[test]
+    fn write_output_file_preserves_modified_time_when_requested() {
+        let dir = tempfile::tempdir().unwrap();
+        let input = dir.path().join("input.jpg");
+        fs::write(&input, b"input").unwrap();
+        let past = SystemTime::UNIX_EPOCH + Duration::from_secs(1_000_000_000);
+        File::options()
+            .write(true)
+            .open(&input)
+            .unwrap()
+            .set_modified(past)
+            .unwrap();
+        let input_metadata = input.metadata().unwrap();
+        let out = dir.path().join("out.jpg");
+
+        write_output_file(&out, b"data", Some(&input_metadata), &options(true)).unwrap();
+
+        assert_eq!(out.metadata().unwrap().modified().unwrap(), past);
+    }
+
+    #[test]
+    fn write_output_file_does_not_touch_times_when_not_requested() {
+        let dir = tempfile::tempdir().unwrap();
+        let input = dir.path().join("input.jpg");
+        fs::write(&input, b"input").unwrap();
+        let past = SystemTime::UNIX_EPOCH + Duration::from_secs(1_000_000_000);
+        File::options()
+            .write(true)
+            .open(&input)
+            .unwrap()
+            .set_modified(past)
+            .unwrap();
+        let out = dir.path().join("out.jpg");
+
+        write_output_file(&out, b"data", None, &options(true)).unwrap();
+
+        assert_ne!(out.metadata().unwrap().modified().unwrap(), past);
+    }
+
+    // tempfile creates files with mode 0o600; outputs should stay readable like File::create did.
+    #[cfg(unix)]
+    #[test]
+    fn write_output_file_output_is_readable_by_others() {
+        use std::os::unix::fs::PermissionsExt;
+        let dir = tempfile::tempdir().unwrap();
+        let out = dir.path().join("out.jpg");
+
+        write_output_file(&out, b"data", None, &options(false)).unwrap();
+
+        let mode = out.metadata().unwrap().permissions().mode();
+        assert_ne!(mode & 0o044, 0, "output mode is {:o}", mode & 0o777);
+    }
 }

@@ -459,6 +459,7 @@ dependencies = [
  "tauri-plugin-store",
  "tauri-plugin-updater",
  "tauri-plugin-window-state",
+ "tempfile",
  "thiserror 2.0.21",
  "trash",
  "walkdir",
