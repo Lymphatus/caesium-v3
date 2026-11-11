@@ -442,6 +442,7 @@ dependencies = [
  "open",
  "rayon",
  "regex",
+ "same-file",
  "serde",
  "serde_json",
  "serde_repr",
