@@ -541,8 +541,17 @@ fn setup_output_path(
     options: &OptionsPayload,
     base_folder: &str,
 ) -> Option<PathBuf> {
+    let (output_directory, filename) = resolve_output_path(input_file, options, base_folder)?;
+    ensure_output_dir(&output_directory).ok()?;
+    Some(output_directory.join(filename))
+}
+pub fn resolve_output_path(
+    input_file: &Path,
+    options: &OptionsPayload,
+    base_folder: &str,
+) -> Option<(PathBuf, OsString)> {
     let output_directory = determine_output_directory(input_file, options)?;
-    let (output_directory, filename) = compute_output_full_path(
+    compute_output_full_path(
         &output_directory,
         input_file,
         &PathBuf::from(base_folder),
@@ -550,15 +559,14 @@ fn setup_output_path(
         &options.output_options.suffix,
         &options.output_options.output_format,
         options.output_options.same_folder_as_input,
-    )?;
-
-    if !output_directory.exists() && fs::create_dir_all(&output_directory).is_err() {
-        return None; // TODO track errors here
-    }
-
-    Some(output_directory.join(filename))
+    )
 }
 
+fn ensure_output_dir(output_directory: &Path) -> io::Result<()> {
+    fs::create_dir_all(output_directory)?;
+
+    Ok(())
+}
 fn determine_output_directory(input_file: &Path, options: &OptionsPayload) -> Option<PathBuf> {
     if options.output_options.same_folder_as_input {
         input_file.parent().map(|p| p.to_path_buf())

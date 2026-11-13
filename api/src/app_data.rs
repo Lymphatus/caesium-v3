@@ -3,7 +3,8 @@ use indexmap::IndexSet;
 use std::cmp::{min, Ordering};
 use std::ops::Div;
 use std::path::PathBuf;
-use std::sync::atomic::AtomicBool;
+use std::sync::atomic::{AtomicBool, Ordering as AtomicOrdering};
+use std::sync::Arc;
 
 #[derive(Debug, Clone, PartialEq, Default)]
 pub enum FileListColumn {
@@ -47,7 +48,7 @@ impl SortOrder {
 pub struct AppData {
     pub(crate) file_list: AppDataFileList,
     pub(crate) base_path: Option<PathBuf>,
-    pub(crate) compression_status: CompressionStatus,
+    pub(crate) compression_status: Arc<CompressionStatus>,
 }
 
 #[derive(Default)]
@@ -55,6 +56,27 @@ pub struct CompressionStatus {
     pub is_compression_cancelled: AtomicBool,
     pub is_compression_paused: AtomicBool,
     pub is_compressing: AtomicBool,
+}
+
+impl CompressionStatus {
+    pub fn begin(self: &Arc<Self>) -> Option<CompressionGuard> {
+        if self.is_compressing.swap(true, AtomicOrdering::SeqCst) {
+            return None;
+        }
+        self.is_compression_cancelled
+            .store(false, AtomicOrdering::SeqCst);
+        self.is_compression_paused
+            .store(false, AtomicOrdering::SeqCst);
+        Some(CompressionGuard(Arc::clone(self)))
+    }
+}
+
+pub struct CompressionGuard(Arc<CompressionStatus>);
+
+impl Drop for CompressionGuard {
+    fn drop(&mut self) {
+        self.0.is_compressing.store(false, AtomicOrdering::SeqCst);
+    }
 }
 
 #[derive(Default)]
@@ -79,11 +101,7 @@ impl AppData {
         Self {
             file_list: AppDataFileList::new(),
             base_path: None,
-            compression_status: CompressionStatus {
-                is_compression_cancelled: AtomicBool::new(false),
-                is_compression_paused: AtomicBool::new(false),
-                is_compressing: AtomicBool::new(false),
-            },
+            compression_status: Arc::default(),
         }
     }
 
@@ -266,3 +284,6 @@ fn get_saved_size(old_size: u64, new_size: u64) -> f64 {
     }
     (old_size.saturating_sub(new_size) as f64).div(old_size as f64)
 }
+
+#[cfg(test)]
+mod tests;

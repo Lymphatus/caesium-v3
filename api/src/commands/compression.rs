@@ -1,6 +1,6 @@
 use crate::compressor::{
-    compress_cimage, preview_cimage, CompressionProgress, CompressionResult, CompressionStatus,
-    CompressionSummary, OptionsPayload,
+    compress_cimage, preview_cimage, resolve_output_path, CompressionProgress, CompressionResult,
+    CompressionStatus, CompressionSummary, OptionsPayload,
 };
 use crate::errors::CommandError;
 use crate::{AppData, CImage, ImageStatus};
@@ -69,9 +69,32 @@ pub async fn compress(
     let files_on_pause = Arc::new(Mutex::new(HashSet::<String>::new()));
     let max_threads = max(threads, 1);
 
-    let thread_pool = rayon::ThreadPoolBuilder::new()
-        .num_threads(max_threads)
-        .build()?;
+    //TODO avoid cloning everything if performance will suffer
+    // SNAPSHOT what's needed to work on, then release the lock before any work
+    let (status, images) = {
+        let state = app.state::<Mutex<AppData>>();
+        let state = state.lock()?;
+        (
+            Arc::clone(&state.compression_status),
+            state.file_list.iter().cloned().collect::<Vec<CImage>>(),
+        )
+    };
+
+    // Named binding on purpose: the guard clears is_compressing when it drops,
+    // so every exit below resets the flag without touching it by hand.
+    let Some(_compressing) = status.begin() else {
+        return Ok(()); // a run is already in flight
+    };
+
+    match has_output_conflicts(&images, &options, &base_folder) {
+        Some(false) => {}
+        Some(true) => return Err(CommandError::Generic("Output conflicts not allowed".into())),
+        None => {
+            return Err(CommandError::Generic(
+                "Unable to check output conflicts".into(),
+            ))
+        }
+    }
 
     app.emit(
         "fileList:compressionProgress",
@@ -81,57 +104,21 @@ pub async fn compress(
         },
     )?;
 
-    //TODO avoid cloning everything if performance will suffer
-    let state = app.state::<Mutex<AppData>>();
-    let state = state.lock()?;
-
-    if state
-        .compression_status
-        .is_compressing
-        .load(Ordering::Relaxed)
-    {
-        return Ok(());
-    }
-
-    state
-        .compression_status
-        .is_compression_cancelled
-        .store(false, Ordering::Relaxed);
-    state
-        .compression_status
-        .is_compression_paused
-        .store(false, Ordering::Relaxed);
-
-    state
-        .compression_status
-        .is_compressing
-        .store(true, Ordering::Relaxed);
-    // SNAPSHOT what's needed to work on
-    let images: Vec<CImage> = state.file_list.iter().cloned().collect();
-    //
-    drop(state); // Unlock immediately
-
     total_images.store(images.len(), Ordering::Relaxed);
 
     let progress = AtomicUsize::new(0);
 
+    let thread_pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(max_threads)
+        .build()?;
+
     thread_pool.install(|| {
         let _ = images.par_iter().try_for_each(|cimage| {
             loop {
-                let state = app.state::<Mutex<AppData>>();
-                let (is_cancelled, is_paused) = {
-                    let state = state.lock().unwrap();
-                    (
-                        state
-                            .compression_status
-                            .is_compression_cancelled
-                            .load(Ordering::Relaxed),
-                        state
-                            .compression_status
-                            .is_compression_paused
-                            .load(Ordering::Relaxed),
-                    )
-                };
+                // Lock-free: the flags live behind an Arc, so polling them does
+                // not take the AppData mutex the UI also needs.
+                let is_cancelled = status.is_compression_cancelled.load(Ordering::Relaxed);
+                let is_paused = status.is_compression_paused.load(Ordering::Relaxed);
 
                 if is_cancelled {
                     return Err(()); // Stop iteration
@@ -207,14 +194,32 @@ pub async fn compress(
 
     app.emit("fileList:compressionFinished", summary)?;
 
-    let state = app.state::<Mutex<AppData>>();
-    let state = state.lock()?;
+    Ok(()) // _compressing drops here and clears is_compressing
+}
 
-    state
-        .compression_status
-        .is_compressing
-        .store(false, Ordering::Relaxed);
-    Ok(())
+fn has_output_conflicts(
+    images: &[CImage],
+    options: &OptionsPayload,
+    base_folder: &str,
+) -> Option<bool> {
+    let mut map: HashSet<String> = HashSet::new();
+    for cimage in images {
+        let (folder, filename) =
+            match resolve_output_path(cimage.path.as_ref(), options, base_folder) {
+                Some((folder, filename)) => (folder, filename),
+                None => return None,
+            };
+        let mut key = folder.join(filename).display().to_string();
+        #[cfg(any(windows, target_os = "macos"))]
+        {
+            key = key.to_lowercase();
+        }
+        if !map.insert(key) {
+            return Some(true);
+        }
+    }
+
+    Some(false)
 }
 
 #[tauri::command]
@@ -243,3 +248,6 @@ pub async fn preview(
         app.emit("fileList:updateCImage", result).unwrap(); //TODO
     });
 }
+
+#[cfg(test)]
+mod tests;
